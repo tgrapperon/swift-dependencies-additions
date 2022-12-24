@@ -16,23 +16,31 @@ extension DependencyValues {
 
 extension Compressor: DependencyKey {
   public static var liveValue: Self {
-    Compressor(`default`(.compress), async: defaultAsync(.compress))
+    .default
   }
 
   public static var testValue: Self {
     XCTFail(#"Unimplemented: @Dependency(\.compressor)"#)
-    return Compressor(`default`(.compress), async: defaultAsync(.compress))
+    return .default
+  }
+
+  public static var `default`: Compressor {
+    Compressor(defaultSync(.compress), async: defaultAsync(.compress))
   }
 }
 
 extension Decompressor: DependencyKey {
   public static var liveValue: Self {
-    Decompressor(`default`(.decompress), async: defaultAsync(.decompress))
+    .default
   }
 
   public static var testValue: Self {
     XCTFail(#"Unimplemented: @Dependency(\.decompressor)"#)
-    return Decompressor(`default`(.decompress), async: defaultAsync(.decompress))
+    return .default
+  }
+
+  public static var `default`: Decompressor {
+    Decompressor(defaultSync(.decompress), async: defaultAsync(.decompress))
   }
 }
 
@@ -47,11 +55,17 @@ public struct Compressor: Sendable {
     self.compress = { @Sendable in try compress($0, $1) }
     self.compressAsync = { @Sendable in try await compressAsync?($0, $1) ?? compress($0, $1) }
   }
-  public func callAsFunction(_ data: Data, using algorithm: Algorithm = .zlib) throws -> Data {
+  
+  public func callAsFunction(
+    _ data: Data,
+    using algorithm: Algorithm = .zlib
+  ) throws -> Data {
     try self.compress(data, algorithm)
   }
-  public func callAsFunction(_ data: Data, using algorithm: Algorithm = .zlib) async throws -> Data
-  {
+  public func callAsFunction(
+    _ data: Data,
+    using algorithm: Algorithm = .zlib
+  ) async throws -> Data {
     try await self.compressAsync(data, algorithm)
   }
 }
@@ -67,23 +81,29 @@ public struct Decompressor: Sendable {
     self.decompress = { @Sendable in try decompress($0, $1) }
     self.decompressAsync = { @Sendable in try await decompressAsync?($0, $1) ?? decompress($0, $1) }
   }
-  public func callAsFunction(_ data: Data, using algorithm: Algorithm = .zlib) throws -> Data {
+  
+  public func callAsFunction(
+    _ data: Data,
+    using algorithm: Algorithm = .zlib
+  ) throws -> Data {
     try self.decompress(data, algorithm)
   }
-  public func callAsFunction(_ data: Data, using algorithm: Algorithm = .zlib) async throws -> Data
-  {
+  public func callAsFunction(
+    _ data: Data,
+    using algorithm: Algorithm = .zlib
+  ) async throws -> Data {
     try await self.decompressAsync(data, algorithm)
   }
 }
 
-private func `default`(_ operation: FilterOperation) -> @Sendable (
+private func defaultSync(_ operation: FilterOperation) -> @Sendable (
   _ data: Data, _ algorithm: Algorithm
 ) throws
   -> Data
 {
   let operation = UncheckedSendable(operation)
   return { data, algorithm in
-    let pageSize: Int = 512
+    let pageSize = 512
 
     var processed = Data()
     var index = 0
@@ -107,12 +127,11 @@ private func `default`(_ operation: FilterOperation) -> @Sendable (
 
 private func defaultAsync(_ operation: FilterOperation) -> @Sendable (
   _ data: Data, _ algorithm: Algorithm
-) async throws
-  -> Data
-{
+) async throws -> Data {
   let operation = UncheckedSendable(operation)
   return { data, algorithm in
-    let pageSize: Int = 512
+    let pageSize = 512
+    let asyncOperationsPeriod = 10
 
     var processed = Data()
     var index = 0
@@ -127,10 +146,14 @@ private func defaultAsync(_ operation: FilterOperation) -> @Sendable (
       index += rangeLength
       return subdata
     }
+    var iteration: Int = 0
     while let page = try inputFilter.readData(ofLength: pageSize) {
-      try Task.checkCancellation()
-      await Task.yield()
+      if iteration.isMultiple(of: asyncOperationsPeriod) {
+        try Task.checkCancellation()
+        await Task.yield()
+      }
       processed.append(page)
+      iteration += 1
     }
     return processed
   }
