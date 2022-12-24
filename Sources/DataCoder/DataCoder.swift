@@ -102,7 +102,10 @@ extension DataEncoder {
   }
 
   public static var json: DataEncoder {
-    DataEncoder(JSONEncoder())
+    let encoder = JSONEncoder()
+    // The following can help with testing
+    encoder.outputFormatting.insert(.sortedKeys)
+    return DataEncoder(encoder)
   }
 
   public static func plist(_ outputFormat: PropertyListSerialization.PropertyListFormat = .xml)
