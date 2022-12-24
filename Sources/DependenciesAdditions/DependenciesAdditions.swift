@@ -108,3 +108,15 @@ extension RandomNumberGenerator where Self == SystemRandomNumberGenerator {
     }
   }
 #endif
+
+extension AsyncStream {
+  public init<S: AsyncSequence>(_ sequence: @escaping () async -> S) where S.Element == Element {
+    var iterator: S.AsyncIterator?
+    self.init {
+      if iterator == nil {
+        iterator = await sequence().makeAsyncIterator()
+      }
+      return try? await iterator?.next()
+    }
+  }
+}
