@@ -27,7 +27,7 @@ define("CompressorDependency")
 //define("CryptoDependency")
 //define("KeyChainDependency")
 //define("NotificationDependency")
-define("SwiftUIDependency")
+define("SwiftUIEnvironment")
 
 func define(_ target: String) {
   package.targets.append(
