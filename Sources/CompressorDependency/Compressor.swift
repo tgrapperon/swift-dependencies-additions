@@ -20,7 +20,7 @@ extension Compressor: DependencyKey {
   }
 
   public static var testValue: Self {
-    XCTFail(#"Unimplemented: @Dependency(\.compressor)"#)
+    XCTFail(#"Unimplemented: @Dependency(\.compress)"#)
     return .default
   }
 
@@ -35,7 +35,7 @@ extension Decompressor: DependencyKey {
   }
 
   public static var testValue: Self {
-    XCTFail(#"Unimplemented: @Dependency(\.decompressor)"#)
+    XCTFail(#"Unimplemented: @Dependency(\.decompress)"#)
     return .default
   }
 
