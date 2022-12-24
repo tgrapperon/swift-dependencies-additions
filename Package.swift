@@ -16,6 +16,7 @@ let package = Package(
   ]
 )
 
+/// Temporary helpers
 define("DependenciesAdditions")
 define("AppStorage")
 define("BundleInfo")
@@ -30,7 +31,10 @@ define("SwiftUIDependency")
 
 func define(_ target: String) {
   package.targets.append(
-    .target(name: target, dependencies: [.product(name: "Dependencies", package: "swift-dependencies")])
+    .target(
+      name: target, dependencies: [
+        .product(name: "Dependencies", package: "swift-dependencies")
+      ])
   )
   package.targets.append(
     .testTarget(name: "\(target)Tests", dependencies: [.target(name: target)])
@@ -44,7 +48,7 @@ for target in package.targets {
     .unsafeFlags([
       "-Xfrontend", "-warn-concurrency",
       "-Xfrontend", "-enable-actor-data-race-checks",
-//      "-enable-library-evolution",
+      //      "-enable-library-evolution",
     ])
   )
 }
