@@ -18,23 +18,16 @@ extension DataDecoder: DependencyKey {
 }
 
 public struct DataDecoder: Sendable {
-  private let _decode: @Sendable (any Decodable.Type, Data) throws -> any Decodable
-  private let _decodeAsync: @Sendable (any Decodable.Type, Data) async throws -> any Decodable
+  private let decode: @Sendable (any Decodable.Type, Data) throws -> any Decodable
 
   public init(
-    decode: @escaping @Sendable (any Decodable.Type, Data) throws -> any Decodable,
-    async decodeAsync: (@Sendable (any Decodable.Type, Data) async throws -> any Decodable)? = nil
+    decode: @escaping @Sendable (any Decodable.Type, Data) throws -> any Decodable
   ) {
-    self._decode = decode
-    self._decodeAsync = { @Sendable in try await decodeAsync?($0, $1) ?? decode($0, $1) }
+    self.decode = decode
   }
 
   public func callAsFunction<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
-    try self._decode(type, data) as! T
-  }
-
-  public func callAsFunction<T: Decodable>(_ type: T.Type, from data: Data) async throws -> T {
-    try await self._decodeAsync(type, data) as! T
+    try self.decode(type, data) as! T
   }
 }
 

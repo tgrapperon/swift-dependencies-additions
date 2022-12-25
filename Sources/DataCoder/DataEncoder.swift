@@ -33,24 +33,16 @@ extension DataEncoder: DependencyKey {
 }
 
 public struct DataEncoder: Sendable {
-  private let _encode: @Sendable (any Encodable) throws -> Data
-  private let _encodeAsync: @Sendable (any Encodable) async throws -> Data
+  private let encode: @Sendable (any Encodable) throws -> Data
 
   public init(
-    encode: @escaping @Sendable (any Encodable) throws -> Data,
-    async encodeAsync: (@Sendable (any Encodable) async throws -> Data)? = nil
-
+    encode: @escaping @Sendable (any Encodable) throws -> Data
   ) {
-    self._encode = encode
-    self._encodeAsync = { @Sendable in try await encodeAsync?($0) ?? encode($0) }
+    self.encode = encode
   }
 
   public func callAsFunction(_ value: some Encodable) throws -> Data {
-    try self._encode(value)
-  }
-
-  public func callAsFunction(_ value: some Encodable) async throws -> Data {
-    try await self._encodeAsync(value)
+    try self.encode(value)
   }
 }
 
