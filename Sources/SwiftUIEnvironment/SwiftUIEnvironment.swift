@@ -69,6 +69,7 @@ public final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
       let cancellable = UncheckedSendable(
         self.$dependencies
           .map { $0[key] as? Value }
+          .removeDuplicates(by: isDuplicate(v1:v2:))
           .sink { continuation.yield($0) }
       )
       continuation.onTermination = { _ in
@@ -155,15 +156,7 @@ struct EnvironmentalDependencyModifier<ID: Hashable, Value: Sendable>: ViewModif
   final class Values {
     let currentValue: CurrentValueSubject<Value?, Never> = .init(nil)
     private(set) lazy var publisher: AnyPublisher<Value?, Never> = self.currentValue
-      .removeDuplicates { v1, v2 in
-        if let v1 = v1 as? any Equatable, let v2 = v2 as? any Equatable {
-          return v1.isEqual(to: v2)
-        } else {
-          var v1 = v1
-          var v2 = v2
-          return memcmp(&v1, &v2, MemoryLayout.size(ofValue: v1)) == 0
-        }
-      }
+      .removeDuplicates(by: isDuplicate(v1:v2:))
       .eraseToAnyPublisher()
   }
 
@@ -186,6 +179,16 @@ struct EnvironmentalDependencyModifier<ID: Hashable, Value: Sendable>: ViewModif
       .onReceive(self.values.publisher) {
         self.dependencies.update($0, keyPath: self.keyPath, id: self.id)
       }
+  }
+}
+
+private func isDuplicate<V>(v1: V?, v2: V?) -> Bool {
+  if let v1 = v1 as? any Equatable, let v2 = v2 as? any Equatable {
+    return v1.isEqual(to: v2)
+  } else {
+    var v1 = v1
+    var v2 = v2
+    return memcmp(&v1, &v2, MemoryLayout.size(ofValue: v1)) == 0
   }
 }
 
