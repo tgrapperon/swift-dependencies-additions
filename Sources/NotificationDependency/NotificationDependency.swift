@@ -1,78 +1,121 @@
 import Dependencies
 import Foundation
 
-public struct NotificationObservationOf<Value>: Hashable, Sendable {
-  let name: Notification.Name
-  let object: UncheckedSendable<NSObject>?
-  let transform: @Sendable (Notification) throws -> Value
-  let notify: (@Sendable (Value) -> Notification?)?
-  let id: NotificationID
-
-  public init(
-    _ name: Notification.Name,
-    object: UncheckedSendable<NSObject>? = nil,
-    transform: @escaping @Sendable (Notification) -> Value = { $0 },
-    notify: (@Sendable (Value) -> Notification?)? = nil,
-    file: StaticString = #fileID,
-    line: UInt = #line
-  ) {
-    self.name = name
-    self.object = object
-    self.transform = transform
-    self.notify = notify
-    self.id = NotificationID(
-      name: name,
-      object: object.map { ObjectIdentifier($0.wrappedValue) },
-      file: file.description,
-      line: line,
-      valueType: ObjectIdentifier(Value.self)
-    )
-  }
-
-  public static func == (lhs: Self, rhs: Self) -> Bool {
-    lhs.id == rhs.id
-  }
-
-  public func hash(into hasher: inout Hasher) {
-    hasher.combine(self.id)
-  }
-  
-  var notification: Notification {
-    Notification(name: self.name, object: self.object?.wrappedValue)
+extension DependencyValues {
+  public var notifications: any NotificationCenterProtocol {
+    get { self[NotificationCenterKey.self] }
+    set { self[NotificationCenterKey.self] = newValue }
   }
 }
 
-struct NotificationID: Hashable, Sendable {
-  let name: Notification.Name
-  let object: ObjectIdentifier?
-  let file: String
-  let line: UInt
-  let valueType: ObjectIdentifier
-}
-
-public struct NotificationStreamOf<Value>: Sendable {
-  // TODO: Implement throwing version?
-  private let post: @Sendable (Value) -> Void
-  private let stream: @Sendable () -> AsyncStream<Value>
-  init(
-    post: @escaping @Sendable (Value) -> Void,
-    stream: @escaping @Sendable () -> AsyncStream<Value>
-  ) {
-    self.post = post
-    self.stream = stream
-  }
-  
-  public func callAsFunction() -> AsyncStream<Value> {
-    self.stream()
-  }
-  public func post(_ value: Value) {
-    self.post(value)
+enum NotificationCenterKey: DependencyKey {
+  static var liveValue: any NotificationCenterProtocol { .default }
+  static var testValue: NotificationCenterProtocol {
+    XCTFail(#"Unimplemented: @Dependency(\.notifications)"#)
+    return .default
   }
 }
 
+public struct Notifications {}
+//// Test
+//extension Notifications {
+//  var didBecomeSingleTreaded: ObservationOf<Notification> {
+//    .init(.NSDidBecomeSingleThreaded)
+//  }
+//}
+//
+//func test() {
+//  @Dependency(\.notifications) var notifications
+//  @Dependency(\.notifications.didBecomeSingleTreaded) var didBecomeSingleTreaded;
+//
+//  notifications.post(.init(name: .NSDidBecomeSingleThreaded))
+//}
+
+extension Notifications {
+  public struct ObservationOf<Value>: Hashable, Sendable {
+    let name: Notification.Name
+    let object: UncheckedSendable<NSObject>?
+    let transform: @Sendable (Notification) throws -> Value
+    let notify: (@Sendable (Value) -> Notification?)?
+    let id: ID
+
+    public init(
+      _ name: Notification.Name,
+      object: UncheckedSendable<NSObject>? = nil,
+      transform: @escaping @Sendable (Notification) -> Value = { $0 },
+      notify: (@Sendable (Value) -> Notification?)? = nil,
+      file: StaticString = #fileID,
+      line: UInt = #line
+    ) {
+      self.name = name
+      self.object = object
+      self.transform = transform
+      self.notify = notify
+      self.id = ID(
+        name: name,
+        object: object.map { ObjectIdentifier($0.wrappedValue) },
+        file: file.description,
+        line: line,
+        valueType: ObjectIdentifier(Value.self)
+      )
+    }
+
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+      lhs.id == rhs.id
+    }
+
+    public func hash(into hasher: inout Hasher) {
+      hasher.combine(self.id)
+    }
+    
+    var notification: Notification {
+      Notification(name: self.name, object: self.object?.wrappedValue)
+    }
+  }
+}
+
+extension Notifications {
+  public struct StreamOf<Value>: Sendable {
+    // TODO: Implement throwing version?
+    private let post: @Sendable (Value) -> Void
+    private let stream: @Sendable () -> AsyncStream<Value>
+    init(
+      post: @escaping @Sendable (Value) -> Void,
+      stream: @escaping @Sendable () -> AsyncStream<Value>
+    ) {
+      self.post = post
+      self.stream = stream
+    }
+    
+    public func callAsFunction() -> AsyncStream<Value> {
+      self.stream()
+    }
+    public func post(_ value: Value) {
+      self.post(value)
+    }
+  }
+}
+
+extension Notifications {
+  struct ID: Hashable, Sendable {
+    let name: Notification.Name
+    let object: ObjectIdentifier?
+    let file: String
+    let line: UInt
+    let valueType: ObjectIdentifier
+  }
+}
+
+@dynamicMemberLookup
 public protocol NotificationCenterProtocol: Sendable {
-  func post(notification: Notification)
-  subscript<Value>(notification: NotificationObservationOf<Value>) -> NotificationStreamOf<Value> { get }
+  func post(_ notification: Notification)
+  subscript<Value>(notification: Notifications.ObservationOf<Value>) -> Notifications.StreamOf<Value> { get }
+}
+
+extension NotificationCenterProtocol {
+  public subscript<Value>(dynamicMember keyPath: KeyPath<Notifications, Notifications.ObservationOf<Value>>) -> Notifications.StreamOf<Value> {
+    self[Notifications()[keyPath: keyPath]]
+  }
 }
 
 extension NotificationCenterProtocol where Self == _DefaultNotificationCenter {
@@ -84,18 +127,18 @@ extension NotificationCenterProtocol where Self == _ControllableNotificationCent
 }
 
 public struct _DefaultNotificationCenter: NotificationCenterProtocol {
-  let streams = LockIsolated([NotificationID: any Sendable]())
+  private let streams = LockIsolated([Notifications.ID: any Sendable]())
 
-  public func post(notification: Notification) {
+  public func post(_ notification: Notification) {
     NotificationCenter.default.post(notification)
   }
   
-  public subscript<Value>(notification: NotificationObservationOf<Value>) -> NotificationStreamOf<Value> {
-    self.streams.withValue { (streams) -> NotificationStreamOf<Value> in
-      if let existing = streams[notification.id] as! NotificationStreamOf<Value>? {
+  public subscript<Value>(notification: Notifications.ObservationOf<Value>) -> Notifications.StreamOf<Value> {
+    self.streams.withValue { (streams) -> Notifications.StreamOf<Value> in
+      if let existing = streams[notification.id] as! Notifications.StreamOf<Value>? {
         return existing
       }
-      let stream = NotificationStreamOf<Value> { value in
+      let stream = Notifications.StreamOf<Value> { value in
         if let notification = notification.notify?(value) {
           NotificationCenter.default.post(notification)
         } else if let notification = value as? Notification {
@@ -148,35 +191,35 @@ public struct _DefaultNotificationCenter: NotificationCenterProtocol {
 }
 
 public struct _ControllableNotificationCenter: NotificationCenterProtocol {
-  // Bundles a `NotificationStreamOf` and its `SharedAsyncStreamsContinuation`
-  struct StreamAndSharedContinuations: Sendable {
+  // Bundles a `Notifications.StreamOf` and its `SharedAsyncStreamsContinuation`
+  internal struct StreamAndSharedContinuations: Sendable {
     let notificationStream: any Sendable
     let postedSharedContinuations: any Sendable
     
-    func notificationStream<T>(of type: T.Type) -> NotificationStreamOf<T> {
-      notificationStream as! NotificationStreamOf<T>
+    func notificationStream<T>(of type: T.Type) -> Notifications.StreamOf<T> {
+      notificationStream as! Notifications.StreamOf<T>
     }
     func postedSharedContinuation<T>(of type: T.Type) -> SharedAsyncStreamsContinuation<T> {
       postedSharedContinuations as! SharedAsyncStreamsContinuation<T>
     }
   }
   
-  let notifications = SharedAsyncStreamsContinuation<Notification>()
-  let streams = LockIsolated([NotificationID: StreamAndSharedContinuations]())
+  private let notifications = SharedAsyncStreamsContinuation<Notification>()
+  private let streams = LockIsolated([Notifications.ID: StreamAndSharedContinuations]())
   
-  public func post(notification: Notification) {
+  public func post(_ notification: Notification) {
     notifications.yield(notification)
   }
   
-  public subscript<Value>(notification: NotificationObservationOf<Value>) -> NotificationStreamOf<Value> {
+  public subscript<Value>(notification: Notifications.ObservationOf<Value>) -> Notifications.StreamOf<Value> {
     return self.streams.withValue { streams in
       if let existing = streams[notification.id]?.notificationStream(of: Value.self) {
         return existing
       }
       let postedValues = SharedAsyncStreamsContinuation<Result<Value, Error>>()
-      let notificationStream = NotificationStreamOf<Value>{ postedValue in
+      let notificationStream = Notifications.StreamOf<Value>{ postedValue in
         if let notification = notification.notify?(postedValue) {
-          self.post(notification: notification)
+          self.post(notification)
         } else {
           postedValues.yield(.success(postedValue))
         }
@@ -226,24 +269,9 @@ public struct _ControllableNotificationCenter: NotificationCenterProtocol {
   }
 }
 
-enum NotificationCenterKey: DependencyKey {
-  static var liveValue: any NotificationCenterProtocol {
-    _DefaultNotificationCenter()
-  }
-  static var testValue: NotificationCenterProtocol {
-    XCTFail(#"Unimplemented: @Dependency(\.notifications)"#)
-    return _DefaultNotificationCenter()
-  }
-}
-
-extension DependencyValues {
-  public var notifications: any NotificationCenterProtocol {
-    get { self[NotificationCenterKey.self] }
-    set { self[NotificationCenterKey.self] = newValue }
-  }
-}
-
-final class SharedAsyncStreamsContinuation<Value>: Sendable {
+// A type that is able to broadcast continuation messages to an arbitrary number of
+// `AsyncStream`s it can generate.
+internal final class SharedAsyncStreamsContinuation<Value>: Sendable {
   let continuations = LockIsolated([UUID: AsyncStream<Value>.Continuation]())
 
   func yield(_ value: Value) {
@@ -251,6 +279,15 @@ final class SharedAsyncStreamsContinuation<Value>: Sendable {
       for continuation in $0.values {
         continuation.yield(value)
       }
+    }
+  }
+  
+  func finish() {
+    continuations.withValue {
+      for continuation in $0.values {
+        continuation.finish()
+      }
+      $0 = [:]
     }
   }
 
