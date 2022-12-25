@@ -26,7 +26,7 @@ define("LoggerDependency", dependencies: "BundleInfo")
 define("CompressorDependency")
 //define("CryptoDependency")
 //define("KeyChainDependency")
-//define("NotificationDependency")
+define("NotificationDependency")
 define("SwiftUIEnvironment", testingDependencies: "DependenciesAdditions")
 
 func define(_ target: String, dependencies: String..., testingDependencies: String...) {
