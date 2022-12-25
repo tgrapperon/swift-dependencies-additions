@@ -13,6 +13,7 @@ import SwiftUI
 // @Dependency(\.environment.streams.colorScheme) var colorSchemes (AsyncStream<ColorScheme?>)
 // @Dependency(\.environment["some"].streams.colorScheme) var colorSchemes (AsyncStream<ColorScheme?>)
 
+// TODO: `stream` refactor so `stream` appears before the `id` subscript
 // TODO: Rename `id` as `tag`?
 // TODO: Explore observing any DynamicProperty
 
@@ -70,6 +71,8 @@ public final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
       let cancellable = UncheckedSendable(
         self.$dependencies
           .map { $0[key] as? Value }
+          // We still need to remove duplicates as `dependencies` can be updated
+          // multiple types by different observed environment values.
           .removeDuplicates(by: isDuplicate(v1:v2:))
           .sink { continuation.yield($0) }
       )
