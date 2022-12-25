@@ -29,13 +29,13 @@ public final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
   nonisolated public static var liveValue: SwiftUIEnvironment { .shared }
   nonisolated public static var testValue: SwiftUIEnvironment { .shared }
 
-  private static let shared = SwiftUIEnvironment()
+  internal static let shared = SwiftUIEnvironment()
 
   @Published private var dependencies = [Key: Any]()
 
   init() {}
 
-  fileprivate func update<ID: Hashable, Value>(
+  internal func update<ID: Hashable, Value>(
     _ value: Value?,
     keyPath: KeyPath<EnvironmentValues, Value>,
     id: ID? = String?.none
@@ -68,10 +68,8 @@ public final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
       let key = Key(id: id, keypath: keyPath)
       let cancellable = UncheckedSendable(
         self.$dependencies
-          .compactMap { $0[key] as! Value? }
-          .sink {
-            continuation.yield($0)
-          }
+          .map { $0[key] as? Value }
+          .sink { continuation.yield($0) }
       )
       continuation.onTermination = { _ in
         cancellable.wrappedValue.cancel()
