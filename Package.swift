@@ -22,22 +22,32 @@ define("AppStorage")
 define("BundleInfo")
 //define("CoreDataDependency")
 define("DataCoder")
-define("LoggerDependency")
+define("LoggerDependency", dependencies: "BundleInfo")
 define("CompressorDependency")
 //define("CryptoDependency")
 //define("KeyChainDependency")
 //define("NotificationDependency")
-define("SwiftUIEnvironment")
+define("SwiftUIEnvironment", testingDependencies: "DependenciesAdditions")
 
-func define(_ target: String) {
+func define(_ target: String, dependencies: String..., testingDependencies: String...) {
+  var targetDependencies: [Target.Dependency] = [
+    .product(name: "Dependencies", package: "swift-dependencies")
+  ]
+  for dependency in dependencies {
+    targetDependencies.append(.target(name: dependency))
+  }
   package.targets.append(
     .target(
-      name: target, dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies")
-      ])
+      name: target, dependencies: targetDependencies)
   )
+  var targetTestingDependencies: [Target.Dependency] = [
+    .target(name: target)
+  ]
+  for dependency in testingDependencies {
+    targetTestingDependencies.append(.target(name: dependency))
+  }
   package.targets.append(
-    .testTarget(name: "\(target)Tests", dependencies: [.target(name: target)])
+    .testTarget(name: "\(target)Tests", dependencies: targetTestingDependencies)
   )
   package.products.append(.library(name: target, targets: [target]))
 }
