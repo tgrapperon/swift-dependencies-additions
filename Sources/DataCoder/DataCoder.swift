@@ -46,25 +46,44 @@ extension DataEncoder: DependencyKey {
 
 public struct DataDecoder: Sendable {
   private let _decode: @Sendable (any Decodable.Type, Data) throws -> any Decodable
+  private let _decodeAsync: @Sendable (any Decodable.Type, Data) async throws -> any Decodable
 
-  public init(decode: @escaping @Sendable (any Decodable.Type, Data) throws -> any Decodable) {
+  public init(
+    decode: @escaping @Sendable (any Decodable.Type, Data) throws -> any Decodable,
+    async decodeAsync: (@Sendable (any Decodable.Type, Data) async throws -> any Decodable)? = nil
+  ) {
     self._decode = decode
+    self._decodeAsync = { @Sendable in try await decodeAsync?($0, $1) ?? decode($0, $1) }
   }
 
   public func callAsFunction<T: Decodable>(_ type: T.Type, from data: Data) throws -> T {
     try self._decode(type, data) as! T
   }
+
+  public func callAsFunction<T: Decodable>(_ type: T.Type, from data: Data) async throws -> T {
+    try await self._decodeAsync(type, data) as! T
+  }
 }
 
 public struct DataEncoder: Sendable {
   private let _encode: @Sendable (any Encodable) throws -> Data
+  private let _encodeAsync: @Sendable (any Encodable) async throws -> Data
 
-  public init(encode: @escaping @Sendable (any Encodable) throws -> Data) {
+  public init(
+    encode: @escaping @Sendable (any Encodable) throws -> Data,
+    async encodeAsync: (@Sendable (any Encodable) async throws -> Data)? = nil
+
+  ) {
     self._encode = encode
+    self._encodeAsync = { @Sendable in try await encodeAsync?($0) ?? encode($0) }
   }
 
   public func callAsFunction(_ value: some Encodable) throws -> Data {
     try self._encode(value)
+  }
+  
+  public func callAsFunction(_ value: some Encodable) async throws -> Data {
+    try await self._encodeAsync(value)
   }
 }
 
