@@ -42,7 +42,7 @@ extension Notifications {
     public init(
       _ name: Notification.Name,
       object: UncheckedSendable<NSObject>? = nil,
-      transform: @escaping @Sendable (Notification) -> Value = { $0 },
+      transform: @escaping @Sendable (Notification) throws -> Value = { $0 },
       notify: (@Sendable (Value) -> Notification?)? = nil,
       file: StaticString = #fileID,
       line: UInt = #line
@@ -110,6 +110,10 @@ extension Notifications {
 public protocol NotificationCenterProtocol: Sendable {
   func post(_ notification: Notification)
   subscript<Value>(notification: Notifications.ObservationOf<Value>) -> Notifications.StreamOf<Value> { get }
+  // The subscript for @dynamicMemberLookup needs to be declared at the protocol
+  // level or it crashes when trying to build of testing
+  // TODO: Report this
+  subscript<Value>(dynamicMember keyPath: KeyPath<Notifications, Notifications.ObservationOf<Value>>) -> Notifications.StreamOf<Value> { get }
 }
 
 extension NotificationCenterProtocol {

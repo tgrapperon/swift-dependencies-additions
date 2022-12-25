@@ -27,7 +27,7 @@ final class SwiftUIEnvironmentTests: XCTestCase {
         for await value in testValue {
           XCTAssertEqual(value, expected[index])
           index += 1
-          if index == expected.endIndex - 1 { return }
+          if index == expected.endIndex { return }
         }
       }
       group.addTask { @MainActor in
