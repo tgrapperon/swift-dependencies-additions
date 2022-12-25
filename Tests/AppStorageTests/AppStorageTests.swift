@@ -1,6 +1,7 @@
 import AppStorage
 import Dependencies
 import XCTest
+import DependenciesAdditions
 
 final class AppStorageTests: XCTestCase {
   func testAppStorage() {
@@ -40,54 +41,34 @@ final class AppStorageTests: XCTestCase {
     }
   }
 
-  @available(iOS 16.0, macOS 13.0, *)
   func testStream() async throws {
     @AppStorage("SomeKey") var int = 42
 
     try await DependencyValues.withValue(\.userDefaults, .ephemeral()) {
-      try await withThrowingTaskGroup(of: AsyncEnumerationTestStatus.self) { group in
+      try await withTimeout { group in
         group.addTask {
-          var expectations: [Int] = [42, 55, 42, 20, 446, 42]
+          let expectations: [Int] = [42, 55, 42, 20, 446, 42]
+          var index = 0
           for await element in $int.values() {
-            let expected = expectations.removeFirst()
-            XCTAssertEqual(element, expected)
-            if expectations.isEmpty {
-              break
+            XCTAssertEqual(element, expectations[index])
+            index += 1
+            if index == expectations.endIndex {
+              return
             }
           }
-          return .enumerationDidFinish
         }
         group.addTask {
           /// Let the first value hit the enumeration
-          try await Task.sleep(for: .milliseconds(50))
+          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
           $int.set(55)
-          try await Task.sleep(for: .milliseconds(50))
+          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
           $int.wrappedValue = 42  // Alternative
-          try await Task.sleep(for: .milliseconds(50))
+          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
           $int.set(20)
-          try await Task.sleep(for: .milliseconds(50))
+          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
           $int.set(446)
-          try await Task.sleep(for: .milliseconds(50))
+          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
           $int.reset()
-          return .controlDidFinish
-        }
-        group.addTask {
-          try await Task.sleep(for: .seconds(1))
-          throw TimeOutError()
-        }
-        
-        while !group.isEmpty {
-          do {
-            if try await group.next() == .enumerationDidFinish {
-              group.cancelAll()
-            }
-          } catch {
-            if error is CancellationError {
-              return
-            } else {
-              throw error
-            }
-          }
         }
       }
     }
@@ -124,7 +105,6 @@ final class AppStorageTests: XCTestCase {
     XCTAssertEqual(fileURL, sameFileURL)
   }
 
-  @available(iOS 16.0, macOS 13.0, *)
   func testLiveStream() async throws {
     @AppStorage("SomeKey") var int = 42
 
@@ -132,57 +112,32 @@ final class AppStorageTests: XCTestCase {
     defer {
       UserDefaults.standard.removeObject(forKey: "SomeKey")
     }
-    try await withThrowingTaskGroup(of: AsyncEnumerationTestStatus.self) { group in
+    try await withTimeout { group in
       group.addTask {
-        var expectations: [Int] = [42, 55, 42, 20, 446, 42]
+        let expectations: [Int] = [42, 55, 42, 20, 446, 42]
+        var index = 0
         for await element in $int.values() {
-          let expected = expectations.removeFirst()
-          XCTAssertEqual(element, expected)
-          if expectations.isEmpty {
-            break
+          XCTAssertEqual(element, expectations[index])
+          index += 1
+          if index == expectations.endIndex {
+            return
           }
         }
-        return .enumerationDidFinish
       }
       group.addTask {
         /// Let the first value hit the enumeration
-        try await Task.sleep(for: .milliseconds(50))
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
         $int.set(55)
-        try await Task.sleep(for: .milliseconds(50))
-        $int.set(42)
-        try await Task.sleep(for: .milliseconds(50))
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        $int.wrappedValue = 42  // Alternative
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
         $int.set(20)
-        try await Task.sleep(for: .milliseconds(50))
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
         $int.set(446)
-        try await Task.sleep(for: .milliseconds(50))
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
         $int.reset()
-        return .controlDidFinish
-      }
-      
-      group.addTask {
-        try await Task.sleep(for: .seconds(1))
-        throw TimeOutError()
-      }
-      
-      while !group.isEmpty {
-        do {
-          if try await group.next() == .enumerationDidFinish {
-            group.cancelAll()
-          }
-        } catch {
-          if error is CancellationError {
-            return
-          } else {
-            throw error
-          }
-        }
       }
     }
   }
 }
 
-private enum AsyncEnumerationTestStatus {
-  case enumerationDidFinish
-  case controlDidFinish
-}
-private struct TimeOutError: Error {}

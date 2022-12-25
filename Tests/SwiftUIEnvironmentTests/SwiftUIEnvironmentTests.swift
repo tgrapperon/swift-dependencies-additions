@@ -15,12 +15,11 @@ extension EnvironmentValues {
   }
 }
 
-@available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 final class SwiftUIEnvironmentTests: XCTestCase {
   func testSwiftUIEnvironment() async throws {
     @Dependency(\.environment.streams.test) var testValue
 
-    try await withTimeout(.seconds(1)) { group in
+    try await withTimeout(1000) { group in
       group.addTask { @MainActor in
         let expected: [Int?] = [nil, 1, 3, nil, 5, 8, 10]
         var index = 0
@@ -31,18 +30,19 @@ final class SwiftUIEnvironmentTests: XCTestCase {
         }
       }
       group.addTask { @MainActor in
-        try await Task.sleep(for: .milliseconds(100))
-        SwiftUIEnvironment.shared.update(1, keyPath: \.test)
-        try await Task.sleep(for: .milliseconds(100))
-        SwiftUIEnvironment.shared.update(3, keyPath: \.test)
-        try await Task.sleep(for: .milliseconds(100))
-        SwiftUIEnvironment.shared.update(nil, keyPath: \.test)
-        try await Task.sleep(for: .milliseconds(100))
-        SwiftUIEnvironment.shared.update(5, keyPath: \.test)
-        try await Task.sleep(for: .milliseconds(100))
-        SwiftUIEnvironment.shared.update(8, keyPath: \.test)
-        try await Task.sleep(for: .milliseconds(100))
-        SwiftUIEnvironment.shared.update(10, keyPath: \.test)
+        let environment = SwiftUIEnvironment.shared
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        environment.update(1, keyPath: \.test)
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        environment.update(3, keyPath: \.test)
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        environment.update(nil, keyPath: \.test)
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        environment.update(5, keyPath: \.test)
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        environment.update(8, keyPath: \.test)
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        environment.update(10, keyPath: \.test)
       }
     }
   }

@@ -27,9 +27,8 @@ extension AsyncThrowingStream where Failure == Error {
   }
 }
 
-@available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
 public func withTimeout(
-  _ duration: Duration = .milliseconds(100),
+  _ milliseconds: UInt64 = 1000,
   description: String = "",
   operation: @Sendable @escaping () async throws -> Void,
   file: StaticString = #filePath,
@@ -38,23 +37,23 @@ public func withTimeout(
   try await withThrowingTaskGroup(of: Void.self) { group in
     group.addTask(operation: operation)
     group.addTask {
-      try await Task.sleep(for: duration)
+      try await Task.sleep(nanoseconds: milliseconds * NSEC_PER_MSEC)
       XCTFail(description, file: file, line: line)
     }
     try await group.next()
     group.cancelAll()
   }
 }
-@available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
+
 public func withTimeout(
-  _ duration: Duration = .milliseconds(100),
+  _ milliseconds: UInt64 = 1000,
   description: String = "",
   group operations: @escaping @Sendable (inout ThrowingTaskGroup<Void, Error>) async throws -> Void,
   file: StaticString = #filePath,
   line: UInt = #line
 ) async throws {
   try await withTimeout(
-    duration,
+    milliseconds,
     description: description,
     operation: {
       try await withThrowingTaskGroup(of: Void.self) { group in

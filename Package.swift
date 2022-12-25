@@ -18,7 +18,7 @@ let package = Package(
 
 /// Temporary helpers
 define("DependenciesAdditions")
-define("AppStorage")
+define("AppStorage", testingDependencies: "DependenciesAdditions")
 define("BundleInfo")
 //define("CoreDataDependency")
 define("DataCoder")

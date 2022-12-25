@@ -38,12 +38,10 @@ extension Notifications {
 }
 
 final class NotificationDependencyTests: XCTestCase {
-
-  @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
   func testLiveNotifications() async throws {
     @Dependency(\.notifications.testNotificationWithBidirectionalTransform) var testNotification
 
-    try await withTimeout(.seconds(1)) { group in
+    try await withTimeout(1000) { group in
       group.addTask {
         let expectations = [2, 4, 7, -1]
         var index: Int = 0
@@ -56,24 +54,23 @@ final class NotificationDependencyTests: XCTestCase {
         }
       }
       group.addTask {
-        try await Task.sleep(for: .milliseconds(100))
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
         testNotification.post(2)
-        try await Task.sleep(for: .milliseconds(100))
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
         testNotification.post(4)
-        try await Task.sleep(for: .milliseconds(100))
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
         testNotification.post(7)
-        try await Task.sleep(for: .milliseconds(100))
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
         testNotification.post(-1)
       }
     }
   }
 
-  @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
   func testLiveNotificationsFailureToExtract() async throws {
     @Dependency(\.notifications.testNotificationWithBidirectionalTransform) var testNotification
     @Dependency(\.notifications) var notificationCenter
 
-    try await withTimeout(.seconds(1)) { group in
+    try await withTimeout { group in
       group.addTask {
         let expectations = [2, 4, 7, -1]
         var index: Int = 0
@@ -88,17 +85,16 @@ final class NotificationDependencyTests: XCTestCase {
         XCTAssertEqual(index, 2)
       }
       group.addTask {
-        try await Task.sleep(for: .milliseconds(100))
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
         testNotification.post(2)
-        try await Task.sleep(for: .milliseconds(100))
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
         testNotification.post(4)
-        try await Task.sleep(for: .milliseconds(100))
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
         notificationCenter.post(.init(name: notificationName))
       }
     }
   }
 
-  @available(macOS 13.0, iOS 16.0, watchOS 9.0, tvOS 16.0, *)
   func testLiveFailureToSendNotifications() async throws {
     @Dependency(\.notifications.testNotificationWithUnidirectionalTransform) var testNotification;
     
