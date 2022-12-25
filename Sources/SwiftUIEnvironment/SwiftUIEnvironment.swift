@@ -14,6 +14,7 @@ import SwiftUI
 // @Dependency(\.environment["some"].streams.colorScheme) var colorSchemes (AsyncStream<ColorScheme?>)
 
 // TODO: Rename `id` as `tag`?
+// TODO: Explore observing any DynamicProperty
 
 extension DependencyValues {
   public var environment: SwiftUIEnvironment {
