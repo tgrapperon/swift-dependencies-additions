@@ -1,8 +1,8 @@
 import Dependencies
 
 #if canImport(OSLog)
-  // Because of safety reasons, the compiler prevents pass non-literal `OSLogMessage`s to a `Logger`
-  // value. This prevents to create a `Sendable` wrapper. This value is however very likely
+  // Because of safety reasons, the compiler prevents to pass non-literal `OSLogMessage`s to a
+  // `Logger` value. This prevents to create a `Sendable` wrapper. This value is however very likely
   // thread-safe (to be confirmed), so we can probably use `@preconcurrency` without problem for
   // now.
   @preconcurrency import OSLog
