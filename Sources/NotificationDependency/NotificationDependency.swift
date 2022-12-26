@@ -41,19 +41,19 @@ extension Notifications {
 
     public init(
       _ name: Notification.Name,
-      object: UncheckedSendable<NSObject>? = nil,
+      object: NSObject? = nil,
       transform: @escaping @Sendable (Notification) throws -> Value = { $0 },
       notify: (@Sendable (Value) -> Notification?)? = nil,
       file: StaticString = #fileID,
       line: UInt = #line
     ) {
       self.name = name
-      self.object = object
+      self.object = object.map(UncheckedSendable.init(wrappedValue:))
       self.transform = transform
       self.notify = notify
       self.id = ID(
         name: name,
-        object: object.map { ObjectIdentifier($0.wrappedValue) },
+        object: object.map { ObjectIdentifier($0) },
         file: file.description,
         line: line,
         valueType: ObjectIdentifier(Value.self)
@@ -70,6 +70,26 @@ extension Notifications {
     
     var notification: Notification {
       Notification(name: self.name, object: self.object?.wrappedValue)
+    }
+    
+    public func map<T>(
+      transform: @escaping @Sendable (Value) throws -> T,
+      notify: (@Sendable (T) -> Value?)? = nil,
+      file: StaticString = #fileID,
+      line: UInt = #line
+    ) -> ObservationOf<T> {
+      return .init(
+        self.name,
+        object: self.object?.wrappedValue
+      ) {
+        try transform(self.transform($0))
+      } notify: {
+        guard
+          let selfNotify = self.notify,
+          let value = notify?($0)
+        else { return nil }
+        return selfNotify(value)
+      }
     }
   }
 }
@@ -312,3 +332,4 @@ internal final class SharedAsyncStreamsContinuation<Value>: Sendable {
     }
   }
 }
+

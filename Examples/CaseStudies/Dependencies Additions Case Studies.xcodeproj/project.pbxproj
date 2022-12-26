@@ -21,6 +21,7 @@
 		E9DC4C662958FA41003F0CA8 /* SwiftUIEnvironment in Frameworks */ = {isa = PBXBuildFile; productRef = E9DC4C652958FA41003F0CA8 /* SwiftUIEnvironment */; };
 		E9DC4C682958FA5B003F0CA8 /* LoggerStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DC4C672958FA5B003F0CA8 /* LoggerStudy.swift */; };
 		E9DC4C6B29591626003F0CA8 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = E9DC4C6A29591626003F0CA8 /* SwiftUINavigation */; };
+		E9DC4C6D29591D60003F0CA8 /* NotificationsStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DC4C6C29591D60003F0CA8 /* NotificationsStudy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		E9DC4C4D2958F9BC003F0CA8 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E9DC4C552958F9F1003F0CA8 /* swift-dependencies-additions */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "swift-dependencies-additions"; path = ../..; sourceTree = "<group>"; };
 		E9DC4C672958FA5B003F0CA8 /* LoggerStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerStudy.swift; sourceTree = "<group>"; };
+		E9DC4C6C29591D60003F0CA8 /* NotificationsStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsStudy.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +80,7 @@
 				E9DC4C452958F9BB003F0CA8 /* Dependencies_Additions_Case_StudiesApp.swift */,
 				E9DC4C472958F9BB003F0CA8 /* ContentView.swift */,
 				E9DC4C672958FA5B003F0CA8 /* LoggerStudy.swift */,
+				E9DC4C6C29591D60003F0CA8 /* NotificationsStudy.swift */,
 				E9DC4C492958F9BC003F0CA8 /* Assets.xcassets */,
 				E9DC4C4B2958F9BC003F0CA8 /* Dependencies_Additions_Case_Studies.entitlements */,
 				E9DC4C4C2958F9BC003F0CA8 /* Preview Content */,
@@ -194,6 +197,7 @@
 			files = (
 				E9DC4C682958FA5B003F0CA8 /* LoggerStudy.swift in Sources */,
 				E9DC4C482958F9BB003F0CA8 /* ContentView.swift in Sources */,
+				E9DC4C6D29591D60003F0CA8 /* NotificationsStudy.swift in Sources */,
 				E9DC4C462958F9BB003F0CA8 /* Dependencies_Additions_Case_StudiesApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
