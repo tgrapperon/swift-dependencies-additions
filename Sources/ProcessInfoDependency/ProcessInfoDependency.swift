@@ -2,29 +2,19 @@ import Dependencies
 import Foundation
 import XCTestDynamicOverlay
 
-extension ProcessInfo.Value: DependencyKey {
-  public static var liveValue: ProcessInfo.Value { .init() }
-}
-
 extension DependencyValues {
-  var processInfo: ProcessInfo.Value {
+  public var processInfo: ProcessInfo.Value {
     get { self[ProcessInfo.Value.self] }
     set { self[ProcessInfo.Value.self] = newValue }
   }
 }
 
-extension ProcessInfo.Value {
-  public static var umplemented: Self {
+extension ProcessInfo.Value: DependencyKey {
+  public static var liveValue: ProcessInfo.Value { .init() }
+
+  public static var unimplemented: Self {
     XCTFail(#"Unimplemented: @Dependency(\.processInfo)"#)
     return .init()
-  }
-  public func with(configuration configure: (inout Self) -> Void) -> Self {
-    var value = self
-    configure(&value)
-    return value
-  }
-  public init(configure: (inout Self) -> Void) {
-    self = Self().with(configuration: configure)
   }
 }
 
