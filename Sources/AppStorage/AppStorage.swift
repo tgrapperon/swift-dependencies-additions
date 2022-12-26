@@ -12,14 +12,6 @@ import XCTestDynamicOverlay
 // mutated in concurrent contexts. All fields are constants and thread safety is deferred to the
 // corresponding `userDefaults`, which are themselve thread safe by construction.
 
-/// A property wrapper type that reflects a value from `UserDefaults`.
-/// This property wrapper can be used in `ObservableObject` instances, or anywhere the
-/// ``DependencyValues/userDefaults`` dependency is defined.
-///
-/// - Note: This version of `AppStorage` should inter-operate seamlessly with SwiftUI's own version
-/// of this property wrapper, provided you're using the same keys to save the same types of values.
-public typealias AppStorage<Value> = Dependency<Value>.AppStorage
-
 public extension Dependency {
   // NB: Repeted doc in order to be displayed in Xcode's right side bar.
   /// A property wrapper type that reflects a value from `UserDefaults`.
@@ -32,6 +24,8 @@ public extension Dependency {
   @propertyWrapper
   @dynamicMemberLookup
   final class AppStorage: Sendable where Value: Sendable {
+    let initialValues: DependencyValues
+
     let key: String
     let defaultValue: Value
     let explicitUserDefaults: UserDefaults.Dependency?
@@ -40,7 +34,9 @@ public extension Dependency {
     let setValue: @Sendable (UserDefaults.Dependency, Value) -> Void
 
     private var userDefaults: UserDefaults.Dependency {
-      @Dependency<UserDefaults.Dependency>(\.userDefaults) var currentUserDefaults
+      #warning("Fix this if possible")
+//      let currentUserDefaults = self.initialValues.merging(DependencyValues._current)[keyPath:\.userDefaults]
+      let currentUserDefaults = self.initialValues[keyPath:\.userDefaults]
       return self.explicitUserDefaults ?? currentUserDefaults
     }
 
@@ -91,6 +87,7 @@ public extension Dependency {
       getValue: @escaping @Sendable (UserDefaults.Dependency) -> Value,
       setValue: @escaping @Sendable (UserDefaults.Dependency, Value) -> Void
     ) {
+      self.initialValues = DependencyValues._current
       self.explicitUserDefaults = userDefaults
       self.getValue = getValue
       self.setValue = setValue
@@ -267,20 +264,20 @@ private extension UserDefaults {
 
   func getSendable(forKey key: String, as type: Any.Type) -> (any Sendable)? {
     switch type {
-    case let type where type == Bool.self:
+    case let type where type == Bool.self, let type where type == Bool?.self:
       guard self.contains(key: key) else { return nil }
       return self.bool(forKey: key)
-    case let type where type == Int.self:
+    case let type where type == Int.self, let type where type == Int?.self:
       guard self.contains(key: key) else { return nil }
       return self.integer(forKey: key)
-    case let type where type == Double.self:
+    case let type where type == Double.self, let type where type == Double?.self:
       guard self.contains(key: key) else { return nil }
       return self.double(forKey: key)
-    case let type where type == Data.self:
+    case let type where type == Data.self, let type where type == Data?.self:
       return self.data(forKey: key)
-    case let type where type == String.self:
+    case let type where type == String.self, let type where type == String?.self:
       return self.string(forKey: key)
-    case let type where type == URL.self:
+    case let type where type == URL.self, let type where type == URL?.self:
       return self.url(forKey: key)
     default:
       return nil
@@ -329,25 +326,26 @@ extension UserDefaults.Dependency: TestDependencyKey {
   /// `UserDefaults.set(:URL?:String)` for more information).
   public static func ephemeral() -> UserDefaults.Dependency {
     let storage = LockIsolated([String: any Sendable]())
-    let continuation = LockIsolated<AsyncStream<(String, (any Sendable)?)>.Continuation?>(nil)
-
+    let continuations = LockIsolated([String: [UUID: AsyncStream<(any Sendable)?>.Continuation]]())
+    
     return UserDefaults.Dependency { key, _ in
       storage.value[key]
     } set: { value, key in
       storage.withValue {
         $0[key] = value
       }
-      continuation.value?.yield((key, value))
-    } values: { key, _ in
-      let stream = AsyncStream((String, (any Sendable)?).self) { streamContinuation in
-        continuation.withValue { $0 = streamContinuation }
+      for continuation in continuations.value[key]?.values ?? [:].values {
+        continuation.yield(value)
       }
-      defer { continuation.value?.yield((key, storage.value[key])) }
-      return
-        stream
-          .filter { $0.0 == key }
-          .map(\.1)
-          .eraseToStream()
+    } values: { key, _ in
+      let id = UUID()
+      let stream = AsyncStream((any Sendable)?.self) { streamContinuation in
+        continuations.withValue {
+          $0[key, default: [:]][id] = streamContinuation
+        }
+      }
+      defer { continuations.value[key]?[id]?.yield(storage.value[key]) }
+      return stream
     }
   }
 }

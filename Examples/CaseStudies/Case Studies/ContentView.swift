@@ -1,31 +1,43 @@
 import SwiftUI
 import SwiftUINavigation
+import Dependencies
 
 @MainActor
 class StudiesModel: ObservableObject {
+  @Dependency(\.self) var dependencies
+  
   enum Destination {
+    case appStorageStudy(AppStorageStudy)
     case notificationStudy(NotificationStudy)
     case loggerStudy(LoggerStudy)
     case swiftUIEnvironmentStudy(SwiftUIEnvironmentStudy)
   }
   @Published var destination: Destination?
 
+  func userDidTapNavigateToAppStorageStudyButton() {
+    self.destination = DependencyValues.withValues(from: self) {
+      .appStorageStudy(.init())
+    }
+  }
+  
   func userDidTapNavigateToNotificationStudyButton() {
-    self.destination = .notificationStudy(
-      .init(count: 42)
-    )
+    self.destination = DependencyValues.withValues(from: self) {
+      .notificationStudy(.init(count: 42))
+    }
   }
 
   func userDidTapNavigateToLoggerStudyButton() {
-    self.destination = .loggerStudy(
-      .init(customerName: "Blob")
-    )
+    self.destination = DependencyValues.withValues(from: self) {
+      .loggerStudy(
+        .init(customerName: "Blob")
+      )
+    }
   }
 
   func userDidTapNavigateToSwiftUIEnvironmentStudyButton() {
-    self.destination = .swiftUIEnvironmentStudy(
-      .init()
-    )
+    self.destination = DependencyValues.withValues(from: self) {
+      .swiftUIEnvironmentStudy(.init())
+    }
   }
 }
 
@@ -35,6 +47,12 @@ struct ContentView: View {
   var body: some View {
     NavigationStack {
       List {
+
+        Button {
+          self.model.userDidTapNavigateToAppStorageStudyButton()
+        } label: {
+          Label("AppStorage", systemImage: "archivebox")
+        }
 
         Button {
           self.model.userDidTapNavigateToLoggerStudyButton()
@@ -56,6 +74,12 @@ struct ContentView: View {
 
       }
       .navigationTitle("Case Studies")
+      .navigationDestination(
+        unwrapping: self.$model.destination,
+        case: /StudiesModel.Destination.appStorageStudy
+      ) { $model in
+        AppStorageStudyView(model: model)
+      }
       .navigationDestination(
         unwrapping: self.$model.destination,
         case: /StudiesModel.Destination.notificationStudy
