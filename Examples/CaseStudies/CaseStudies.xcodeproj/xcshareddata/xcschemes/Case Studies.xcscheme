@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E9DC4C412958F9BB003F0CA8"
-               BuildableName = "Dependencies Additions Case Studies.app"
-               BlueprintName = "Dependencies Additions Case Studies"
+               BuildableName = "CaseStudies.app"
+               BlueprintName = "CaseStudies"
                ReferencedContainer = "container:CaseStudies.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,6 +28,17 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "E9C3B93B29596715000263AD"
+               BuildableName = "CaseStudiesTests.xctest"
+               BlueprintName = "CaseStudiesTests"
+               ReferencedContainer = "container:CaseStudies.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -45,8 +56,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E9DC4C412958F9BB003F0CA8"
-            BuildableName = "Dependencies Additions Case Studies.app"
-            BlueprintName = "Dependencies Additions Case Studies"
+            BuildableName = "CaseStudies.app"
+            BlueprintName = "CaseStudies"
             ReferencedContainer = "container:CaseStudies.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,8 +73,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E9DC4C412958F9BB003F0CA8"
-            BuildableName = "Dependencies Additions Case Studies.app"
-            BlueprintName = "Dependencies Additions Case Studies"
+            BuildableName = "CaseStudies.app"
+            BlueprintName = "CaseStudies"
             ReferencedContainer = "container:CaseStudies.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

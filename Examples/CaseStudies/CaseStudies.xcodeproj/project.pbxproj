@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		E9C3B93529594A35000263AD /* AppStorageStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B93429594A35000263AD /* AppStorageStudy.swift */; };
 		E9C3B9372959607A000263AD /* CompressionStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B9362959607A000263AD /* CompressionStudy.swift */; };
+		E9C3B93F29596715000263AD /* CaseStudiesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B93E29596715000263AD /* CaseStudiesTests.swift */; };
+		E9C3B946295967AE000263AD /* AppStorageStudyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B945295967AE000263AD /* AppStorageStudyTests.swift */; };
 		E9DC4C462958F9BB003F0CA8 /* CaseStudiesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DC4C452958F9BB003F0CA8 /* CaseStudiesApp.swift */; };
 		E9DC4C482958F9BB003F0CA8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DC4C472958F9BB003F0CA8 /* ContentView.swift */; };
 		E9DC4C4A2958F9BC003F0CA8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9DC4C492958F9BC003F0CA8 /* Assets.xcassets */; };
@@ -27,10 +29,23 @@
 		E9DC4C6F2959396E003F0CA8 /* SwiftUIEnvironmentStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DC4C6E2959396E003F0CA8 /* SwiftUIEnvironmentStudy.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		E9C3B94029596715000263AD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E9DC4C3A2958F9BB003F0CA8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E9DC4C412958F9BB003F0CA8;
+			remoteInfo = "Dependencies Additions Case Studies";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		E9C3B93429594A35000263AD /* AppStorageStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageStudy.swift; sourceTree = "<group>"; };
 		E9C3B9362959607A000263AD /* CompressionStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompressionStudy.swift; sourceTree = "<group>"; };
-		E9DC4C422958F9BB003F0CA8 /* Dependencies Additions Case Studies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Dependencies Additions Case Studies.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9C3B93C29596715000263AD /* CaseStudiesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaseStudiesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E9C3B93E29596715000263AD /* CaseStudiesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseStudiesTests.swift; sourceTree = "<group>"; };
+		E9C3B945295967AE000263AD /* AppStorageStudyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageStudyTests.swift; sourceTree = "<group>"; };
+		E9DC4C422958F9BB003F0CA8 /* CaseStudies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CaseStudies.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9DC4C452958F9BB003F0CA8 /* CaseStudiesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseStudiesApp.swift; sourceTree = "<group>"; };
 		E9DC4C472958F9BB003F0CA8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E9DC4C492958F9BC003F0CA8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -43,6 +58,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		E9C3B93929596715000263AD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E9DC4C3F2958F9BB003F0CA8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -74,11 +96,21 @@
 			path = Studies;
 			sourceTree = "<group>";
 		};
+		E9C3B93D29596715000263AD /* CaseStudiesTests */ = {
+			isa = PBXGroup;
+			children = (
+				E9C3B93E29596715000263AD /* CaseStudiesTests.swift */,
+				E9C3B945295967AE000263AD /* AppStorageStudyTests.swift */,
+			);
+			path = CaseStudiesTests;
+			sourceTree = "<group>";
+		};
 		E9DC4C392958F9BB003F0CA8 = {
 			isa = PBXGroup;
 			children = (
 				E9DC4C542958F9F1003F0CA8 /* Packages */,
 				E9DC4C442958F9BB003F0CA8 /* Case Studies */,
+				E9C3B93D29596715000263AD /* CaseStudiesTests */,
 				E9DC4C432958F9BB003F0CA8 /* Products */,
 				E9DC4C562958FA41003F0CA8 /* Frameworks */,
 			);
@@ -87,7 +119,8 @@
 		E9DC4C432958F9BB003F0CA8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E9DC4C422958F9BB003F0CA8 /* Dependencies Additions Case Studies.app */,
+				E9DC4C422958F9BB003F0CA8 /* CaseStudies.app */,
+				E9C3B93C29596715000263AD /* CaseStudiesTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -131,9 +164,27 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E9DC4C412958F9BB003F0CA8 /* Dependencies Additions Case Studies */ = {
+		E9C3B93B29596715000263AD /* CaseStudiesTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E9DC4C512958F9BC003F0CA8 /* Build configuration list for PBXNativeTarget "Dependencies Additions Case Studies" */;
+			buildConfigurationList = E9C3B94229596715000263AD /* Build configuration list for PBXNativeTarget "CaseStudiesTests" */;
+			buildPhases = (
+				E9C3B93829596715000263AD /* Sources */,
+				E9C3B93929596715000263AD /* Frameworks */,
+				E9C3B93A29596715000263AD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E9C3B94129596715000263AD /* PBXTargetDependency */,
+			);
+			name = CaseStudiesTests;
+			productName = CaseStudiesTests;
+			productReference = E9C3B93C29596715000263AD /* CaseStudiesTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E9DC4C412958F9BB003F0CA8 /* CaseStudies */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E9DC4C512958F9BC003F0CA8 /* Build configuration list for PBXNativeTarget "CaseStudies" */;
 			buildPhases = (
 				E9DC4C3E2958F9BB003F0CA8 /* Sources */,
 				E9DC4C3F2958F9BB003F0CA8 /* Frameworks */,
@@ -143,7 +194,7 @@
 			);
 			dependencies = (
 			);
-			name = "Dependencies Additions Case Studies";
+			name = CaseStudies;
 			packageProductDependencies = (
 				E9DC4C572958FA41003F0CA8 /* AppStorage */,
 				E9DC4C592958FA41003F0CA8 /* BundleInfo */,
@@ -156,7 +207,7 @@
 				E9DC4C6A29591626003F0CA8 /* SwiftUINavigation */,
 			);
 			productName = "Dependencies Additions Case Studies";
-			productReference = E9DC4C422958F9BB003F0CA8 /* Dependencies Additions Case Studies.app */;
+			productReference = E9DC4C422958F9BB003F0CA8 /* CaseStudies.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -169,6 +220,10 @@
 				LastSwiftUpdateCheck = 1410;
 				LastUpgradeCheck = 1410;
 				TargetAttributes = {
+					E9C3B93B29596715000263AD = {
+						CreatedOnToolsVersion = 14.1;
+						TestTargetID = E9DC4C412958F9BB003F0CA8;
+					};
 					E9DC4C412958F9BB003F0CA8 = {
 						CreatedOnToolsVersion = 14.1;
 					};
@@ -190,12 +245,20 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E9DC4C412958F9BB003F0CA8 /* Dependencies Additions Case Studies */,
+				E9DC4C412958F9BB003F0CA8 /* CaseStudies */,
+				E9C3B93B29596715000263AD /* CaseStudiesTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		E9C3B93A29596715000263AD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E9DC4C402958F9BB003F0CA8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -208,6 +271,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		E9C3B93829596715000263AD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E9C3B93F29596715000263AD /* CaseStudiesTests.swift in Sources */,
+				E9C3B946295967AE000263AD /* AppStorageStudyTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E9DC4C3E2958F9BB003F0CA8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -224,7 +296,54 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		E9C3B94129596715000263AD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E9DC4C412958F9BB003F0CA8 /* CaseStudies */;
+			targetProxy = E9C3B94029596715000263AD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		E9C3B94329596715000263AD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = swift.dependencies.additions.CaseStudiesTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CaseStudies.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CaseStudies";
+			};
+			name = Debug;
+		};
+		E9C3B94429596715000263AD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = swift.dependencies.additions.CaseStudiesTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CaseStudies.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CaseStudies";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		E9DC4C4F2958F9BC003F0CA8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -421,6 +540,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		E9C3B94229596715000263AD /* Build configuration list for PBXNativeTarget "CaseStudiesTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9C3B94329596715000263AD /* Debug */,
+				E9C3B94429596715000263AD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E9DC4C3D2958F9BB003F0CA8 /* Build configuration list for PBXProject "CaseStudies" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -430,7 +558,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E9DC4C512958F9BC003F0CA8 /* Build configuration list for PBXNativeTarget "Dependencies Additions Case Studies" */ = {
+		E9DC4C512958F9BC003F0CA8 /* Build configuration list for PBXNativeTarget "CaseStudies" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E9DC4C522958F9BC003F0CA8 /* Debug */,
