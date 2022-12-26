@@ -15,7 +15,6 @@ final class CompressionStudy: ObservableObject {
   @Published var processedTextJSON: String = ""
   @Published var decompressed: String = ""
 
-
   @Dependency(\.compress) var compress
   @Dependency(\.decompress) var decompress
 
@@ -33,12 +32,12 @@ final class CompressionStudy: ObservableObject {
           let data = text.data(using: .utf8)!
 
           let compressed = try await compress(data)
-          
+
           let processedText = ProcessedText(
             text: text,
             data: compressed
           )
-          
+
           let jsonData = try encode(processedText)
 
           self.processedTextJSON = String(decoding: jsonData, as: UTF8.self)
