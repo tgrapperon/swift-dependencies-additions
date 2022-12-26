@@ -12,10 +12,9 @@ struct ProcessedText: Hashable, Codable {
 @MainActor
 final class CompressionStudy: ObservableObject {
   @Published var source: String
+  @Published var processedTextJSON: String = ""
   @Published var decompressed: String = ""
 
-  @Published var processedText = ProcessedText()
-  @Published var processedTextJSON: String = ""
 
   @Dependency(\.compress) var compress
   @Dependency(\.decompress) var decompress
@@ -34,12 +33,12 @@ final class CompressionStudy: ObservableObject {
           let data = text.data(using: .utf8)!
 
           let compressed = try await compress(data)
+          
           let processedText = ProcessedText(
             text: text,
             data: compressed
           )
-          self.processedText = processedText
-
+          
           let jsonData = try encode(processedText)
 
           self.processedTextJSON = String(decoding: jsonData, as: UTF8.self)
