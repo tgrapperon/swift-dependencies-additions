@@ -1,13 +1,14 @@
+import Dependencies
 import SwiftUI
 import SwiftUINavigation
-import Dependencies
 
 @MainActor
 class StudiesModel: ObservableObject {
   @Dependency(\.self) var dependencies
-  
+
   enum Destination {
     case appStorageStudy(AppStorageStudy)
+    case compression(CompressionStudy)
     case notificationStudy(NotificationStudy)
     case loggerStudy(LoggerStudy)
     case swiftUIEnvironmentStudy(SwiftUIEnvironmentStudy)
@@ -19,7 +20,13 @@ class StudiesModel: ObservableObject {
       .appStorageStudy(.init())
     }
   }
-  
+
+  func userDidTapNavigateToCompressionStudyButton() {
+    self.destination = DependencyValues.withValues(from: self) {
+      .compression(.init())
+    }
+  }
+
   func userDidTapNavigateToNotificationStudyButton() {
     self.destination = DependencyValues.withValues(from: self) {
       .notificationStudy(.init(count: 42))
@@ -55,6 +62,12 @@ struct ContentView: View {
         }
 
         Button {
+          self.model.userDidTapNavigateToCompressionStudyButton()
+        } label: {
+          Label("Compression", systemImage: "rectangle.compress.vertical")
+        }
+
+        Button {
           self.model.userDidTapNavigateToLoggerStudyButton()
         } label: {
           Label("Logger", systemImage: "list.dash")
@@ -82,6 +95,12 @@ struct ContentView: View {
       }
       .navigationDestination(
         unwrapping: self.$model.destination,
+        case: /StudiesModel.Destination.compression
+      ) { $model in
+        CompressionStudyView(model: model)
+      }
+      .navigationDestination(
+        unwrapping: self.$model.destination,
         case: /StudiesModel.Destination.notificationStudy
       ) { $model in
         NotificationsStudyView(model: model)
@@ -104,6 +123,11 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
   static var previews: some View {
-    ContentView(model: .init())
+    ContentView(
+      model:
+        DependencyValues.withValue(\.userDefaults, .standard) {
+          .init()
+        }
+    )
   }
 }

@@ -25,12 +25,11 @@ final class LoggerStudy: ObservableObject {
     Task { [customerName = self.customerName] in
       do {
         try await purchase(instrument: instrument)
-        transactionsLogger.log(
+        transactionsLogger.info(
           "\(customerName) did succesfully purchase a \(instrument.rawValue, privacy: .public)"
         )
       } catch {
-        transactionsLogger.log(
-          level: .error,
+        transactionsLogger.error(
           "\(customerName, privacy: .private) failed to purchase a \(instrument.rawValue, privacy: .public)"
         )
       }

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E9C3B93529594A35000263AD /* AppStorageStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B93429594A35000263AD /* AppStorageStudy.swift */; };
+		E9C3B9372959607A000263AD /* CompressionStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B9362959607A000263AD /* CompressionStudy.swift */; };
 		E9DC4C462958F9BB003F0CA8 /* CaseStudiesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DC4C452958F9BB003F0CA8 /* CaseStudiesApp.swift */; };
 		E9DC4C482958F9BB003F0CA8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DC4C472958F9BB003F0CA8 /* ContentView.swift */; };
 		E9DC4C4A2958F9BC003F0CA8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9DC4C492958F9BC003F0CA8 /* Assets.xcassets */; };
@@ -28,6 +29,7 @@
 
 /* Begin PBXFileReference section */
 		E9C3B93429594A35000263AD /* AppStorageStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageStudy.swift; sourceTree = "<group>"; };
+		E9C3B9362959607A000263AD /* CompressionStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompressionStudy.swift; sourceTree = "<group>"; };
 		E9DC4C422958F9BB003F0CA8 /* Dependencies Additions Case Studies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Dependencies Additions Case Studies.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9DC4C452958F9BB003F0CA8 /* CaseStudiesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseStudiesApp.swift; sourceTree = "<group>"; };
 		E9DC4C472958F9BB003F0CA8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 			isa = PBXGroup;
 			children = (
 				E9C3B93429594A35000263AD /* AppStorageStudy.swift */,
+				E9C3B9362959607A000263AD /* CompressionStudy.swift */,
 				E9DC4C672958FA5B003F0CA8 /* LoggerStudy.swift */,
 				E9DC4C6C29591D60003F0CA8 /* NotificationsStudy.swift */,
 				E9DC4C6E2959396E003F0CA8 /* SwiftUIEnvironmentStudy.swift */,
@@ -214,6 +217,7 @@
 				E9DC4C482958F9BB003F0CA8 /* ContentView.swift in Sources */,
 				E9C3B93529594A35000263AD /* AppStorageStudy.swift in Sources */,
 				E9DC4C6D29591D60003F0CA8 /* NotificationsStudy.swift in Sources */,
+				E9C3B9372959607A000263AD /* CompressionStudy.swift in Sources */,
 				E9DC4C462958F9BB003F0CA8 /* CaseStudiesApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
