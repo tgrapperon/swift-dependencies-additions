@@ -1,17 +1,28 @@
 import CompressorDependency
+import DataCoder
 import Dependencies
 import LoggerDependency
 import SwiftUI
 
+struct ProcessedText: Hashable, Codable {
+  var text: String = ""
+  var data: Data = .init()
+}
+
 @MainActor
 final class CompressionStudy: ObservableObject {
   @Published var source: String
-  @Published var base64Data: String = ""
-  @Published var compressedBase64Data: String = ""
   @Published var decompressed: String = ""
+
+  @Published var processedText = ProcessedText()
+  @Published var processedTextJSON: String = ""
 
   @Dependency(\.compress) var compress
   @Dependency(\.decompress) var decompress
+
+  @Dependency(\.encode) var encode
+  @Dependency(\.decode) var decode
+
   @Dependency(\.logger) var logger
 
   var observation: Task<Void, Never>?
@@ -21,17 +32,28 @@ final class CompressionStudy: ObservableObject {
       do {
         for await text in self.$source.values {
           let data = text.data(using: .utf8)!
-          self.base64Data = data.base64EncodedString()
 
-          let compressed = try await self.compress(data)
-          self.compressedBase64Data = compressed.base64EncodedString()
+          let compressed = try await compress(data)
+          let processedText = ProcessedText(
+            text: text,
+            data: compressed
+          )
+          self.processedText = processedText
 
-          let decompressedData = try await self.decompress(compressed)
+          let jsonData = try encode(processedText)
+
+          self.processedTextJSON = String(decoding: jsonData, as: UTF8.self)
+
+          let decoded = try decode(ProcessedText.self, from: jsonData)
+
+          let decompressedData = try await decompress(decoded.data)
+
           self.decompressed = String(decoding: decompressedData, as: UTF8.self)
+
         }
       } catch {
         if !(error is CancellationError) {
-          logger.error("Failed to compress/decompress: \(error)")
+          logger.error("Failed to process: \(error)")
         }
       }
     }
@@ -48,50 +70,28 @@ struct CompressionStudyView: View {
     List {
       Section {
         TextEditor(text: self.$model.source)
-          .frame(minHeight: 66)
+          .frame(minHeight: 55)
       } header: {
-        HStack {
-          Text("Text")
-          Spacer()
-          Text(self.model.source.count.formatted())
-        }
+        Text("Text")
       }
-      
+
       Section {
-        TextEditor(text: .constant(self.model.base64Data))
-          .frame(minHeight: 66)
+        TextEditor(text: .constant(self.model.processedTextJSON))
+          .frame(minHeight: 88)
           .foregroundStyle(.secondary)
+          .monospaced(true)
+          .font(.callout)
       } header: {
-        HStack {
-          Text("Text data in Base64")
-          Spacer()
-          Text(self.model.base64Data.count.formatted())
-        }
+        Text("Processed text in JSON")
       }
       .disabled(true)
-      
-      Section {
-        TextEditor(text: .constant(self.model.compressedBase64Data))
-          .frame(minHeight: 66)
-          .foregroundStyle(.secondary)
-      } header: {
-        HStack {
-          Text("Compressed text data in Base64")
-          Spacer()
-          Text(self.model.compressedBase64Data.count.formatted())
-        }
-      }.disabled(true)
 
       Section {
         TextEditor(text: .constant(self.model.decompressed))
-          .frame(minHeight: 66)
+          .frame(minHeight: 55)
           .foregroundStyle(.secondary)
       } header: {
-        HStack {
-          Text("Decompressed text")
-          Spacer()
-          Text(self.model.decompressed.count.formatted())
-        }
+        Text("Decoded & decompressed text")
       }.disabled(true)
     }
     .headerProminence(.increased)
@@ -101,9 +101,20 @@ struct CompressionStudyView: View {
 }
 
 struct CompressionStudyView_Previews: PreviewProvider {
+
   static var previews: some View {
     NavigationStack {
-      CompressionStudyView(model: .init())
+      CompressionStudyView(
+        model:
+          DependencyValues.withValues {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting.insert(.prettyPrinted)
+            encoder.outputFormatting.insert(.sortedKeys)
+            $0.encode = DataEncoder(encoder)
+          } operation: {
+            .init()
+          }
+      )
     }
   }
 }
