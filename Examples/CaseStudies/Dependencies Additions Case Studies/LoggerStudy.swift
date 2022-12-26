@@ -70,11 +70,14 @@ struct LoggerStudyView: View {
       Text("Check the console while you tap the buttons above…")
     }
     .padding()
+    .navigationTitle("Logger")
   }
 }
 
 struct LoggerStudyView_Previews: PreviewProvider {
   static var previews: some View {
-    LoggerStudyView(model: .init())
+    NavigationStack {
+      LoggerStudyView(model: .init())
+    }
   }
 }

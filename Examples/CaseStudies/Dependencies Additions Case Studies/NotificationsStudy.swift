@@ -91,11 +91,14 @@ struct NotificationsStudyView: View {
     .onDisappear {
       model.onDisappear()
     }
+    .navigationTitle("Notifications")
   }
 }
 
 struct NotificationsStudyView_Previews: PreviewProvider {
   static var previews: some View {
-    NotificationsStudyView(model: .init())
+    NavigationStack {
+      NotificationsStudyView(model: .init())
+    }
   }
 }
