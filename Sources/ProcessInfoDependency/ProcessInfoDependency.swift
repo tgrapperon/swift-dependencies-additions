@@ -13,13 +13,23 @@ extension DependencyValues {
   }
 }
 
+extension ProcessInfo.Value {
+  public static var umplemented: Self {
+    XCTFail(#"Unimplemented: @Dependency(\.processInfo)"#)
+    return .init()
+  }
+  public func with(configuration configure: (inout Self) -> Void) -> Self {
+    var value = self
+    configure(&value)
+    return value
+  }
+  public init(configure: (inout Self) -> Void) {
+    self = Self().with(configuration: configure)
+  }
+}
+
 extension ProcessInfo {
   public struct Value: Sendable {
-    public static var umplemented: Self {
-      XCTFail(#"Unimplemented: @Dependency(\.processInfo)"#)
-      return .init()
-    }
-
     public var environment: [String: String]
     public var arguments: [String]
     public var hostName: String
@@ -276,16 +286,5 @@ extension ProcessInfo {
       self._disableAutomaticTermination = disableAutomaticTermination
       self._enableAutomaticTermination = enableAutomaticTermination
     }
-  }
-}
-
-extension ProcessInfo.Value {
-  public func with(configuration configure: (inout Self) -> Void) -> Self {
-    var value = self
-    configure(&value)
-    return value
-  }
-  public init(configure: (inout Self) -> Void) {
-    self = Self().with(configuration: configure)
   }
 }
