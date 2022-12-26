@@ -25,9 +25,12 @@ extension Notifications {
 final class NotificationStudy: ObservableObject {
   @Published var count: Int
   @Published var countFromNotification: Int?
+  
   @Dependency(\.notifications.countNotification) var countsNotification
-  var notificationObservation: Task<Void, Never>?
-
+  @Dependency(\.continuousClock) var clock
+  
+  private var notificationObservation: Task<Void, Never>?
+  
   init(count: Int = 0) {
     self.count = count
   }
@@ -40,6 +43,13 @@ final class NotificationStudy: ObservableObject {
         self.countFromNotification = count
       }
     }
+    // We also send the current value at `onAppear`, so
+    // the view starts with an up-to-date value.
+    Task {
+      // Let the observation above start being effective…
+      try await clock.sleep(for: .microseconds(1))
+      self.countsNotification.post(self.count)
+    }
   }
   
   func onDisappear() {
@@ -48,11 +58,13 @@ final class NotificationStudy: ObservableObject {
   
   func userDidTapIncrementButton() {
     self.count += 1
+    // Post the updated value
     self.countsNotification.post(self.count)
   }
   
   func userDidTapDecrementButton() {
     self.count -= 1
+    // Post the updated value
     self.countsNotification.post(self.count)
   }
 }
