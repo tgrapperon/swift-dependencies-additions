@@ -9,9 +9,9 @@ final class AppStorageTests: XCTestCase {
       case first
       case second
     }
-    @AppStorage("SomeKey") var int = 42
-    @AppStorage("SomeKey") var sameInt: Int?
-    @AppStorage("RawRep") var rawRep: RawRep = .first
+    @Dependency.AppStorage("SomeKey") var int = 42
+    @Dependency.AppStorage("SomeKey") var sameInt: Int?
+    @Dependency.AppStorage("RawRep") var rawRep: RawRep = .first
 
     DependencyValues.withValue(\.userDefaults, .ephemeral()) {
       XCTAssertEqual(int, 42)
@@ -28,8 +28,8 @@ final class AppStorageTests: XCTestCase {
     let userDefaults1 = UserDefaults.Dependency.ephemeral()
     let userDefaults2 = UserDefaults.Dependency.ephemeral()
 
-    @AppStorage("SomeKey") var int1 = 42
-    @AppStorage("SomeKey", store: userDefaults2) var int2 = 44
+    @Dependency.AppStorage("SomeKey") var int1 = 42
+    @Dependency.AppStorage("SomeKey", store: userDefaults2) var int2 = 44
 
     DependencyValues.withValue(\.userDefaults, userDefaults1) {
       XCTAssertEqual(int1, 42)
@@ -42,7 +42,7 @@ final class AppStorageTests: XCTestCase {
   }
 
   func testStream() async throws {
-    @AppStorage("SomeKey") var int = 42
+    @Dependency.AppStorage("SomeKey") var int = 42
 
     try await DependencyValues.withValue(\.userDefaults, .ephemeral()) {
       try await withTimeout { group in
@@ -87,11 +87,11 @@ final class AppStorageTests: XCTestCase {
       UserDefaults.standard.removeObject(forKey: "FileURL")
     }
 
-    @AppStorage("URL") var url = url1
-    @AppStorage("FileURL") var fileURL: URL = fileURL1
+    @Dependency.AppStorage("URL") var url = url1
+    @Dependency.AppStorage("FileURL") var fileURL: URL = fileURL1
 
-    @AppStorage("URL") var sameURL: URL?
-    @AppStorage("FileURL") var sameFileURL: URL?
+    @Dependency.AppStorage("URL") var sameURL: URL?
+    @Dependency.AppStorage("FileURL") var sameFileURL: URL?
 
     XCTAssertEqual(url, url1)
     XCTAssertEqual(fileURL, fileURL1)
@@ -106,7 +106,7 @@ final class AppStorageTests: XCTestCase {
   }
 
   func testLiveStream() async throws {
-    @AppStorage("SomeKey") var int = 42
+    @Dependency.AppStorage("SomeKey") var int = 42
 
     UserDefaults.standard.removeObject(forKey: "SomeKey")
     defer {

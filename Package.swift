@@ -26,7 +26,7 @@ define("LoggerDependency", dependencies: "BundleInfo")
 define("CompressorDependency")
 //define("CryptoDependency")
 //define("KeyChainDependency")
-//define("ProcessInfoDependency")
+define("ProcessInfoDependency")
 define("NotificationDependency", testingDependencies: "DependenciesAdditions")
 define("SwiftUIEnvironment", testingDependencies: "DependenciesAdditions")
 
