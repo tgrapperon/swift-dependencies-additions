@@ -9,21 +9,21 @@ final class CoreDataStudy: ObservableObject {
   
   @Dependency(\.logger["CoreDataStudy"]) var logger
   
-  @Published var persons: CoreDataDependency.FetchRequest.Results<Person> = .init()
+  @Published var composers: CoreDataDependency.FetchRequest.Results<Composer> = .init()
   var observation: Task<Void, Never>?
   init() {
     self.observation = Task { [weak self] in
       guard let self else { return }
       do {
-        for try await persons in self.fetchRequest(
-          of: Person.self,
+        for try await composers in self.fetchRequest(
+          of: Composer.self,
           sortDescriptors: [
-            NSSortDescriptor(keyPath: \Person.age, ascending: true),
-            NSSortDescriptor(key: "name", ascending: true)
+            NSSortDescriptor(keyPath: \Composer.songsCount, ascending: false),
+            NSSortDescriptor(keyPath: \Composer.name, ascending: true),
           ]
         ) {
           withAnimation {
-            self.persons = persons
+            self.composers = composers
           }
         }
       } catch {}
@@ -32,19 +32,18 @@ final class CoreDataStudy: ObservableObject {
 
   func userDidTapAddNewPersonButton() {
     persistentContainer.withViewContext { context in
-      let person = Person(context: context)
-      person.name = "Blob Sr"
-      person.age = Int64.random(in: 55 ... 100)
-      person.identifier = .init()
+      let composer = Composer(context: context)
+      composer.identifier = .init()
+      composer.name = "Blob Sr"
       try? context.save()
     }
   }
   
-  func userDidSwipeDeletePerson(person: FetchedResult<Person>) {
+  func userDidSwipeDeletePerson(composer: Composer.Value) {
     do {
-      try person.withValue { person in
-        let context = person.managedObjectContext
-        context?.delete(person)
+      try composer.withManagedObject { composer in
+        let context = composer.managedObjectContext
+        context?.delete(composer)
         try context?.save()
       }
     } catch {
@@ -65,22 +64,24 @@ struct CoreDataStudyView: View {
         Button {
           model.userDidTapAddNewPersonButton()
         } label: {
-          Text("Add new person")
+          Text("Add new Composer")
         }
       }
       Section {
-        ForEach(model.persons) { person in
-          person.withValue { person in
+        ForEach(model.composers) { composer in
+          composer.withManagedObject { composer in
             VStack(alignment: .leading) {
-              LabeledContent(person.name ?? "?", value: person.age.formatted())
-              Text(person.identifier!.uuidString)
+              
+              LabeledContent(composer.name ?? "?", value: composer.songs!.count.formatted())
+              Text(composer.identifier!.uuidString)
                 .font(.caption2)
                 .foregroundStyle(.secondary)
+              Text("\(composer.songsCount)")
             }
           }
           .swipeActions {
             Button(role: .destructive) {
-              model.userDidSwipeDeletePerson(person: person)
+              model.userDidSwipeDeletePerson(composer: composer)
             } label: {
               Label("Delete", systemImage: "trash")
             }
@@ -88,9 +89,22 @@ struct CoreDataStudyView: View {
           }
         }
       } header: {
-        Text("^[\(model.persons.count) \("person")](inflect: true)")
+        Text("^[\(model.composers.count) \("composer")](inflect: true)")
       }
     }.headerProminence(.increased)
+  }
+}
+
+
+fileprivate final class SongsModel: ObservableObject {
+  
+  
+}
+struct SongsView: View {
+  
+  
+  var body: some View {
+    Color.red
   }
 }
 
@@ -101,26 +115,67 @@ struct CoreDataStudyView_Previews: PreviewProvider {
         DependencyValues.withValues { values in
           values.persistentContainer = PersistentContainer
             .canonical(inMemory: true)
-            .with { context in
-              @Dependency(\.uuid) var uuid
-
-              do {
-                let person = Person(context: context)
-                person.name = "Blob"
-                person.identifier = uuid()
-                person.age = 34
-              }
-
-              do {
-                let person = Person(context: context)
-                person.name = "Blob Jr."
-                person.identifier = uuid()
-                person.age = 2
-              }
-            }
+            .withInitialData()
         } operation: {
           CoreDataStudy()
         }
     )
+  }
+}
+
+extension PersistentContainer {
+  @MainActor
+  func withInitialData() -> Self {
+    self.with { context in
+      @Dependency(\.uuid) var uuid
+
+      func song(_ name: String, year: Int64) -> Song {
+        let song = Song(context: context)
+        song.identifier = uuid()
+        song.name = name
+        song.year = year
+        return song
+      }
+      
+      func composer(name: String) -> Composer {
+        let composer = Composer(context: context)
+        composer.identifier = uuid()
+        composer.name = name
+        return composer
+      }
+      
+      let yesterday = song("Yesterday", year: 1965)
+      let allMyLoving = song("All My Loving", year: 1965)
+      let aDayInTheLife = song("A Day In The Life", year: 1967)
+      let help = song("Help!", year: 1965)
+      let ticketToRide = song("Ticket To Ride", year: 1965)
+      let something = song("Something", year: 1969)
+      let whileMyGuitar = song("While My Guitar Gently Weeps", year: 1968)
+      let octopussGarden = song("Octopuss Garden", year: 1969)
+      let blackbird = song("Blackbird", year: 1968)
+
+
+      let paul = composer(name: "Paul McCartney")
+      let john = composer(name: "John Lennon")
+      let george = composer(name: "George Harrison")
+      let ringo = composer(name: "Ringo Starr")
+
+      paul.addToSongs(yesterday)
+      paul.addToSongs(allMyLoving)
+      paul.addToSongs(aDayInTheLife)
+      paul.addToSongs(blackbird)
+      
+      john.addToSongs(aDayInTheLife)
+      john.addToSongs(help)
+      john.addToSongs(ticketToRide)
+
+      george.addToSongs(something)
+      george.addToSongs(whileMyGuitar)
+      
+      ringo.addToSongs(octopussGarden)
+      
+      // We need to save so the derived `songsCount` relation is updated
+      try! context.save()
+    }
   }
 }

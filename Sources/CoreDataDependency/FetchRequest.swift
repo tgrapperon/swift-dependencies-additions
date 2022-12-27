@@ -8,7 +8,18 @@ public enum ScheduledTaskType {
   case enqueued
 }
 
-public struct FetchedResult<ResultType: NSManagedObject>: Identifiable, Sendable, Hashable {
+extension NSFetchRequestResult where Self: NSManagedObject {
+  public typealias Value = Fetched<Self>
+  
+  public var value: Value? {
+    guard let context = self.managedObjectContext else { return nil }
+    return Fetched(id: self.objectID, context: context)
+  }
+}
+
+
+
+public struct Fetched<ResultType: NSManagedObject>: Identifiable, Sendable, Hashable {
   public let id: NSManagedObjectID
   public let context: NSManagedObjectContext
   var result: ResultType { self.context.object(with: self.id) as! ResultType }
@@ -19,9 +30,9 @@ public struct FetchedResult<ResultType: NSManagedObject>: Identifiable, Sendable
   }
 }
 
-extension FetchedResult {
+extension Fetched {
   @discardableResult
-  public func withValue<T>(perform: (ResultType) -> T) -> T {
+  public func withManagedObject<T>(perform: (ResultType) -> T) -> T {
     var result: Swift.Result<T, Never>?
     self.context.performAndWait {
       result = .success(perform(self.result))
@@ -33,7 +44,7 @@ extension FetchedResult {
   }
 
   @discardableResult
-  public func withValue<T>(perform: (ResultType) throws -> T) throws -> T {
+  public func withManagedObject<T>(perform: (ResultType) throws -> T) throws -> T {
     var result: Swift.Result<T, Error>?
     self.context.performAndWait {
       result = .init(catching: { try perform(self.result) })
@@ -42,13 +53,13 @@ extension FetchedResult {
   }
 
   @discardableResult
-  public func withValue<T>(
+  public func withManagedObject<T>(
     schedule: ScheduledTaskType = .immediate, perform: @escaping (ResultType) -> T
   ) async -> T {
     return await withCheckedContinuation { continuation in
       switch schedule {
       case .immediate:
-        continuation.resume(returning: self.withValue(perform: perform))
+        continuation.resume(returning: self.withManagedObject(perform: perform))
       case .enqueued:
         self.context.perform {
           continuation.resume(returning: perform(self.result))
@@ -58,7 +69,7 @@ extension FetchedResult {
   }
 
   @discardableResult
-  public func withValue<T>(
+  public func withManagedObject<T>(
     schedule: ScheduledTaskType = .immediate, perform: @escaping (ResultType) throws -> T
   ) async throws -> T {
     return try await withCheckedThrowingContinuation { continuation in
@@ -66,7 +77,7 @@ extension FetchedResult {
       case .immediate:
         continuation.resume(
           with: .init {
-            try self.withValue(perform: perform)
+            try self.withManagedObject(perform: perform)
           })
       case .enqueued:
         self.context.perform {
@@ -96,11 +107,11 @@ public struct FetchRequest {
     let fetchRequest = NSFetchRequest<ResultType>(entityName: String(describing: ResultType.self))
     fetchRequest.predicate = predicate
     fetchRequest.sortDescriptors = sortDescriptors
-    if fetchRequest.sortDescriptors!.isEmpty {
-      fetchRequest.sortDescriptors?.append(
-        .init(key: "objectID", ascending: true)
-      )
-    }
+//    if fetchRequest.sortDescriptors!.isEmpty {
+//      fetchRequest.sortDescriptors?.append(
+//        .init(key: "objectID", ascending: true)
+//      )
+//    }
     return stream(fetchRequest: fetchRequest, context: context)
   }
 
@@ -142,7 +153,7 @@ extension FetchRequest {
   {
     public struct Section: Hashable, Identifiable, Sendable {
       public let id: SectionIdentifier
-      let results: [FetchedResult<Element>]
+      let results: [Fetched<Element>]
     }
 
     let sections: [Section]
@@ -158,11 +169,11 @@ extension FetchRequest {
 
 extension FetchRequest {
   public struct Results<ResultType: NSManagedObject>: Hashable, Sendable {
-    let values: [FetchedResult<ResultType>]
+    let values: [Fetched<ResultType>]
     public init() {
       self.values = []
     }
-    init(values: [FetchedResult<ResultType>]) {
+    init(values: [Fetched<ResultType>]) {
       self.values = values
     }
   }
@@ -172,7 +183,7 @@ extension FetchRequest.Results: RandomAccessCollection {
   public var startIndex: Int { values.startIndex }
   public var endIndex: Int { values.endIndex }
 
-  public subscript(position: Int) -> FetchedResult<ResultType> {
+  public subscript(position: Int) -> Fetched<ResultType> {
     values[position]
   }
 
@@ -206,7 +217,7 @@ extension FetchRequest.SectionedResults.Section: RandomAccessCollection {
   public var startIndex: Int { results.startIndex }
   public var endIndex: Int { results.endIndex }
 
-  public subscript(position: Int) -> FetchedResult<Element> {
+  public subscript(position: Int) -> Fetched<Element> {
     results[position]
   }
 
@@ -243,7 +254,7 @@ extension FetchRequest {
               currentValue = .init(
                 values:
                   results.map {
-                    FetchedResult(
+                    Fetched(
                       id: $0.objectID,
                       context: context.wrappedValue,
                       token: tokens[$0.objectID]
@@ -308,7 +319,7 @@ extension FetchRequest {
                     SectionedResults<SectionIdentifier, T>.Section(
                       id: $0.0,
                       results: $0.1.map {
-                        FetchedResult(
+                        Fetched(
                           id: $0.objectID,
                           context: context.wrappedValue,
                           token: tokens[$0.objectID, default: UUID()]
