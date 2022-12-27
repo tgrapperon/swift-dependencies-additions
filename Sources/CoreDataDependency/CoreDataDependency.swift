@@ -3,8 +3,8 @@ import CoreData
 import Dependencies
 import LoggerDependency
 
-public extension DependencyValues {
-  var persistentContainer: PersistentContainer {
+extension DependencyValues {
+   public var persistentContainer: PersistentContainer {
     get { self[PersistentContainer.self] }
     set { self[PersistentContainer.self] = newValue }
   }
@@ -16,7 +16,8 @@ extension PersistentContainer: DependencyKey {
   }
 
   public static var testValue: PersistentContainer {
-    canonical(inMemory: true)
+    XCTFail(#"Unimplemented: @Dependency(\.persistentContainer)"#)
+    return canonical(inMemory: true)
   }
 
   public static var previewValue: PersistentContainer {
@@ -85,15 +86,29 @@ public struct PersistentContainer: Sendable {
   // TODO: Check if we can improve with inheritsActorContext
   @MainActor
   public func withViewContext<R: Sendable>(
-    perform: @MainActor @Sendable @escaping (NSManagedObjectContext) throws -> R
+    perform: @MainActor @escaping (NSManagedObjectContext) throws -> R
   ) rethrows -> R {
     try perform(self.viewContext)
   }
 
   public func withNewBackgroundContext<R: Sendable>(
-    perform: @Sendable @escaping (NSManagedObjectContext) throws -> R
+    perform: @escaping (NSManagedObjectContext) throws -> R
   ) async throws -> R {
-    let context = self.newBackgroundContext()
+    try await withContext(self.newBackgroundContext(), perform: perform)
+  }
+
+  // Rethrows diagnostic doesn't work well, so we explicitly provide an overload for non-throwing
+  // closures.
+  public func withNewBackgroundContext<R: Sendable>(
+    perform: @escaping (NSManagedObjectContext) -> R
+  ) async -> R {
+    try! await withContext(self.newBackgroundContext(), perform: perform)
+  }
+  
+  func withContext<R: Sendable>(
+    _ context: NSManagedObjectContext,
+    perform: @escaping (NSManagedObjectContext) throws -> R
+  ) async throws -> R {
     return try await withCheckedThrowingContinuation { continuation in
       context.performAndWait {
         continuation.resume(
@@ -104,17 +119,32 @@ public struct PersistentContainer: Sendable {
       }
     }
   }
+  
+  @MainActor
+  public func with(
+    operation: @escaping @MainActor (NSManagedObjectContext) throws -> Void
+  ) rethrows -> Self {
+    try withViewContext(perform: operation)
+    return self
+  }
 
-  // Rethrows diagnostic doesn't work well, so we explicitly provide an overload for non-throwing
-  // closures.
-  public func withNewBackgroundContext<R: Sendable>(
-    perform: @Sendable @escaping (NSManagedObjectContext) -> R
-  ) async -> R {
+  
+  public func setUp(
+    operation: @escaping (NSManagedObjectContext) throws -> Void,
+    catch onFailure: @escaping (NSManagedObjectContext, Error) -> Void = { _, _ in () }
+  ) -> Self {
     let context = self.newBackgroundContext()
-    return await withCheckedContinuation { continuation in
-      context.performAndWait {
-        continuation.resume(returning: perform(context))
+    context.perform {
+      do {
+        try operation(context)
+        if context.hasChanges {
+          try context.save()
+        }
+      } catch {
+        onFailure(context, error)
       }
     }
+    return self
   }
+  
 }
