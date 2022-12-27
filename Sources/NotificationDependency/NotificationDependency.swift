@@ -43,8 +43,8 @@ extension Notifications {
     public init(
       _ name: Notification.Name,
       object: NSObject? = nil,
-      transform: @escaping @Sendable (Notification) throws -> Value = { $0 },
-      notify: (@Sendable (Value) -> Notification?)? = nil,
+      @_inheritActorContext transform: @escaping @Sendable (Notification) throws -> Value = { $0 },
+      @_inheritActorContext notify: (@Sendable (Value) -> Notification?)? = nil,
       file: StaticString = #fileID,
       line: UInt = #line
     ) {

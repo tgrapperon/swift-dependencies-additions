@@ -1,4 +1,4 @@
-import DataCoder
+import CodableDependency
 import Dependencies
 import XCTest
 
