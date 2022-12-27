@@ -11,7 +11,43 @@ public enum ScheduledTaskType {
 extension NSFetchRequestResult where Self: NSManagedObject {
   public typealias Fetched = CoreDataDependency.Fetched<Self>
   public typealias FetchedResults = PersistentContainer.FetchRequest.Results<Self>
-  public typealias SectionedFetchedResults<SectionIdentifier: Hashable> = PersistentContainer.FetchRequest.SectionedResults<SectionIdentifier, Self>
+  public typealias SectionedFetchedResults<SectionIdentifier: Hashable> = PersistentContainer
+    .FetchRequest.SectionedResults<SectionIdentifier, Self>
+}
+
+extension PersistentContainer {
+
+  @MainActor
+  public func insert<ManagedObject: NSManagedObject>(_ type: ManagedObject.Type, configure: (ManagedObject) -> Void = { _ in () }) throws
+  -> Fetched<
+    ManagedObject
+  > {
+    let context = self.viewContext
+    let object = ManagedObject(context: context)
+    try context.obtainPermanentIDs(for: [object])
+    configure(object)
+    return Fetched<ManagedObject>(
+      id: object.objectID,
+      context: context,
+      viewContext: context
+    )
+  }
+
+  public func insert<ManagedObject: NSManagedObject>(
+    _ type: ManagedObject.Type,
+    into context: NSManagedObjectContext?,
+    configure: (ManagedObject) -> Void
+  ) throws -> Fetched<ManagedObject> {
+    let context = context ?? newBackgroundContext()
+    let object = ManagedObject(context: context)
+    try context.obtainPermanentIDs(for: [object])
+    configure(object)
+    return Fetched<ManagedObject>(
+      id: object.objectID,
+      context: context,
+      viewContext: self._viewContext().wrappedValue
+    )
+  }
 }
 
 @dynamicMemberLookup
@@ -34,10 +70,32 @@ public struct Fetched<ManagedObject: NSManagedObject>: Identifiable, Sendable, H
     self.viewContext = viewContext
   }
 
-  @_disfavoredOverload
   @MainActor
   public subscript<Value>(dynamicMember keyPath: KeyPath<ManagedObject, Value>) -> Value {
-    get { (self.viewContext.object(with: id) as! ManagedObject)[keyPath: keyPath] }
+    get { (self.viewContext.object(with: self.id) as! ManagedObject)[keyPath: keyPath] }
+  }
+}
+
+extension Fetched {
+  public var editable: Editor {
+    get { .init(fetched: self) }
+    nonmutating set {}
+  }
+
+  @dynamicMemberLookup
+  public struct Editor {
+    let fetched: Fetched
+    @MainActor
+    public subscript<Value>(dynamicMember keyPath: WritableKeyPath<ManagedObject, Value>) -> Value {
+      get {
+        (self.fetched.viewContext.object(with: self.fetched.id) as! ManagedObject)[keyPath: keyPath]
+      }
+      nonmutating set {
+        var object = (self.fetched.viewContext.object(with: self.fetched.id) as! ManagedObject)
+        object[keyPath: keyPath] = newValue
+        self.fetched.context.processPendingChanges()
+      }
+    }
   }
 }
 
@@ -106,7 +164,7 @@ extension Fetched {
 extension PersistentContainer {
   public struct FetchRequest {
     let persistentContainer: PersistentContainer
-    
+
     init(persistentContainer: PersistentContainer) {
       self.persistentContainer = persistentContainer
     }
@@ -176,7 +234,9 @@ extension AsyncThrowingStream {
 }
 
 extension PersistentContainer.FetchRequest {
-  public struct SectionedResults<SectionIdentifier: Hashable & Sendable, ManagedObject: NSManagedObject>:
+  public struct SectionedResults<
+    SectionIdentifier: Hashable & Sendable, ManagedObject: NSManagedObject
+  >:
     Sendable, Hashable
   {
     public struct Section: Hashable, Identifiable, Sendable {

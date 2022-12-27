@@ -88,6 +88,17 @@ public struct PersistentContainer: Sendable {
   ) rethrows -> R {
     try perform(self.viewContext)
   }
+  
+  @_disfavoredOverload
+  @MainActor
+  public func withViewContext<ManagedObject>(
+    perform: @MainActor @escaping (NSManagedObjectContext) throws -> ManagedObject
+  ) throws -> Fetched<ManagedObject> {
+    let context = self.viewContext
+    let object = try perform(self.viewContext)
+    try context.obtainPermanentIDs(for: [object])
+    return Fetched(id: object.objectID, context: context, viewContext: context)
+  }
 
   public func withNewBackgroundContext<R: Sendable>(
     perform: @escaping (NSManagedObjectContext) throws -> R

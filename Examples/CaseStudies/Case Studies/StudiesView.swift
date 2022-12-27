@@ -4,8 +4,7 @@ import SwiftUINavigation
 
 @MainActor
 class StudiesModel: ObservableObject {
-  @Dependency(\.self) var dependencies
-
+  
   enum Destination {
     case userDefaultsStudy(UserDefaultsStudy)
     case compression(CompressionStudy)
@@ -14,8 +13,14 @@ class StudiesModel: ObservableObject {
     case loggerStudy(LoggerStudy)
     case swiftUIEnvironmentStudy(SwiftUIEnvironmentStudy)
   }
+  
+  @Dependency(\.self) var dependencies
   @Published var destination: Destination?
 
+  init(destination: Destination? = nil) {
+    self.destination = destination
+  }
+  
   func userDidTapNavigateToUserDefaultsStudyButton() {
     self.destination = DependencyValues.withValues(from: self) {
       .userDefaultsStudy(.init())
@@ -55,7 +60,7 @@ class StudiesModel: ObservableObject {
   }
 }
 
-struct ContentView: View {
+struct StudiesView: View {
   @ObservedObject var model: StudiesModel
 
   var body: some View {
@@ -141,13 +146,14 @@ struct ContentView: View {
   }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct StudiesView_Previews: PreviewProvider {
   static var previews: some View {
-    ContentView(
+    StudiesView(
       model:
         DependencyValues.withValues {
           $0.userDefaults = .standard
-          $0.persistentContainer = .canonical(inMemory: true).withInitialData()
+          $0.persistentContainer = .canonical(inMemory: true)
+            .withInitialData()
         } operation: {
           .init()
         }

@@ -1,12 +1,17 @@
 import CoreDataDependency
 import Dependencies
 import SwiftUI
+import SwiftUINavigation
 
 @MainActor
 final class CoreDataStudy: ObservableObject {
-  @Dependency(\.persistentContainer) var persistentContainer
+  enum Destination {
+    case addSong(AddSongModel)
+  }
 
+  @Dependency(\.persistentContainer) var persistentContainer
   @Dependency(\.logger["CoreDataStudy"]) var logger
+  @Dependency(\.uuid) var uuid
 
   @Published var composers: Composer.FetchedResults = .empty
   @Published var songsByYear: Song.SectionedFetchedResults<Int64> = .empty
@@ -14,8 +19,11 @@ final class CoreDataStudy: ObservableObject {
   @Published var isLoadingComposers: Bool = false
   @Published var isLoadingSongs: Bool = false
 
+  @Published var destination: Destination?
+
   var tasks = Set<Task<Void, Never>>()
-  init() {
+  init(destination: Destination? = nil) {
+    self.destination = destination
     // Observe composers
     tasks.insert(
       Task { [weak self] in
@@ -29,9 +37,13 @@ final class CoreDataStudy: ObservableObject {
               NSSortDescriptor(keyPath: \Composer.name, ascending: true),
             ]
           ) {
-            self.isLoadingComposers = false
-            withAnimation {
-              self.composers = composers
+            // MainActor.run fixes a glitch where the UI doesn't update if the
+            // changes are wrapped in a `withAnimation` block.
+            await MainActor.run {
+              withAnimation {
+                self.isLoadingComposers = false
+                self.composers = composers
+              }
             }
           }
         } catch {}
@@ -52,9 +64,13 @@ final class CoreDataStudy: ObservableObject {
             ],
             sectionIdentifier: \.year
           ) {
-            self.isLoadingSongs = false
-            withAnimation {
-              self.songsByYear = sectionedSongs
+            // MainActor.run fixes a glitch where the UI doesn't update if the
+            // changes are wrapped in a `withAnimation` block.
+            await MainActor.run {
+              withAnimation {
+                self.isLoadingSongs = false
+                self.songsByYear = sectionedSongs
+              }
             }
           }
         } catch {}
@@ -74,14 +90,27 @@ final class CoreDataStudy: ObservableObject {
     }
   }
 
-//  func userDidTapAddNewPersonButton() {
-//    persistentContainer.withViewContext { context in
-//      let composer = Composer(context: context)
-//      composer.identifier = .init()
-//      composer.name = "Blob Sr"
-//      try? context.save()
-//    }
-//  }
+  #warning("Fix crash in Previews")
+  @Published var error: Error?
+  func userDidTapAddNewSongButton() {
+    do {
+      destination = try DependencyValues.withValues(from: self) {
+        Destination.addSong(
+          .init(
+            song: try persistentContainer.withViewContext { context in
+              let song = Song(context: context)
+              song.identifier = self.uuid()
+              song.name = "Let It Be"
+              song.year = 1970
+              return song
+            }
+          )
+        )
+      }
+    } catch {
+      self.error = error
+    }
+  }
 
   deinit {
     for task in tasks {
@@ -92,14 +121,11 @@ final class CoreDataStudy: ObservableObject {
 
 struct CoreDataStudyView: View {
   @ObservedObject var model: CoreDataStudy
+  #warning("Do better onDismiss")
   var body: some View {
     List {
-      Section {
-        //        Button {
-        //          model.userDidTapAddNewPersonButton()
-        //        } label: {
-        //          Text("Add new Composer")
-        //        }
+      if let error = model.error {
+        Text(String(describing: error))
       }
       Section {
         ForEach(model.composers) { composer in
@@ -116,10 +142,9 @@ struct CoreDataStudyView: View {
           Text("^[\(model.composers.count) \("composer")](inflect: true)")
         }
       }
-      
+
       ForEach(model.songsByYear) { songsByYear in
         Section {
-
           ForEach(songsByYear) { song in
             VStack(alignment: .leading) {
               Text(song.name ?? "")
@@ -139,17 +164,87 @@ struct CoreDataStudyView: View {
           Text("^[\(songsByYear.count) \("song")](inflect: true) from \(songsByYear.id.formatted(.number.grouping(.never)))")
         }
       }
-
-    }.headerProminence(.increased)
-      .navigationTitle("Core Data Study")
+    }
+    .toolbar {
+      ToolbarItem(placement: .primaryAction) {
+        Button {
+          model.userDidTapAddNewSongButton()
+        } label: {
+          Label("Add a new song", systemImage: "plus")
+        }
+      }
+    }
+    .sheet(
+      unwrapping: $model.destination,
+      case: /CoreDataStudy.Destination.addSong,
+      onDismiss: {
+        model.persistentContainer.withViewContext {
+          $0.reset()
+        }
+      }
+    ) { $songModel in
+      NavigationStack {
+        AddSongView(model: songModel)
+          .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+              Button("Done") {
+                songModel.userDidTapDone()
+                model.destination = nil
+              }
+            }
+            ToolbarItem(placement: .cancellationAction) {
+              Button("Cancel") {
+                songModel.userDidTapCancel()
+                model.destination = nil
+              }
+            }
+          }
+      }
+    }
+    .headerProminence(.increased)
+    .navigationTitle("Core Data Study")
   }
 }
 
-private final class SongsModel: ObservableObject {}
+@MainActor
+final class AddSongModel: ObservableObject {
+  @Dependency(\.persistentContainer) var persistentContainer
+  @Dependency(\.logger["CoreDataStudy"]) var logger
 
-struct SongsView: View {
+  @Published var song: Fetched<Song>
+
+  init(song: Fetched<Song>) {
+    self.song = song
+  }
+
+  func userDidTapDone() {
+    persistentContainer.withViewContext {
+      do {
+        try $0.save()
+      } catch {
+        self.logger.error("Failed to save ")
+      }
+    }
+  }
+
+  func userDidTapCancel() {
+    persistentContainer.withViewContext { context in
+      context.delete(context.object(with: self.song.id))
+    }
+  }
+}
+
+struct AddSongView: View {
+  @ObservedObject var model: AddSongModel
+
   var body: some View {
-    Color.red
+    Form {
+      TextField("Name", text: $model.song.editable.name.emptyIfNil())
+      Stepper(value: $model.song.editable.year, in: 1960 ... 1970) {
+        LabeledContent("Year", value: "\(model.song.year)")
+      }
+    }
+    .navigationTitle("Add Song")
   }
 }
 
@@ -164,6 +259,43 @@ struct CoreDataStudyView_Previews: PreviewProvider {
           CoreDataStudy()
         }
       )
+    }
+
+    NavigationStack {
+      AddSongView(
+        model:
+        DependencyValues.withValues {
+          $0.persistentContainer = .canonical(inMemory: true).withInitialData()
+          $0.uuid = .incrementing
+        } operation: {
+          @Dependency(\.persistentContainer) var persistentContainer
+          @Dependency(\.uuid) var uuid
+
+          return AddSongModel(song: try! persistentContainer.insert(Song.self) {
+            $0.identifier = uuid()
+            $0.year = 1970
+            $0.name = "Let it be"
+          })
+        }
+      )
+    }
+  }
+}
+
+public extension Binding {
+  func nilIfEmpty() -> Binding<Value?> where Value: RangeReplaceableCollection {
+    Binding<Value?> {
+      self.wrappedValue.isEmpty ? nil : self.wrappedValue
+    } set: { newValue, _ in
+      self.transaction(transaction).wrappedValue = newValue ?? .init()
+    }
+  }
+
+  func emptyIfNil<T>() -> Binding<T> where Value == T?, T: RangeReplaceableCollection {
+    Binding<T> {
+      self.wrappedValue ?? .init()
+    } set: { newValue, _ in
+      self.transaction(transaction).wrappedValue = newValue.isEmpty ? .none : newValue
     }
   }
 }

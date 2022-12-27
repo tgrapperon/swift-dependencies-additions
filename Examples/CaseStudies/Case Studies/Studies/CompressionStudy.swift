@@ -106,7 +106,9 @@ struct CompressionStudyView: View {
       }.disabled(true)
     }
     .headerProminence(.increased)
+    #if os(iOS)
     .listStyle(.grouped)
+    #endif
     .navigationTitle("Codable & Compression")
   }
 }

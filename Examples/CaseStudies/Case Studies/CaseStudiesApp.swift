@@ -5,11 +5,11 @@ import SwiftUI
 struct Case_StudiesApp: App {
   var body: some Scene {
     WindowGroup {
-      ContentView(
+      StudiesView(
         model: DependencyValues.withValues {
           $0.persistentContainer = .canonical(inMemory: true).withInitialData()
         } operation: {
-          .init()
+          .init(destination: .coreDataStudy(.init()))
         }
       )
     }
