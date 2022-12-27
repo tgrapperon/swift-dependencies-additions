@@ -2,23 +2,22 @@ import CoreDataDependency
 import Dependencies
 import SwiftUI
 
-
-
-
 @MainActor
 final class CoreDataStudy: ObservableObject {
   @Dependency(\.persistentContainer) var persistentContainer
   @Dependency(\.persistentContainer.fetchRequest) var fetchRequest
-  
+
   @Dependency(\.logger["CoreDataStudy"]) var logger
-  
+
   @Published var composers: Composer.FetchedResults = .init()
+  @Published var isLoading: Bool = false
   
   var observation: Task<Void, Never>?
   init() {
     self.observation = Task { [weak self] in
       guard let self else { return }
       do {
+        self.isLoading = true
         for try await composers in self.fetchRequest(
           of: Composer.self,
           sortDescriptors: [
@@ -26,6 +25,7 @@ final class CoreDataStudy: ObservableObject {
             NSSortDescriptor(keyPath: \Composer.name, ascending: true),
           ]
         ) {
+          self.isLoading = false
           withAnimation {
             self.composers = composers
           }
@@ -42,7 +42,7 @@ final class CoreDataStudy: ObservableObject {
 //      try? context.save()
 //    }
 //  }
-  
+
 //  func userDidSwipeDeletePerson(composer: Composer.Value) {
 //    do {
 //      try composer.withManagedObject { composer in
@@ -74,10 +74,9 @@ struct CoreDataStudyView: View {
       Section {
         ForEach(model.composers) { composer in
           VStack(alignment: .leading) {
-            LabeledContent(composer.name ?? "?", value: composer.songsCount.formatted())
-            Text(composer.identifier!.uuidString)
-              .font(.caption2)
-              .foregroundStyle(.secondary)
+            LabeledContent(composer.name!) {
+              Text("^[\(composer.songsCount) \("song")](inflect: true)")
+            }
           }
 //          .swipeActions {
 //            Button(role: .destructive) {
@@ -89,20 +88,20 @@ struct CoreDataStudyView: View {
 //          }
         }
       } header: {
-        Text("^[\(model.composers.count) \("composer")](inflect: true)")
+        if model.isLoading {
+          ProgressView()
+        } else {
+          Text("^[\(model.composers.count) \("composer")](inflect: true)")
+        }
       }
     }.headerProminence(.increased)
+      .navigationTitle("Core Data Study")
   }
 }
 
+private final class SongsModel: ObservableObject {}
 
-fileprivate final class SongsModel: ObservableObject {
-  
-  
-}
 struct SongsView: View {
-  
-  
   var body: some View {
     Color.red
   }
@@ -113,13 +112,11 @@ struct CoreDataStudyView_Previews: PreviewProvider {
     NavigationStack {
       CoreDataStudyView(
         model:
-          DependencyValues.withValues { values in
-            values.persistentContainer = PersistentContainer
-              .canonical(inMemory: true)
-              .withInitialData()
-          } operation: {
-            CoreDataStudy()
-          }
+        DependencyValues.withValue(
+          \.persistentContainer, .canonical(inMemory: true).withInitialData()
+        ) {
+          CoreDataStudy()
+        }
       )
     }
   }
@@ -138,14 +135,14 @@ extension PersistentContainer {
         song.year = year
         return song
       }
-      
+
       func composer(name: String) -> Composer {
         let composer = Composer(context: context)
         composer.identifier = uuid()
         composer.name = name
         return composer
       }
-      
+
       let yesterday = song("Yesterday", year: 1965)
       let allMyLoving = song("All My Loving", year: 1965)
       let aDayInTheLife = song("A Day In The Life", year: 1967)
@@ -156,7 +153,6 @@ extension PersistentContainer {
       let octopussGarden = song("Octopuss Garden", year: 1969)
       let blackbird = song("Blackbird", year: 1968)
 
-
       let paul = composer(name: "Paul McCartney")
       let john = composer(name: "John Lennon")
       let george = composer(name: "George Harrison")
@@ -166,16 +162,16 @@ extension PersistentContainer {
       paul.addToSongs(allMyLoving)
       paul.addToSongs(aDayInTheLife)
       paul.addToSongs(blackbird)
-      
+
       john.addToSongs(aDayInTheLife)
       john.addToSongs(help)
       john.addToSongs(ticketToRide)
 
       george.addToSongs(something)
       george.addToSongs(whileMyGuitar)
-      
+
       ringo.addToSongs(octopussGarden)
-      
+
       // We need to save so the derived `songsCount` relation is updated
       try! context.save()
     }

@@ -27,7 +27,7 @@ class StudiesModel: ObservableObject {
       .compression(.init())
     }
   }
-  
+
   func userDidTapNavigateToCoreDataStudyButton() {
     self.destination = DependencyValues.withValues(from: self) {
       .coreDataStudy(.init())
@@ -73,11 +73,11 @@ struct ContentView: View {
         } label: {
           Label("Compression", systemImage: "rectangle.compress.vertical")
         }
-        
+
         Button {
           self.model.userDidTapNavigateToCoreDataStudyButton()
         } label: {
-          Label("CoreData", systemImage: "point.3.connected.trianglepath.dotted")
+          Label("Core Data", systemImage: "point.3.connected.trianglepath.dotted")
         }
 
         Button {
@@ -144,7 +144,10 @@ struct ContentView_Previews: PreviewProvider {
   static var previews: some View {
     ContentView(
       model:
-        DependencyValues.withValue(\.userDefaults, .standard) {
+        DependencyValues.withValues {
+          $0.userDefaults = .standard
+          $0.persistentContainer = .canonical(inMemory: true).withInitialData()
+        } operation: {
           .init()
         }
     )
