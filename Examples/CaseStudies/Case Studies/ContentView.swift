@@ -9,6 +9,7 @@ class StudiesModel: ObservableObject {
   enum Destination {
     case appStorageStudy(AppStorageStudy)
     case compression(CompressionStudy)
+    case coreDataStudy(CoreDataStudy)
     case notificationStudy(NotificationStudy)
     case loggerStudy(LoggerStudy)
     case swiftUIEnvironmentStudy(SwiftUIEnvironmentStudy)
@@ -24,6 +25,12 @@ class StudiesModel: ObservableObject {
   func userDidTapNavigateToCompressionStudyButton() {
     self.destination = DependencyValues.withValues(from: self) {
       .compression(.init())
+    }
+  }
+  
+  func userDidTapNavigateToCoreDataStudyButton() {
+    self.destination = DependencyValues.withValues(from: self) {
+      .coreDataStudy(.init())
     }
   }
 
@@ -66,6 +73,12 @@ struct ContentView: View {
         } label: {
           Label("Compression", systemImage: "rectangle.compress.vertical")
         }
+        
+        Button {
+          self.model.userDidTapNavigateToCoreDataStudyButton()
+        } label: {
+          Label("CoreData", systemImage: "point.3.connected.trianglepath.dotted")
+        }
 
         Button {
           self.model.userDidTapNavigateToLoggerStudyButton()
@@ -98,6 +111,12 @@ struct ContentView: View {
         case: /StudiesModel.Destination.compression
       ) { $model in
         CompressionStudyView(model: model)
+      }
+      .navigationDestination(
+        unwrapping: self.$model.destination,
+        case: /StudiesModel.Destination.coreDataStudy
+      ) { $model in
+        CoreDataStudyView(model: model)
       }
       .navigationDestination(
         unwrapping: self.$model.destination,

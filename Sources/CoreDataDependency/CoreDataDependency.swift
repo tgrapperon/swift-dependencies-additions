@@ -1,10 +1,10 @@
+import BundleInfo
 import CoreData
 import Dependencies
-import BundleInfo
 import LoggerDependency
 
-extension DependencyValues {
-  public var persistentContainer: PersistentContainer {
+public extension DependencyValues {
+  var persistentContainer: PersistentContainer {
     get { self[PersistentContainer.self] }
     set { self[PersistentContainer.self] = newValue }
   }
@@ -12,27 +12,42 @@ extension DependencyValues {
 
 extension PersistentContainer: DependencyKey {
   public static var liveValue: PersistentContainer {
-   canonical()
+    canonical()
   }
+
   public static var testValue: PersistentContainer {
     canonical(inMemory: true)
   }
+
   public static var previewValue: PersistentContainer {
     canonical(inMemory: true)
   }
 }
 
 extension PersistentContainer {
-  static func canonical(inMemory: Bool = false) -> PersistentContainer {
-    let bundleName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
-    let persistentContainer = NSPersistentContainer(name: bundleName)
+  public var fetchRequest: FetchRequest {
+    .init()
+  }
+}
+
+extension PersistentContainer {
+  public static func canonical(inMemory: Bool = false) -> PersistentContainer {
+    var name = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
+    if Bundle.main.url(forResource: name, withExtension: "momd") == nil {
+      name = Bundle.main.url(forResource: nil, withExtension: "momd")?
+        .deletingPathExtension()
+        .lastPathComponent
+        ?? "Model"
+    }
+
+    let persistentContainer = NSPersistentContainer(name: name)
     guard !persistentContainer.persistentStoreDescriptions.isEmpty else {
       return .init(persistentContainer)
     }
     if inMemory {
       persistentContainer.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
     }
-    persistentContainer.loadPersistentStores(completionHandler: { (storeDescription, error) in
+    persistentContainer.loadPersistentStores(completionHandler: { _, error in
       if let error {
         print("Failed to load PesistentStore: \(error)")
       }

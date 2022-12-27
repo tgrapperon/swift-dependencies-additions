@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E98E74B7295AD4AC0024D761 /* CaseStudies.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E98E74B5295AD4AC0024D761 /* CaseStudies.xcdatamodeld */; };
+		E98E74B9295AD51A0024D761 /* CoreDataStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98E74B8295AD51A0024D761 /* CoreDataStudy.swift */; };
+		E98E74BB295AD5390024D761 /* CoreDataDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74BA295AD5390024D761 /* CoreDataDependency */; };
+		E98E74BD295AD53D0024D761 /* ProcessInfoDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74BC295AD53D0024D761 /* ProcessInfoDependency */; };
 		E9C3B93529594A35000263AD /* AppStorageStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B93429594A35000263AD /* AppStorageStudy.swift */; };
 		E9C3B9372959607A000263AD /* CompressionStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B9362959607A000263AD /* CompressionStudy.swift */; };
 		E9C3B93F29596715000263AD /* CaseStudiesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B93E29596715000263AD /* CaseStudiesTests.swift */; };
@@ -40,6 +44,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E98E74B6295AD4AC0024D761 /* CaseStudies.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CaseStudies.xcdatamodel; sourceTree = "<group>"; };
+		E98E74B8295AD51A0024D761 /* CoreDataStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStudy.swift; sourceTree = "<group>"; };
 		E9C3B93429594A35000263AD /* AppStorageStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageStudy.swift; sourceTree = "<group>"; };
 		E9C3B9362959607A000263AD /* CompressionStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompressionStudy.swift; sourceTree = "<group>"; };
 		E9C3B93C29596715000263AD /* CaseStudiesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaseStudiesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,11 +75,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E98E74BB295AD5390024D761 /* CoreDataDependency in Frameworks */,
 				E9DC4C642958FA41003F0CA8 /* NotificationDependency in Frameworks */,
 				E9DC4C5E2958FA41003F0CA8 /* DataCoder in Frameworks */,
 				E9DC4C6B29591626003F0CA8 /* SwiftUINavigation in Frameworks */,
 				E9DC4C662958FA41003F0CA8 /* SwiftUIEnvironment in Frameworks */,
 				E9DC4C622958FA41003F0CA8 /* LoggerDependency in Frameworks */,
+				E98E74BD295AD53D0024D761 /* ProcessInfoDependency in Frameworks */,
 				E9DC4C602958FA41003F0CA8 /* DependenciesAdditions in Frameworks */,
 				E9DC4C5A2958FA41003F0CA8 /* BundleInfo in Frameworks */,
 				E9DC4C582958FA41003F0CA8 /* AppStorage in Frameworks */,
@@ -92,6 +100,8 @@
 				E9DC4C672958FA5B003F0CA8 /* LoggerStudy.swift */,
 				E9DC4C6C29591D60003F0CA8 /* NotificationsStudy.swift */,
 				E9DC4C6E2959396E003F0CA8 /* SwiftUIEnvironmentStudy.swift */,
+				E98E74B5295AD4AC0024D761 /* CaseStudies.xcdatamodeld */,
+				E98E74B8295AD51A0024D761 /* CoreDataStudy.swift */,
 			);
 			path = Studies;
 			sourceTree = "<group>";
@@ -205,6 +215,8 @@
 				E9DC4C632958FA41003F0CA8 /* NotificationDependency */,
 				E9DC4C652958FA41003F0CA8 /* SwiftUIEnvironment */,
 				E9DC4C6A29591626003F0CA8 /* SwiftUINavigation */,
+				E98E74BA295AD5390024D761 /* CoreDataDependency */,
+				E98E74BC295AD53D0024D761 /* ProcessInfoDependency */,
 			);
 			productName = "Dependencies Additions Case Studies";
 			productReference = E9DC4C422958F9BB003F0CA8 /* CaseStudies.app */;
@@ -285,10 +297,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				E9DC4C682958FA5B003F0CA8 /* LoggerStudy.swift in Sources */,
+				E98E74B9295AD51A0024D761 /* CoreDataStudy.swift in Sources */,
 				E9DC4C6F2959396E003F0CA8 /* SwiftUIEnvironmentStudy.swift in Sources */,
 				E9DC4C482958F9BB003F0CA8 /* ContentView.swift in Sources */,
 				E9C3B93529594A35000263AD /* AppStorageStudy.swift in Sources */,
 				E9DC4C6D29591D60003F0CA8 /* NotificationsStudy.swift in Sources */,
+				E98E74B7295AD4AC0024D761 /* CaseStudies.xcdatamodeld in Sources */,
 				E9C3B9372959607A000263AD /* CompressionStudy.swift in Sources */,
 				E9DC4C462958F9BB003F0CA8 /* CaseStudiesApp.swift in Sources */,
 			);
@@ -581,6 +595,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E98E74BA295AD5390024D761 /* CoreDataDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CoreDataDependency;
+		};
+		E98E74BC295AD53D0024D761 /* ProcessInfoDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProcessInfoDependency;
+		};
 		E9DC4C572958FA41003F0CA8 /* AppStorage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AppStorage;
@@ -619,6 +641,19 @@
 			productName = SwiftUINavigation;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		E98E74B5295AD4AC0024D761 /* CaseStudies.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				E98E74B6295AD4AC0024D761 /* CaseStudies.xcdatamodel */,
+			);
+			currentVersion = E98E74B6295AD4AC0024D761 /* CaseStudies.xcdatamodel */;
+			path = CaseStudies.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = E9DC4C3A2958F9BB003F0CA8 /* Project object */;
 }

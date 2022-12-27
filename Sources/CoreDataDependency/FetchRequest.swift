@@ -87,8 +87,9 @@ public struct FetchRequest {
   
   @MainActor
   public func callAsFunction<ResultType: NSManagedObject>(
-    predicate: NSPredicate,
-    sortDescriptors: [NSSortDescriptor],
+    of type: ResultType.Type,
+    predicate: NSPredicate? = nil,
+    sortDescriptors: [NSSortDescriptor] = [],
     context: NSManagedObjectContext? = nil
   ) -> AsyncThrowingStream<Results<ResultType>, Error> {
     let context = context ?? persistentContainer.viewContext
@@ -105,8 +106,9 @@ public struct FetchRequest {
 
   @MainActor
   public func callAsFunction<SectionIdentifier: Hashable, ResultType: NSManagedObject>(
-    predicate: NSPredicate,
-    sortDescriptors: [NSSortDescriptor],
+    of type: ResultType.Type,
+    predicate: NSPredicate? = nil,
+    sortDescriptors: [NSSortDescriptor] = [],
     sectionIdentifier: KeyPath<ResultType, SectionIdentifier>,
     context: NSManagedObjectContext? = nil
   ) -> AsyncThrowingStream<SectionedResults<SectionIdentifier, ResultType>, Error> {
@@ -144,16 +146,29 @@ extension FetchRequest {
     }
 
     let sections: [Section]
+    
+    public init() {
+      self.sections = []
+    }
+    init(sections: [Section]) {
+      self.sections = sections
+    }
   }
 }
 
 extension FetchRequest {
   public struct Results<ResultType: NSManagedObject>: Hashable, Sendable {
     let values: [FetchedResult<ResultType>]
+    public init() {
+      self.values = []
+    }
+    init(values: [FetchedResult<ResultType>]) {
+      self.values = values
+    }
   }
 }
 
-extension FetchRequest.Results: BidirectionalCollection {
+extension FetchRequest.Results: RandomAccessCollection {
   public var startIndex: Int { values.startIndex }
   public var endIndex: Int { values.endIndex }
 
