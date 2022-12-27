@@ -1,5 +1,6 @@
 import Dependencies
 import Foundation
+import DependenciesAdditions
 
 extension DependencyValues {
   public var notifications: any NotificationCenterProtocol {
@@ -223,12 +224,12 @@ public struct _ControllableNotificationCenter: NotificationCenterProtocol {
     func notificationStream<T>(of type: T.Type) -> Notifications.StreamOf<T> {
       notificationStream as! Notifications.StreamOf<T>
     }
-    func postedSharedContinuation<T>(of type: T.Type) -> SharedAsyncStreamsContinuation<T> {
-      postedSharedContinuations as! SharedAsyncStreamsContinuation<T>
+    func postedSharedContinuation<T>(of type: T.Type) -> _AsyncSharedSubject<T> {
+      postedSharedContinuations as! _AsyncSharedSubject<T>
     }
   }
   
-  private let notifications = SharedAsyncStreamsContinuation<Notification>()
+  private let notifications = _AsyncSharedSubject<Notification>()
   private let streams = LockIsolated([Notifications.ID: StreamAndSharedContinuations]())
   
   public func post(_ notification: Notification) {
@@ -240,7 +241,7 @@ public struct _ControllableNotificationCenter: NotificationCenterProtocol {
       if let existing = streams[notification.id]?.notificationStream(of: Value.self) {
         return existing
       }
-      let postedValues = SharedAsyncStreamsContinuation<Result<Value, Error>>()
+      let postedValues = _AsyncSharedSubject<Result<Value, Error>>()
       let notificationStream = Notifications.StreamOf<Value>{ postedValue in
         if let notification = notification.notify?(postedValue) {
           self.post(notification)
@@ -289,46 +290,6 @@ public struct _ControllableNotificationCenter: NotificationCenterProtocol {
         postedSharedContinuations: postedValues
       )
       return notificationStream
-    }
-  }
-}
-
-// A type that is able to broadcast continuation messages to an arbitrary number of
-// `AsyncStream`s it can generate.
-internal final class SharedAsyncStreamsContinuation<Value>: Sendable {
-  let continuations = LockIsolated([UUID: AsyncStream<Value>.Continuation]())
-
-  func yield(_ value: Value) {
-    continuations.withValue {
-      for continuation in $0.values {
-        continuation.yield(value)
-      }
-    }
-  }
-  
-  func finish() {
-    continuations.withValue {
-      for continuation in $0.values {
-        continuation.finish()
-      }
-      $0 = [:]
-    }
-  }
-
-  func stream() -> AsyncStream<Value> {
-    AsyncStream(Value.self) { continuation in
-      let id = UUID()
-      continuations.withValue {
-        $0[id] = continuation
-      }
-      // Capturing `self` here makes all clients retains this instance.
-      // If we'd choose to capture it weakly instead, we would need to call `finish()`
-      // on each continuation in `deinit`.
-      continuation.onTermination = { _ in
-        self.continuations.withValue {
-          $0[id] = nil
-        }
-      }
     }
   }
 }

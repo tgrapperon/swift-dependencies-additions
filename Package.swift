@@ -20,14 +20,14 @@ let package = Package(
 define("DependenciesAdditions")
 define("AppStorage", testingDependencies: "DependenciesAdditions")
 define("BundleInfo")
-//define("CoreDataDependency")
+define("CoreDataDependency", dependencies: "DependenciesAdditions")
 define("DataCoder")
 define("LoggerDependency", dependencies: "BundleInfo")
 define("CompressorDependency")
 //define("CryptoDependency")
 //define("KeyChainDependency")
 define("ProcessInfoDependency")
-define("NotificationDependency", testingDependencies: "DependenciesAdditions")
+define("NotificationDependency", dependencies: "DependenciesAdditions")
 define("SwiftUIEnvironment", testingDependencies: "DependenciesAdditions")
 
 func define(_ target: String, dependencies: String..., testingDependencies: String...) {
