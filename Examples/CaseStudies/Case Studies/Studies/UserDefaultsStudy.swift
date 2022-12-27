@@ -4,7 +4,7 @@ import Dependencies
 import SwiftUI
 
 @MainActor
-final class AppStorageStudy: ObservableObject {
+final class UserDefaultsStudy: ObservableObject {
   // This preference has a default value
   @Dependency.AppStorage("number") var number: Int = 42
   // This preference has a `nil` default value
@@ -86,8 +86,8 @@ final class AppStorageStudy: ObservableObject {
   }
 }
 
-struct AppStorageStudyView: View {
-  @ObservedObject var model: AppStorageStudy
+struct UserDefaultsStudyView: View {
+  @ObservedObject var model: UserDefaultsStudy
   @AppStorage("number") var numberFromSwiftUI: Int = 42
   @AppStorage("string") var stringFromSwiftUI: String?
   
@@ -166,10 +166,10 @@ struct AppStorageStudyView: View {
   }
 }
 
-struct AppStorageStudyView_Previews: PreviewProvider {
+struct UserDefaultsStudyView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationStack {
-      AppStorageStudyView(
+      UserDefaultsStudyView(
         // By default, `\.userDefaults` is `.ephemeral()` for SwiftUI Previews
         // but we force the `.standard` one, so they reflect the same values
         // as SwiftUI's `AppStorage`, which is not configurable.

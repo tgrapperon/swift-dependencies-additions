@@ -1,6 +1,5 @@
-import CompressorDependency
-import DataCoder
-import Dependencies
+import CompressionDependency
+import CodableDependency
 import LoggerDependency
 import SwiftUI
 

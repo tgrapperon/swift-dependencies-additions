@@ -9,9 +9,18 @@
 /* Begin PBXBuildFile section */
 		E98E74B7295AD4AC0024D761 /* CaseStudies.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E98E74B5295AD4AC0024D761 /* CaseStudies.xcdatamodeld */; };
 		E98E74B9295AD51A0024D761 /* CoreDataStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98E74B8295AD51A0024D761 /* CoreDataStudy.swift */; };
-		E98E74BB295AD5390024D761 /* CoreDataDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74BA295AD5390024D761 /* CoreDataDependency */; };
-		E98E74BD295AD53D0024D761 /* ProcessInfoDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74BC295AD53D0024D761 /* ProcessInfoDependency */; };
-		E9C3B93529594A35000263AD /* AppStorageStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B93429594A35000263AD /* AppStorageStudy.swift */; };
+		E98E74C1295B5B9C0024D761 /* BundleInfoDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74C0295B5B9C0024D761 /* BundleInfoDependency */; };
+		E98E74C3295B5B9C0024D761 /* CodableDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74C2295B5B9C0024D761 /* CodableDependency */; };
+		E98E74C5295B5B9C0024D761 /* CompressionDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74C4295B5B9C0024D761 /* CompressionDependency */; };
+		E98E74C7295B5B9C0024D761 /* CoreDataDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74C6295B5B9C0024D761 /* CoreDataDependency */; };
+		E98E74C9295B5B9C0024D761 /* DependenciesAdditions in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74C8295B5B9C0024D761 /* DependenciesAdditions */; };
+		E98E74CB295B5B9C0024D761 /* LoggerDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74CA295B5B9C0024D761 /* LoggerDependency */; };
+		E98E74CD295B5B9C0024D761 /* NotificationDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74CC295B5B9C0024D761 /* NotificationDependency */; };
+		E98E74CF295B5B9C0024D761 /* ProcessInfoDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74CE295B5B9C0024D761 /* ProcessInfoDependency */; };
+		E98E74D1295B5B9C0024D761 /* SwiftUIDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74D0295B5B9C0024D761 /* SwiftUIDependency */; };
+		E98E74D3295B5B9C0024D761 /* UserDefaultsDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74D2295B5B9C0024D761 /* UserDefaultsDependency */; };
+		E98E74D6295B5C070024D761 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74D5295B5C070024D761 /* SwiftUINavigation */; };
+		E9C3B93529594A35000263AD /* UserDefaultsStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B93429594A35000263AD /* UserDefaultsStudy.swift */; };
 		E9C3B9372959607A000263AD /* CompressionStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B9362959607A000263AD /* CompressionStudy.swift */; };
 		E9C3B93F29596715000263AD /* CaseStudiesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B93E29596715000263AD /* CaseStudiesTests.swift */; };
 		E9C3B946295967AE000263AD /* AppStorageStudyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B945295967AE000263AD /* AppStorageStudyTests.swift */; };
@@ -19,16 +28,7 @@
 		E9DC4C482958F9BB003F0CA8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DC4C472958F9BB003F0CA8 /* ContentView.swift */; };
 		E9DC4C4A2958F9BC003F0CA8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9DC4C492958F9BC003F0CA8 /* Assets.xcassets */; };
 		E9DC4C4E2958F9BC003F0CA8 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E9DC4C4D2958F9BC003F0CA8 /* Preview Assets.xcassets */; };
-		E9DC4C582958FA41003F0CA8 /* AppStorage in Frameworks */ = {isa = PBXBuildFile; productRef = E9DC4C572958FA41003F0CA8 /* AppStorage */; };
-		E9DC4C5A2958FA41003F0CA8 /* BundleInfo in Frameworks */ = {isa = PBXBuildFile; productRef = E9DC4C592958FA41003F0CA8 /* BundleInfo */; };
-		E9DC4C5C2958FA41003F0CA8 /* CompressorDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E9DC4C5B2958FA41003F0CA8 /* CompressorDependency */; };
-		E9DC4C5E2958FA41003F0CA8 /* DataCoder in Frameworks */ = {isa = PBXBuildFile; productRef = E9DC4C5D2958FA41003F0CA8 /* DataCoder */; };
-		E9DC4C602958FA41003F0CA8 /* DependenciesAdditions in Frameworks */ = {isa = PBXBuildFile; productRef = E9DC4C5F2958FA41003F0CA8 /* DependenciesAdditions */; };
-		E9DC4C622958FA41003F0CA8 /* LoggerDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E9DC4C612958FA41003F0CA8 /* LoggerDependency */; };
-		E9DC4C642958FA41003F0CA8 /* NotificationDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E9DC4C632958FA41003F0CA8 /* NotificationDependency */; };
-		E9DC4C662958FA41003F0CA8 /* SwiftUIEnvironment in Frameworks */ = {isa = PBXBuildFile; productRef = E9DC4C652958FA41003F0CA8 /* SwiftUIEnvironment */; };
 		E9DC4C682958FA5B003F0CA8 /* LoggerStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DC4C672958FA5B003F0CA8 /* LoggerStudy.swift */; };
-		E9DC4C6B29591626003F0CA8 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = E9DC4C6A29591626003F0CA8 /* SwiftUINavigation */; };
 		E9DC4C6D29591D60003F0CA8 /* NotificationsStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DC4C6C29591D60003F0CA8 /* NotificationsStudy.swift */; };
 		E9DC4C6F2959396E003F0CA8 /* SwiftUIEnvironmentStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DC4C6E2959396E003F0CA8 /* SwiftUIEnvironmentStudy.swift */; };
 /* End PBXBuildFile section */
@@ -46,7 +46,7 @@
 /* Begin PBXFileReference section */
 		E98E74B6295AD4AC0024D761 /* CaseStudies.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CaseStudies.xcdatamodel; sourceTree = "<group>"; };
 		E98E74B8295AD51A0024D761 /* CoreDataStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStudy.swift; sourceTree = "<group>"; };
-		E9C3B93429594A35000263AD /* AppStorageStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageStudy.swift; sourceTree = "<group>"; };
+		E9C3B93429594A35000263AD /* UserDefaultsStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsStudy.swift; sourceTree = "<group>"; };
 		E9C3B9362959607A000263AD /* CompressionStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompressionStudy.swift; sourceTree = "<group>"; };
 		E9C3B93C29596715000263AD /* CaseStudiesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaseStudiesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9C3B93E29596715000263AD /* CaseStudiesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaseStudiesTests.swift; sourceTree = "<group>"; };
@@ -75,17 +75,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E98E74BB295AD5390024D761 /* CoreDataDependency in Frameworks */,
-				E9DC4C642958FA41003F0CA8 /* NotificationDependency in Frameworks */,
-				E9DC4C5E2958FA41003F0CA8 /* DataCoder in Frameworks */,
-				E9DC4C6B29591626003F0CA8 /* SwiftUINavigation in Frameworks */,
-				E9DC4C662958FA41003F0CA8 /* SwiftUIEnvironment in Frameworks */,
-				E9DC4C622958FA41003F0CA8 /* LoggerDependency in Frameworks */,
-				E98E74BD295AD53D0024D761 /* ProcessInfoDependency in Frameworks */,
-				E9DC4C602958FA41003F0CA8 /* DependenciesAdditions in Frameworks */,
-				E9DC4C5A2958FA41003F0CA8 /* BundleInfo in Frameworks */,
-				E9DC4C582958FA41003F0CA8 /* AppStorage in Frameworks */,
-				E9DC4C5C2958FA41003F0CA8 /* CompressorDependency in Frameworks */,
+				E98E74C7295B5B9C0024D761 /* CoreDataDependency in Frameworks */,
+				E98E74CB295B5B9C0024D761 /* LoggerDependency in Frameworks */,
+				E98E74D6295B5C070024D761 /* SwiftUINavigation in Frameworks */,
+				E98E74C3295B5B9C0024D761 /* CodableDependency in Frameworks */,
+				E98E74CD295B5B9C0024D761 /* NotificationDependency in Frameworks */,
+				E98E74C9295B5B9C0024D761 /* DependenciesAdditions in Frameworks */,
+				E98E74CF295B5B9C0024D761 /* ProcessInfoDependency in Frameworks */,
+				E98E74D3295B5B9C0024D761 /* UserDefaultsDependency in Frameworks */,
+				E98E74D1295B5B9C0024D761 /* SwiftUIDependency in Frameworks */,
+				E98E74C5295B5B9C0024D761 /* CompressionDependency in Frameworks */,
+				E98E74C1295B5B9C0024D761 /* BundleInfoDependency in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,7 +95,7 @@
 		E9C3B93329594A21000263AD /* Studies */ = {
 			isa = PBXGroup;
 			children = (
-				E9C3B93429594A35000263AD /* AppStorageStudy.swift */,
+				E9C3B93429594A35000263AD /* UserDefaultsStudy.swift */,
 				E9C3B9362959607A000263AD /* CompressionStudy.swift */,
 				E9DC4C672958FA5B003F0CA8 /* LoggerStudy.swift */,
 				E9DC4C6C29591D60003F0CA8 /* NotificationsStudy.swift */,
@@ -206,17 +206,17 @@
 			);
 			name = CaseStudies;
 			packageProductDependencies = (
-				E9DC4C572958FA41003F0CA8 /* AppStorage */,
-				E9DC4C592958FA41003F0CA8 /* BundleInfo */,
-				E9DC4C5B2958FA41003F0CA8 /* CompressorDependency */,
-				E9DC4C5D2958FA41003F0CA8 /* DataCoder */,
-				E9DC4C5F2958FA41003F0CA8 /* DependenciesAdditions */,
-				E9DC4C612958FA41003F0CA8 /* LoggerDependency */,
-				E9DC4C632958FA41003F0CA8 /* NotificationDependency */,
-				E9DC4C652958FA41003F0CA8 /* SwiftUIEnvironment */,
-				E9DC4C6A29591626003F0CA8 /* SwiftUINavigation */,
-				E98E74BA295AD5390024D761 /* CoreDataDependency */,
-				E98E74BC295AD53D0024D761 /* ProcessInfoDependency */,
+				E98E74C0295B5B9C0024D761 /* BundleInfoDependency */,
+				E98E74C2295B5B9C0024D761 /* CodableDependency */,
+				E98E74C4295B5B9C0024D761 /* CompressionDependency */,
+				E98E74C6295B5B9C0024D761 /* CoreDataDependency */,
+				E98E74C8295B5B9C0024D761 /* DependenciesAdditions */,
+				E98E74CA295B5B9C0024D761 /* LoggerDependency */,
+				E98E74CC295B5B9C0024D761 /* NotificationDependency */,
+				E98E74CE295B5B9C0024D761 /* ProcessInfoDependency */,
+				E98E74D0295B5B9C0024D761 /* SwiftUIDependency */,
+				E98E74D2295B5B9C0024D761 /* UserDefaultsDependency */,
+				E98E74D5295B5C070024D761 /* SwiftUINavigation */,
 			);
 			productName = "Dependencies Additions Case Studies";
 			productReference = E9DC4C422958F9BB003F0CA8 /* CaseStudies.app */;
@@ -251,7 +251,7 @@
 			);
 			mainGroup = E9DC4C392958F9BB003F0CA8;
 			packageReferences = (
-				E9DC4C6929591626003F0CA8 /* XCRemoteSwiftPackageReference "swiftui-navigation" */,
+				E98E74D4295B5C060024D761 /* XCRemoteSwiftPackageReference "swiftui-navigation" */,
 			);
 			productRefGroup = E9DC4C432958F9BB003F0CA8 /* Products */;
 			projectDirPath = "";
@@ -300,7 +300,7 @@
 				E98E74B9295AD51A0024D761 /* CoreDataStudy.swift in Sources */,
 				E9DC4C6F2959396E003F0CA8 /* SwiftUIEnvironmentStudy.swift in Sources */,
 				E9DC4C482958F9BB003F0CA8 /* ContentView.swift in Sources */,
-				E9C3B93529594A35000263AD /* AppStorageStudy.swift in Sources */,
+				E9C3B93529594A35000263AD /* UserDefaultsStudy.swift in Sources */,
 				E9DC4C6D29591D60003F0CA8 /* NotificationsStudy.swift in Sources */,
 				E98E74B7295AD4AC0024D761 /* CaseStudies.xcdatamodeld in Sources */,
 				E9C3B9372959607A000263AD /* CompressionStudy.swift in Sources */,
@@ -584,7 +584,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E9DC4C6929591626003F0CA8 /* XCRemoteSwiftPackageReference "swiftui-navigation" */ = {
+		E98E74D4295B5C060024D761 /* XCRemoteSwiftPackageReference "swiftui-navigation" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swiftui-navigation";
 			requirement = {
@@ -595,49 +595,49 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E98E74BA295AD5390024D761 /* CoreDataDependency */ = {
+		E98E74C0295B5B9C0024D761 /* BundleInfoDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BundleInfoDependency;
+		};
+		E98E74C2295B5B9C0024D761 /* CodableDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CodableDependency;
+		};
+		E98E74C4295B5B9C0024D761 /* CompressionDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CompressionDependency;
+		};
+		E98E74C6295B5B9C0024D761 /* CoreDataDependency */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CoreDataDependency;
 		};
-		E98E74BC295AD53D0024D761 /* ProcessInfoDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ProcessInfoDependency;
-		};
-		E9DC4C572958FA41003F0CA8 /* AppStorage */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = AppStorage;
-		};
-		E9DC4C592958FA41003F0CA8 /* BundleInfo */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = BundleInfo;
-		};
-		E9DC4C5B2958FA41003F0CA8 /* CompressorDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CompressorDependency;
-		};
-		E9DC4C5D2958FA41003F0CA8 /* DataCoder */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DataCoder;
-		};
-		E9DC4C5F2958FA41003F0CA8 /* DependenciesAdditions */ = {
+		E98E74C8295B5B9C0024D761 /* DependenciesAdditions */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DependenciesAdditions;
 		};
-		E9DC4C612958FA41003F0CA8 /* LoggerDependency */ = {
+		E98E74CA295B5B9C0024D761 /* LoggerDependency */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LoggerDependency;
 		};
-		E9DC4C632958FA41003F0CA8 /* NotificationDependency */ = {
+		E98E74CC295B5B9C0024D761 /* NotificationDependency */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = NotificationDependency;
 		};
-		E9DC4C652958FA41003F0CA8 /* SwiftUIEnvironment */ = {
+		E98E74CE295B5B9C0024D761 /* ProcessInfoDependency */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = SwiftUIEnvironment;
+			productName = ProcessInfoDependency;
 		};
-		E9DC4C6A29591626003F0CA8 /* SwiftUINavigation */ = {
+		E98E74D0295B5B9C0024D761 /* SwiftUIDependency */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E9DC4C6929591626003F0CA8 /* XCRemoteSwiftPackageReference "swiftui-navigation" */;
+			productName = SwiftUIDependency;
+		};
+		E98E74D2295B5B9C0024D761 /* UserDefaultsDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = UserDefaultsDependency;
+		};
+		E98E74D5295B5C070024D761 /* SwiftUINavigation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E98E74D4295B5C060024D761 /* XCRemoteSwiftPackageReference "swiftui-navigation" */;
 			productName = SwiftUINavigation;
 		};
 /* End XCSwiftPackageProductDependency section */

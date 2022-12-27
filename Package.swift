@@ -18,17 +18,17 @@ let package = Package(
 
 /// Temporary helpers
 define("DependenciesAdditions")
-define("AppStorage", testingDependencies: "DependenciesAdditions")
-define("BundleInfo")
+define("BundleInfoDependency")
 define("CoreDataDependency", dependencies: "DependenciesAdditions")
-define("DataCoder")
-define("LoggerDependency", dependencies: "BundleInfo")
-define("CompressorDependency")
+define("CodableDependency")
+define("LoggerDependency", dependencies: "BundleInfoDependency")
+define("CompressionDependency")
 //define("CryptoDependency")
 //define("KeyChainDependency")
 define("ProcessInfoDependency")
 define("NotificationDependency", dependencies: "DependenciesAdditions")
-define("SwiftUIEnvironment", testingDependencies: "DependenciesAdditions")
+define("UserDefaultsDependency", testingDependencies: "DependenciesAdditions")
+define("SwiftUIDependency", testingDependencies: "DependenciesAdditions")
 
 func define(_ target: String, dependencies: String..., testingDependencies: String...) {
   var targetDependencies: [Target.Dependency] = [

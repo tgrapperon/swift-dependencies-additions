@@ -1,8 +1,8 @@
-import CompressorDependency
+import CompressionDependency
 import Dependencies
 import XCTest
 
-final class CompressorDependencyTests: XCTestCase {
+final class CompressionDependencyTests: XCTestCase {
   @Dependency(\.compress) var compress
   @Dependency(\.decompress) var decompress
 

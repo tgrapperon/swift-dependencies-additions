@@ -30,14 +30,14 @@ final class CoreDataStudy: ObservableObject {
     }
   }
 
-  func userDidTapAddNewPersonButton() {
-    persistentContainer.withViewContext { context in
-      let composer = Composer(context: context)
-      composer.identifier = .init()
-      composer.name = "Blob Sr"
-      try? context.save()
-    }
-  }
+//  func userDidTapAddNewPersonButton() {
+//    persistentContainer.withViewContext { context in
+//      let composer = Composer(context: context)
+//      composer.identifier = .init()
+//      composer.name = "Blob Sr"
+//      try? context.save()
+//    }
+//  }
   
   func userDidSwipeDeletePerson(composer: Composer.Value) {
     do {
@@ -69,24 +69,24 @@ struct CoreDataStudyView: View {
       }
       Section {
         ForEach(model.composers) { composer in
+
           composer.withManagedObject { composer in
             VStack(alignment: .leading) {
               
-              LabeledContent(composer.name ?? "?", value: composer.songs!.count.formatted())
+              LabeledContent(composer.name ?? "?", value: composer.songsCount.formatted())
               Text(composer.identifier!.uuidString)
                 .font(.caption2)
                 .foregroundStyle(.secondary)
-              Text("\(composer.songsCount)")
             }
           }
-          .swipeActions {
-            Button(role: .destructive) {
-              model.userDidSwipeDeletePerson(composer: composer)
-            } label: {
-              Label("Delete", systemImage: "trash")
-            }
-
-          }
+//          .swipeActions {
+//            Button(role: .destructive) {
+//              model.userDidSwipeDeletePerson(composer: composer)
+//            } label: {
+//              Label("Delete", systemImage: "trash")
+//            }
+//
+//          }
         }
       } header: {
         Text("^[\(model.composers.count) \("composer")](inflect: true)")
@@ -110,16 +110,18 @@ struct SongsView: View {
 
 struct CoreDataStudyView_Previews: PreviewProvider {
   static var previews: some View {
-    CoreDataStudyView(
-      model:
-        DependencyValues.withValues { values in
-          values.persistentContainer = PersistentContainer
-            .canonical(inMemory: true)
-            .withInitialData()
-        } operation: {
-          CoreDataStudy()
-        }
-    )
+    NavigationStack {
+      CoreDataStudyView(
+        model:
+          DependencyValues.withValues { values in
+            values.persistentContainer = PersistentContainer
+              .canonical(inMemory: true)
+              .withInitialData()
+          } operation: {
+            CoreDataStudy()
+          }
+      )
+    }
   }
 }
 
