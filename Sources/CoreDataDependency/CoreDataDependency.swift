@@ -1,7 +1,5 @@
-import BundleInfo
-import CoreData
-import Dependencies
-import LoggerDependency
+@_exported import CoreData
+@_exported import Dependencies
 
 extension DependencyValues {
    public var persistentContainer: PersistentContainer {
@@ -27,7 +25,7 @@ extension PersistentContainer: DependencyKey {
 
 extension PersistentContainer {
   public var fetchRequest: FetchRequest {
-    .init()
+    .init(persistentContainer: self)
   }
 }
 

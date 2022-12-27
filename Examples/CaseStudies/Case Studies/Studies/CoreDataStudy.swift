@@ -2,6 +2,9 @@ import CoreDataDependency
 import Dependencies
 import SwiftUI
 
+
+
+
 @MainActor
 final class CoreDataStudy: ObservableObject {
   @Dependency(\.persistentContainer) var persistentContainer
@@ -9,7 +12,8 @@ final class CoreDataStudy: ObservableObject {
   
   @Dependency(\.logger["CoreDataStudy"]) var logger
   
-  @Published var composers: CoreDataDependency.FetchRequest.Results<Composer> = .init()
+  @Published var composers: Composer.FetchedResults = .init()
+  
   var observation: Task<Void, Never>?
   init() {
     self.observation = Task { [weak self] in
@@ -39,17 +43,17 @@ final class CoreDataStudy: ObservableObject {
 //    }
 //  }
   
-  func userDidSwipeDeletePerson(composer: Composer.Value) {
-    do {
-      try composer.withManagedObject { composer in
-        let context = composer.managedObjectContext
-        context?.delete(composer)
-        try context?.save()
-      }
-    } catch {
-      logger.error("Failed to delete person: \(error)")
-    }
-  }
+//  func userDidSwipeDeletePerson(composer: Composer.Value) {
+//    do {
+//      try composer.withManagedObject { composer in
+//        let context = composer.managedObjectContext
+//        context?.delete(composer)
+//        try context?.save()
+//      }
+//    } catch {
+//      logger.error("Failed to delete person: \(error)")
+//    }
+//  }
 
   deinit {
     observation?.cancel()
@@ -61,23 +65,19 @@ struct CoreDataStudyView: View {
   var body: some View {
     List {
       Section {
-        Button {
-          model.userDidTapAddNewPersonButton()
-        } label: {
-          Text("Add new Composer")
-        }
+//        Button {
+//          model.userDidTapAddNewPersonButton()
+//        } label: {
+//          Text("Add new Composer")
+//        }
       }
       Section {
         ForEach(model.composers) { composer in
-
-          composer.withManagedObject { composer in
-            VStack(alignment: .leading) {
-              
-              LabeledContent(composer.name ?? "?", value: composer.songsCount.formatted())
-              Text(composer.identifier!.uuidString)
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-            }
+          VStack(alignment: .leading) {
+            LabeledContent(composer.name ?? "?", value: composer.songsCount.formatted())
+            Text(composer.identifier!.uuidString)
+              .font(.caption2)
+              .foregroundStyle(.secondary)
           }
 //          .swipeActions {
 //            Button(role: .destructive) {

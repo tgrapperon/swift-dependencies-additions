@@ -7,7 +7,7 @@ class StudiesModel: ObservableObject {
   @Dependency(\.self) var dependencies
 
   enum Destination {
-    case appStorageStudy(AppStorageStudy)
+    case userDefaultsStudy(UserDefaultsStudy)
     case compression(CompressionStudy)
     case coreDataStudy(CoreDataStudy)
     case notificationStudy(NotificationStudy)
@@ -16,9 +16,9 @@ class StudiesModel: ObservableObject {
   }
   @Published var destination: Destination?
 
-  func userDidTapNavigateToAppStorageStudyButton() {
+  func userDidTapNavigateToUserDefaultsStudyButton() {
     self.destination = DependencyValues.withValues(from: self) {
-      .appStorageStudy(.init())
+      .userDefaultsStudy(.init())
     }
   }
 
@@ -63,7 +63,7 @@ struct ContentView: View {
       List {
 
         Button {
-          self.model.userDidTapNavigateToAppStorageStudyButton()
+          self.model.userDidTapNavigateToUserDefaultsStudyButton()
         } label: {
           Label("AppStorage", systemImage: "archivebox")
         }
@@ -102,9 +102,9 @@ struct ContentView: View {
       .navigationTitle("Case Studies")
       .navigationDestination(
         unwrapping: self.$model.destination,
-        case: /StudiesModel.Destination.appStorageStudy
+        case: /StudiesModel.Destination.userDefaultsStudy
       ) { $model in
-        AppStorageStudyView(model: model)
+        UserDefaultsStudyView(model: model)
       }
       .navigationDestination(
         unwrapping: self.$model.destination,

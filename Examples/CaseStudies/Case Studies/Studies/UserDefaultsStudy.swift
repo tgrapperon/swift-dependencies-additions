@@ -1,4 +1,4 @@
-import AppStorage
+import UserDefaultsDependency
 import Combine
 import Dependencies
 import SwiftUI

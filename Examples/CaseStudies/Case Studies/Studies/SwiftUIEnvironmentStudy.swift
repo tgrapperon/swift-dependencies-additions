@@ -1,10 +1,6 @@
 import Dependencies
 import SwiftUI
-import SwiftUIEnvironment
-
-struct t: Sendable {
-  let size: BackgroundStyle
-}
+import SwiftUIDependency
 
 @MainActor
 final class SwiftUIEnvironmentStudy: ObservableObject {
