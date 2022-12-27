@@ -261,24 +261,24 @@ struct CoreDataStudyView_Previews: PreviewProvider {
       )
     }
 
-    NavigationStack {
-      AddSongView(
-        model:
-        DependencyValues.withValues {
-          $0.persistentContainer = .canonical(inMemory: true).withInitialData()
-          $0.uuid = .incrementing
-        } operation: {
-          @Dependency(\.persistentContainer) var persistentContainer
-          @Dependency(\.uuid) var uuid
-
-          return AddSongModel(song: try! persistentContainer.insert(Song.self) {
-            $0.identifier = uuid()
-            $0.year = 1970
-            $0.name = "Let it be"
-          })
-        }
-      )
-    }
+//    NavigationStack {
+//      AddSongView(
+//        model:
+//        DependencyValues.withValues {
+//          $0.persistentContainer = .canonical(inMemory: true).withInitialData()
+//          $0.uuid = .incrementing
+//        } operation: {
+//          @Dependency(\.persistentContainer) var persistentContainer
+//          @Dependency(\.uuid) var uuid
+//
+//          return AddSongModel(song: try! persistentContainer.insert(Song.self) {
+//            $0.identifier = uuid()
+//            $0.year = 1970
+//            $0.name = "Let it be"
+//          })
+//        }
+//      )
+//    }
   }
 }
 

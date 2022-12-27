@@ -1,4 +1,4 @@
-import AppStorage
+import UserDefaultsDependency
 import Dependencies
 import XCTest
 import DependenciesAdditions

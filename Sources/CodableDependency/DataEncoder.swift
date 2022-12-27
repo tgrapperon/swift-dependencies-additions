@@ -2,21 +2,6 @@ import Dependencies
 import Foundation
 import XCTestDynamicOverlay
 
-// Used as
-// @Dependency(\.encode) var encode
-// @Dependency(\.decode) var decode
-//
-// let point = CGPoint(x: 2, y: 4)
-// let data = try encode(point)
-// let decoded = try decode(CGPoint.self, from: data)
-//
-// DependencyValues.withValues {
-//   $0.encode = .plist(.binary)
-//   $0.decode = .json
-// } operation: {
-//   …
-// }
-
 extension DependencyValues {
   public var encode: DataEncoder {
     get { self[DataEncoder.self] }
