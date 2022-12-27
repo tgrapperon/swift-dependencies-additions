@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E974C274295B837A0027AD74 /* NavigationButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E974C273295B837A0027AD74 /* NavigationButtonStyle.swift */; };
 		E98E74B7295AD4AC0024D761 /* CaseStudies.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E98E74B5295AD4AC0024D761 /* CaseStudies.xcdatamodeld */; };
 		E98E74B9295AD51A0024D761 /* CoreDataStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98E74B8295AD51A0024D761 /* CoreDataStudy.swift */; };
 		E98E74C1295B5B9C0024D761 /* BundleInfoDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74C0295B5B9C0024D761 /* BundleInfoDependency */; };
@@ -44,6 +45,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E974C273295B837A0027AD74 /* NavigationButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationButtonStyle.swift; sourceTree = "<group>"; };
 		E98E74B6295AD4AC0024D761 /* CaseStudies.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CaseStudies.xcdatamodel; sourceTree = "<group>"; };
 		E98E74B8295AD51A0024D761 /* CoreDataStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStudy.swift; sourceTree = "<group>"; };
 		E9C3B93429594A35000263AD /* UserDefaultsStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsStudy.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 				E9DC4C6E2959396E003F0CA8 /* SwiftUIEnvironmentStudy.swift */,
 				E98E74B5295AD4AC0024D761 /* CaseStudies.xcdatamodeld */,
 				E98E74B8295AD51A0024D761 /* CoreDataStudy.swift */,
+				E974C273295B837A0027AD74 /* NavigationButtonStyle.swift */,
 			);
 			path = Studies;
 			sourceTree = "<group>";
@@ -303,6 +306,7 @@
 				E9C3B93529594A35000263AD /* UserDefaultsStudy.swift in Sources */,
 				E9DC4C6D29591D60003F0CA8 /* NotificationsStudy.swift in Sources */,
 				E98E74B7295AD4AC0024D761 /* CaseStudies.xcdatamodeld in Sources */,
+				E974C274295B837A0027AD74 /* NavigationButtonStyle.swift in Sources */,
 				E9C3B9372959607A000263AD /* CompressionStudy.swift in Sources */,
 				E9DC4C462958F9BB003F0CA8 /* CaseStudiesApp.swift in Sources */,
 			);
@@ -478,7 +482,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Case Studies/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = SBRW4V6LW2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -520,7 +524,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Case Studies/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = SBRW4V6LW2;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

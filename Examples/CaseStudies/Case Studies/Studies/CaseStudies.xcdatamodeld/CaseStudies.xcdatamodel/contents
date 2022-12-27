@@ -4,12 +4,12 @@
         <attribute name="identifier" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="songsCount" optional="YES" attributeType="Integer 64" derived="YES" derivationExpression="songs.@count" usesScalarValueType="YES"/>
-        <relationship name="songs" toMany="YES" deletionRule="Nullify" destinationEntity="Song" inverseName="authors" inverseEntity="Song"/>
+        <relationship name="songs" toMany="YES" deletionRule="Nullify" destinationEntity="Song" inverseName="composers" inverseEntity="Song"/>
     </entity>
     <entity name="Song" representedClassName="Song" syncable="YES" codeGenerationType="class">
         <attribute name="identifier" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="year" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="authors" toMany="YES" deletionRule="Nullify" destinationEntity="Composer" inverseName="songs" inverseEntity="Composer"/>
+        <relationship name="composers" toMany="YES" deletionRule="Nullify" destinationEntity="Composer" inverseName="songs" inverseEntity="Composer"/>
     </entity>
 </model>

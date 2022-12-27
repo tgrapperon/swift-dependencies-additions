@@ -71,7 +71,7 @@ struct ContentView: View {
         Button {
           self.model.userDidTapNavigateToCompressionStudyButton()
         } label: {
-          Label("Compression", systemImage: "rectangle.compress.vertical")
+          Label("Codable & Compression", systemImage: "rectangle.compress.vertical")
         }
 
         Button {
@@ -99,6 +99,7 @@ struct ContentView: View {
         }
 
       }
+      .buttonStyle(.navigation)
       .navigationTitle("Case Studies")
       .navigationDestination(
         unwrapping: self.$model.destination,

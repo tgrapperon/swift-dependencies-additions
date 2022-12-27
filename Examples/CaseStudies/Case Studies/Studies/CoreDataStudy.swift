@@ -5,32 +5,72 @@ import SwiftUI
 @MainActor
 final class CoreDataStudy: ObservableObject {
   @Dependency(\.persistentContainer) var persistentContainer
-  @Dependency(\.persistentContainer.fetchRequest) var fetchRequest
 
   @Dependency(\.logger["CoreDataStudy"]) var logger
 
-  @Published var composers: Composer.FetchedResults = .init()
-  @Published var isLoading: Bool = false
-  
-  var observation: Task<Void, Never>?
+  @Published var composers: Composer.FetchedResults = .empty
+  @Published var songsByYear: Song.SectionedFetchedResults<Int64> = .empty
+
+  @Published var isLoadingComposers: Bool = false
+  @Published var isLoadingSongs: Bool = false
+
+  var tasks = Set<Task<Void, Never>>()
   init() {
-    self.observation = Task { [weak self] in
-      guard let self else { return }
-      do {
-        self.isLoading = true
-        for try await composers in self.fetchRequest(
-          of: Composer.self,
-          sortDescriptors: [
-            NSSortDescriptor(keyPath: \Composer.songsCount, ascending: false),
-            NSSortDescriptor(keyPath: \Composer.name, ascending: true),
-          ]
-        ) {
-          self.isLoading = false
-          withAnimation {
-            self.composers = composers
+    // Observe composers
+    tasks.insert(
+      Task { [weak self] in
+        guard let self else { return }
+        do {
+          self.isLoadingComposers = true
+          for try await composers in self.persistentContainer.request(
+            Composer.self,
+            sortDescriptors: [
+              NSSortDescriptor(keyPath: \Composer.songsCount, ascending: false),
+              NSSortDescriptor(keyPath: \Composer.name, ascending: true),
+            ]
+          ) {
+            self.isLoadingComposers = false
+            withAnimation {
+              self.composers = composers
+            }
           }
-        }
-      } catch {}
+        } catch {}
+      }
+    )
+
+    // Observe songs by year
+    tasks.insert(
+      Task { [weak self] in
+        guard let self else { return }
+        do {
+          self.isLoadingSongs = true
+          for try await sectionedSongs in self.persistentContainer.request(
+            Song.self,
+            sortDescriptors: [
+              NSSortDescriptor(keyPath: \Song.year, ascending: true),
+              NSSortDescriptor(keyPath: \Song.name, ascending: true),
+            ],
+            sectionIdentifier: \.year
+          ) {
+            self.isLoadingSongs = false
+            withAnimation {
+              self.songsByYear = sectionedSongs
+            }
+          }
+        } catch {}
+      }
+    )
+  }
+
+  func userDidSwipeDeleteSongRow(song: Fetched<Song>) {
+    do {
+      try song.withManagedObject { song in
+        let context = song.managedObjectContext
+        context?.delete(song)
+        try context?.save()
+      }
+    } catch {
+      logger.error("Failed to delete song: \(error)")
     }
   }
 
@@ -43,20 +83,10 @@ final class CoreDataStudy: ObservableObject {
 //    }
 //  }
 
-//  func userDidSwipeDeletePerson(composer: Composer.Value) {
-//    do {
-//      try composer.withManagedObject { composer in
-//        let context = composer.managedObjectContext
-//        context?.delete(composer)
-//        try context?.save()
-//      }
-//    } catch {
-//      logger.error("Failed to delete person: \(error)")
-//    }
-//  }
-
   deinit {
-    observation?.cancel()
+    for task in tasks {
+      task.cancel()
+    }
   }
 }
 
@@ -65,35 +95,51 @@ struct CoreDataStudyView: View {
   var body: some View {
     List {
       Section {
-//        Button {
-//          model.userDidTapAddNewPersonButton()
-//        } label: {
-//          Text("Add new Composer")
-//        }
+        //        Button {
+        //          model.userDidTapAddNewPersonButton()
+        //        } label: {
+        //          Text("Add new Composer")
+        //        }
       }
       Section {
         ForEach(model.composers) { composer in
           VStack(alignment: .leading) {
-            LabeledContent(composer.name!) {
+            LabeledContent(composer.name ?? "") {
               Text("^[\(composer.songsCount) \("song")](inflect: true)")
             }
           }
-//          .swipeActions {
-//            Button(role: .destructive) {
-//              model.userDidSwipeDeletePerson(composer: composer)
-//            } label: {
-//              Label("Delete", systemImage: "trash")
-//            }
-//
-//          }
         }
       } header: {
-        if model.isLoading {
+        if model.isLoadingComposers {
           ProgressView()
         } else {
           Text("^[\(model.composers.count) \("composer")](inflect: true)")
         }
       }
+      
+      ForEach(model.songsByYear) { songsByYear in
+        Section {
+
+          ForEach(songsByYear) { song in
+            VStack(alignment: .leading) {
+              Text(song.name ?? "")
+              Text(song.composersString)
+                .foregroundStyle(.secondary)
+                .font(.callout)
+            }
+            .swipeActions {
+              Button(role: .destructive) {
+                model.userDidSwipeDeleteSongRow(song: song)
+              } label: {
+                Label("Delete", systemImage: "trash")
+              }
+            }
+          }
+        } header: {
+          Text("^[\(songsByYear.count) \("song")](inflect: true) from \(songsByYear.id.formatted(.number.grouping(.never)))")
+        }
+      }
+
     }.headerProminence(.increased)
       .navigationTitle("Core Data Study")
   }
@@ -125,7 +171,7 @@ struct CoreDataStudyView_Previews: PreviewProvider {
 extension PersistentContainer {
   @MainActor
   func withInitialData() -> Self {
-    self.with { context in
+    with { context in
       @Dependency(\.uuid) var uuid
 
       func song(_ name: String, year: Int64) -> Song {
@@ -175,5 +221,14 @@ extension PersistentContainer {
       // We need to save so the derived `songsCount` relation is updated
       try! context.save()
     }
+  }
+}
+
+extension Song {
+  var composersString: String {
+    (composers as! Set<Composer>)
+      .map(\.name!)
+      .sorted()
+      .formatted(.list(type: .and))
   }
 }

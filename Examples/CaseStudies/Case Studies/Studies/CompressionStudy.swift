@@ -1,5 +1,5 @@
-import CompressionDependency
 import CodableDependency
+import CompressionDependency
 import LoggerDependency
 import SwiftUI
 
@@ -13,6 +13,8 @@ final class CompressionStudy: ObservableObject {
   @Published var source: String
   @Published var processedTextJSON: String = ""
   @Published var decompressed: String = ""
+
+  @Published var compressionRatio: Double = 1
 
   @Dependency(\.compress) var compress
   @Dependency(\.decompress) var decompress
@@ -28,23 +30,23 @@ final class CompressionStudy: ObservableObject {
     self.observation = Task {
       do {
         for await text in self.$source.values {
-          let data = text.data(using: .utf8)!
 
+          let data = text.data(using: .utf8)!
           let compressed = try await compress(data)
 
-          let processedText = ProcessedText(
-            text: text,
-            data: compressed
-          )
+          if data.count * compressed.count == 0 {
+            self.compressionRatio = 1
+          } else {
+            self.compressionRatio = Double(compressed.count) / Double(data.count)
+          }
+
+          let processedText = ProcessedText(text: text, data: compressed)
 
           let jsonData = try encode(processedText)
-
           self.processedTextJSON = String(decoding: jsonData, as: UTF8.self)
 
           let decoded = try decode(ProcessedText.self, from: jsonData)
-
           let decompressedData = try await decompress(decoded.data)
-
           self.decompressed = String(decoding: decompressedData, as: UTF8.self)
 
         }
@@ -70,6 +72,17 @@ struct CompressionStudyView: View {
           .frame(minHeight: 55)
       } header: {
         Text("Text")
+      } footer: {
+        Gauge(value: max(1 - model.compressionRatio, 0), in: 0...1) {
+          Text("Compression Ratio")
+        } currentValueLabel: {
+          Text(model.compressionRatio.formatted(.percent.precision(.fractionLength(0))))
+            .monospacedDigit()
+            .animation(.none, value: model.compressionRatio)
+            .transition(.identity)
+        }
+        .animation(.default, value: model.compressionRatio)
+        .listRowBackground(Color.clear)
       }
 
       Section {
@@ -78,6 +91,7 @@ struct CompressionStudyView: View {
           .foregroundStyle(.secondary)
           .monospaced(true)
           .font(.callout)
+
       } header: {
         Text("Processed text in JSON")
       }
@@ -93,7 +107,7 @@ struct CompressionStudyView: View {
     }
     .headerProminence(.increased)
     .listStyle(.grouped)
-    .navigationTitle("Compression")
+    .navigationTitle("Codable & Compression")
   }
 }
 

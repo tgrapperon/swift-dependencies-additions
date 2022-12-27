@@ -11,7 +11,7 @@ public enum ScheduledTaskType {
 extension NSFetchRequestResult where Self: NSManagedObject {
   public typealias Fetched = CoreDataDependency.Fetched<Self>
   public typealias FetchedResults = PersistentContainer.FetchRequest.Results<Self>
-  public typealias SectionedFetchedResults = PersistentContainer.FetchRequest.Results<Self>
+  public typealias SectionedFetchedResults<SectionIdentifier: Hashable> = PersistentContainer.FetchRequest.SectionedResults<SectionIdentifier, Self>
 }
 
 @dynamicMemberLookup
@@ -116,7 +116,7 @@ extension PersistentContainer {
 extension PersistentContainer.FetchRequest {
   @MainActor
   public func callAsFunction<ManagedObject: NSManagedObject>(
-    of: ManagedObject.Type,
+    _ type: ManagedObject.Type,
     predicate: NSPredicate? = nil,
     sortDescriptors: [NSSortDescriptor] = [],
     context: NSManagedObjectContext? = nil
@@ -140,7 +140,7 @@ extension PersistentContainer.FetchRequest {
 
   @MainActor
   public func callAsFunction<SectionIdentifier: Hashable, ManagedObject: NSManagedObject>(
-    of: ManagedObject.Type,
+    _ type: ManagedObject.Type,
     predicate: NSPredicate? = nil,
     sortDescriptors: [NSSortDescriptor] = [],
     sectionIdentifier: KeyPath<ManagedObject, SectionIdentifier>,
@@ -186,11 +186,11 @@ extension PersistentContainer.FetchRequest {
 
     let sections: [Section]
 
-    public init() {
-      self.sections = []
-    }
-    init(sections: [Section]) {
+    init(sections: [Section] = []) {
       self.sections = sections
+    }
+    public static var empty: Self {
+      .init()
     }
   }
 }
@@ -198,11 +198,11 @@ extension PersistentContainer.FetchRequest {
 extension PersistentContainer.FetchRequest {
   public struct Results<ManagedObject: NSManagedObject>: Hashable, Sendable {
     let fetchedObjects: [Fetched<ManagedObject>]
-    public init() {
-      self.fetchedObjects = []
-    }
-    init(fetchedObjects: [Fetched<ManagedObject>]) {
+    init(fetchedObjects: [Fetched<ManagedObject>] = []) {
       self.fetchedObjects = fetchedObjects
+    }
+    public static var empty: Self {
+      .init()
     }
   }
 }

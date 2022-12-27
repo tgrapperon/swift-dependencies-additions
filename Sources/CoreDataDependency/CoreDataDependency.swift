@@ -24,7 +24,7 @@ extension PersistentContainer: DependencyKey {
 }
 
 extension PersistentContainer {
-  public var fetchRequest: FetchRequest {
+  public var request: FetchRequest {
     .init(persistentContainer: self)
   }
 }
