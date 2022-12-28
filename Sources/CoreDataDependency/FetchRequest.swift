@@ -4,10 +4,7 @@ import DependenciesAdditions
 import Foundation
 import Dependencies
 
-public enum ScheduledTaskType {
-  case immediate
-  case enqueued
-}
+
 
 extension NSFetchRequestResult where Self: NSManagedObject {
   public typealias Fetched = CoreDataDependency.Fetched<Self>
@@ -46,7 +43,7 @@ extension PersistentContainer {
     return Fetched<ManagedObject>(
       id: object.objectID,
       context: context,
-      viewContext: self._viewContext().wrappedValue
+      viewContext: self._viewContext()
     )
   }
 }
@@ -99,6 +96,11 @@ extension Fetched {
       }
     }
   }
+}
+
+public enum ScheduledTaskType {
+  case immediate
+  case enqueued
 }
 
 extension Fetched {

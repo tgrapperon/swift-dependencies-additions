@@ -51,71 +51,69 @@ extension PersistentContainer {
 }
 
 public struct PersistentContainer: Sendable {
-  public enum ScheduledTaskType {
-    case immediate
-    case scheduled
-  }
-
   @_spi(Internals)
-  public let _viewContext: @Sendable () -> UncheckedSendable<NSManagedObjectContext>
-  let _newChildViewContext: @Sendable () -> UncheckedSendable<NSManagedObjectContext>
-  let _newBackgroundContext: @Sendable () -> UncheckedSendable<NSManagedObjectContext>
-  //  let lock = NSRecursiveLock()
-
+  public let _viewContext: @Sendable () -> NSManagedObjectContext
+  private let _newChildViewContext: @Sendable () -> NSManagedObjectContext
+  private let _newBackgroundContext: @Sendable () -> NSManagedObjectContext
+  
   public init(_ persistentContainer: NSPersistentContainer) {
     let persistentContainer = UncheckedSendable(persistentContainer)
-    self._viewContext = { .init(persistentContainer.viewContext) }
-    self._newBackgroundContext = { .init(persistentContainer.wrappedValue.newBackgroundContext()) }
+    self._viewContext = { persistentContainer.viewContext }
+    self._newBackgroundContext = {
+      persistentContainer.wrappedValue.newBackgroundContext()
+    }
     self._newChildViewContext = {
       let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
       context.parent = persistentContainer.viewContext
-      return .init(context)
+      return context
     }
   }
-
+  
   public init(
     viewContext: @escaping @Sendable () -> NSManagedObjectContext,
     newChildViewContext: @escaping @Sendable () -> NSManagedObjectContext,
     newBackgroundContext: @escaping @Sendable () -> NSManagedObjectContext
   ) {
-    self._viewContext = { .init(viewContext()) }
-    self._newChildViewContext = { .init(newChildViewContext()) }
-    self._newBackgroundContext = { .init(newBackgroundContext()) }
+    self._viewContext = { viewContext() }
+    self._newChildViewContext = { newChildViewContext() }
+    self._newBackgroundContext = { newBackgroundContext() }
   }
-
+  
   @MainActor
   public var viewContext: NSManagedObjectContext {
-    self._viewContext().wrappedValue
+    self._viewContext()
   }
-
+  
   public func newBackgroundContext() -> NSManagedObjectContext {
-    self._newBackgroundContext().wrappedValue
+    self._newBackgroundContext()
   }
-
+  
   public func newChildViewContext() -> NSManagedObjectContext {
-    self._newChildViewContext().wrappedValue
+    self._newChildViewContext()
   }
-
+}
+  
+extension PersistentContainer {
   @MainActor
   public func withViewContext<R: Sendable>(
     perform: @MainActor @escaping (NSManagedObjectContext) throws -> R
   ) rethrows -> R {
     try perform(self.viewContext)
   }
-
+    
   @MainActor
   public func withNewChildViewContext<R: Sendable>(
     perform: @MainActor @escaping (NSManagedObjectContext) throws -> R
   ) rethrows -> R {
     try perform(self.newChildViewContext())
   }
-
+    
   public func withNewBackgroundContext<R: Sendable>(
     perform: @escaping (NSManagedObjectContext) throws -> R
   ) async throws -> R {
     try await self.withContext(self.newBackgroundContext(), perform: perform)
   }
-
+    
   // Rethrows diagnostic doesn't work well, so we explicitly provide an overload for non-throwing
   // closures.
   public func withNewBackgroundContext<R: Sendable>(
@@ -123,8 +121,8 @@ public struct PersistentContainer: Sendable {
   ) async -> R {
     try! await self.withContext(self.newBackgroundContext(), perform: perform)
   }
-
-  func withContext<R: Sendable>(
+    
+  private func withContext<R: Sendable>(
     _ context: NSManagedObjectContext,
     perform: @escaping (NSManagedObjectContext) throws -> R
   ) async throws -> R {
@@ -138,7 +136,18 @@ public struct PersistentContainer: Sendable {
       }
     }
   }
-
+}
+  
+extension PersistentContainer {
+  /// Performs an synchronous operation on the `MainActor` context and then returns itself.
+  /// - Parameter operation: A operation to perform on the persistent container's `viewContext` that
+  /// is provided as argument.
+  ///
+  /// This method can be useful to setup a persistent container for `SwiftUI` previews for example.
+  /// If you need to perform business logic operations on the `viewContext`, you should preferably
+  ///  use ``PersistentContainer/withViewContext(perform:)`` instead.
+  ///
+  /// - Returns: The ``PersistentContainer``
   @MainActor
   public func with(
     operation: @escaping @MainActor(NSManagedObjectContext) throws -> Void
@@ -146,10 +155,20 @@ public struct PersistentContainer: Sendable {
     try self.withViewContext(perform: operation)
     return self
   }
-
+  
+  /// Schedules an operation to be executed on a background context.
+  ///
+  /// This method can be useful to perform maintenance tasks at launch.
+  ///
+  /// This method returns immediately.
+  /// - Parameters:
+  ///   - operation: An operation to execute on the background context provided as argument.
+  ///   - onFailureHandler: A function to handle errors thrown in `operation`.
+  /// - Returns: The ``PersistentContainer`` value, with the operation scheduled on a background
+  /// context.
   public func setUp(
     operation: @escaping (NSManagedObjectContext) throws -> Void,
-    catch onFailure: @escaping (NSManagedObjectContext, Error) -> Void = { _, _ in () }
+    catch onFailureHandler: @escaping (NSManagedObjectContext, Error) -> Void = { _, _ in () }
   ) -> Self {
     let context = self.newBackgroundContext()
     context.perform {
@@ -159,7 +178,7 @@ public struct PersistentContainer: Sendable {
           try context.save()
         }
       } catch {
-        onFailure(context, error)
+        onFailureHandler(context, error)
       }
     }
     return self
