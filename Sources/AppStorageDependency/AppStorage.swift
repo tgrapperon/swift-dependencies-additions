@@ -1,4 +1,5 @@
 @_exported import Dependencies
+import UserDefaultsDependency
 import Foundation
 import XCTestDynamicOverlay
 

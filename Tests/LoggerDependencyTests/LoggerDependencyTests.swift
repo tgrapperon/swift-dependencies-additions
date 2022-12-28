@@ -15,7 +15,8 @@ final class LoggerDependencyTests: XCTestCase {
   }
 
   func testLoggerCategory() {
-    @Dependency(\.logger["Logger.Dependency.Testing"]) var logger
+    @Dependency(\.logger["Logger.Dependency.Testing"]) var logger;
+    
     logger.log(level: .info, "This is a test info message in some logger category")
   }
 }

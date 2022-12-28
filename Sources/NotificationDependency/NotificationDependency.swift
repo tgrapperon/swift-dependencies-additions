@@ -1,6 +1,6 @@
 @_exported import Dependencies
 import Foundation
-import DependenciesAdditions
+@_spi(Internal) import DependenciesAdditions
 
 extension DependencyValues {
   public var notifications: any NotificationCenterProtocol {

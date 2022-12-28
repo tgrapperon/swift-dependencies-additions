@@ -18,6 +18,12 @@ let package = Package(
 
 /// Temporary helpers
 define("DependenciesAdditions")
+define(
+  "AppStorageDependency",
+  dependencies: "UserDefaultsDependency",
+  testingDependencies: "DependenciesAdditions"
+)
+
 define("BundleInfoDependency")
 define("PersistentContainerDependency")
 define("CoreDataDependency", dependencies: "DependenciesAdditions", "PersistentContainerDependency")
@@ -28,7 +34,7 @@ define("CompressionDependency")
 //define("KeyChainDependency")
 define("ProcessInfoDependency")
 define("NotificationDependency", dependencies: "DependenciesAdditions")
-define("UserDefaultsDependency", testingDependencies: "DependenciesAdditions")
+define("UserDefaultsDependency")
 define("SwiftUIDependency", testingDependencies: "DependenciesAdditions")
 
 func define(_ target: String, dependencies: String..., testingDependencies: String...) {

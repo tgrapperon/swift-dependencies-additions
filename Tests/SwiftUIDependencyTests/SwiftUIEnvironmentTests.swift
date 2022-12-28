@@ -1,8 +1,9 @@
 import Dependencies
-import DependenciesAdditions
+@_spi(Internal) import DependenciesAdditions
 import SwiftUI
-@testable import SwiftUIEnvironment
 import XCTest
+
+@testable import SwiftUIDependency
 
 enum TestEnvironmentKey: EnvironmentKey {
   static var defaultValue: Int { 0 }
@@ -47,4 +48,3 @@ final class SwiftUIEnvironmentTests: XCTestCase {
     }
   }
 }
-

@@ -1,5 +1,6 @@
 import Dependencies
 import Foundation
+@_spi(Internals) import UserDefaultsDependency
 
 // TODO: Relocate out of Foundation namespaces?
 

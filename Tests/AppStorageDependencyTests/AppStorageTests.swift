@@ -1,7 +1,7 @@
-import UserDefaultsDependency
 import Dependencies
+@_spi(Internal) import DependenciesAdditions
+import UserDefaultsDependency
 import XCTest
-import DependenciesAdditions
 
 final class AppStorageTests: XCTestCase {
   func testAppStorage() {
@@ -140,4 +140,3 @@ final class AppStorageTests: XCTestCase {
     }
   }
 }
-

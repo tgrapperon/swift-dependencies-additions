@@ -1,5 +1,5 @@
 import NotificationDependency
-import DependenciesAdditions
+@_spi(Internal) import DependenciesAdditions
 import XCTest
 
 let notificationName = Notification.Name("SomeNotificationName")
