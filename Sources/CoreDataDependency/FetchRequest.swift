@@ -1,7 +1,8 @@
 @preconcurrency import CoreData
-@_spi(Internals) import PersistentContainerDependency
+@_spi(Internals) @_exported import PersistentContainerDependency
 import DependenciesAdditions
 import Foundation
+
 
 public enum ScheduledTaskType {
   case immediate

@@ -1,4 +1,4 @@
-import PersistentContainerDependency
+@_exported import PersistentContainerDependency
 
 extension PersistentContainer {
   public var request: FetchRequest {
@@ -17,5 +17,4 @@ extension PersistentContainer {
     try context.obtainPermanentIDs(for: [object])
     return Fetched(id: object.objectID, context: context, viewContext: context)
   }
-
 }

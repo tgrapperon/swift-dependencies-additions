@@ -1,5 +1,5 @@
 @_exported import Dependencies
-import UserDefaultsDependency
+@_spi(Internals) import UserDefaultsDependency
 import Foundation
 import XCTestDynamicOverlay
 

@@ -46,7 +46,8 @@ extension UserDefaults {
     /// the value is removed or if no value exists for the given key.
     /// - Parameter key: The key that references this user preference.
     /// - Returns: An `AsyncSequence` of `T?` values, including the initial value.
-    func values<T>(forKey key: String) -> AsyncMapSequence<AsyncStream<(any Sendable)?>, T?> {
+    @_spi(Internals)
+    public func values<T>(forKey key: String) -> AsyncMapSequence<AsyncStream<(any Sendable)?>, T?> {
       self._values(key, T.self).map { $0 as? T }
     }
   }

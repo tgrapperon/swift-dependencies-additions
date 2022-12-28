@@ -1,5 +1,6 @@
 #if canImport(OSLog)
-  import Dependencies
+  @_exported import Dependencies
+
   import BundleInfoDependency
   // Because of safety reasons, the compiler prevents to pass non-literal `OSLogMessage`s to a
   // `Logger` value. This prevents to create a `Sendable` wrapper. This value is however very likely

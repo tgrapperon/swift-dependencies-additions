@@ -1,4 +1,4 @@
-import UserDefaultsDependency
+import AppStorageDependency
 import Combine
 import Dependencies
 import SwiftUI
@@ -17,7 +17,7 @@ final class UserDefaultsStudy: ObservableObject {
   @Published var observedStringValue: String?
 
   private var cancellables = Set<AnyCancellable>()
-  private var tasks = [Task<Void, Never>]()
+  private var tasks = Set<Task<Void, Never>>()
 
   init() {
     // Load the stored values
@@ -42,7 +42,7 @@ final class UserDefaultsStudy: ObservableObject {
       }
       .store(in: &self.cancellables)
 
-    self.tasks.append(
+    self.tasks.insert(
       Task { [weak self] in
         guard let self else { return }
         for await newValue in self.$number.values() {
@@ -51,7 +51,7 @@ final class UserDefaultsStudy: ObservableObject {
       }
     )
 
-    self.tasks.append(
+    self.tasks.insert(
       Task { [weak self] in
         guard let self else { return }
         for await newValue in self.$string.values() {

@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		E974C274295B837A0027AD74 /* NavigationButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E974C273295B837A0027AD74 /* NavigationButtonStyle.swift */; };
+		E974C276295BE6050027AD74 /* AppStorageDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E974C275295BE6050027AD74 /* AppStorageDependency */; };
+		E974C278295BE6050027AD74 /* PersistentContainerDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E974C277295BE6050027AD74 /* PersistentContainerDependency */; };
 		E98E74B7295AD4AC0024D761 /* CaseStudies.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E98E74B5295AD4AC0024D761 /* CaseStudies.xcdatamodeld */; };
 		E98E74B9295AD51A0024D761 /* CoreDataStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98E74B8295AD51A0024D761 /* CoreDataStudy.swift */; };
 		E98E74C1295B5B9C0024D761 /* BundleInfoDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74C0295B5B9C0024D761 /* BundleInfoDependency */; };
@@ -82,10 +84,12 @@
 				E98E74D6295B5C070024D761 /* SwiftUINavigation in Frameworks */,
 				E98E74C3295B5B9C0024D761 /* CodableDependency in Frameworks */,
 				E98E74CD295B5B9C0024D761 /* NotificationDependency in Frameworks */,
+				E974C276295BE6050027AD74 /* AppStorageDependency in Frameworks */,
 				E98E74C9295B5B9C0024D761 /* DependenciesAdditions in Frameworks */,
 				E98E74CF295B5B9C0024D761 /* ProcessInfoDependency in Frameworks */,
 				E98E74D3295B5B9C0024D761 /* UserDefaultsDependency in Frameworks */,
 				E98E74D1295B5B9C0024D761 /* SwiftUIDependency in Frameworks */,
+				E974C278295BE6050027AD74 /* PersistentContainerDependency in Frameworks */,
 				E98E74C5295B5B9C0024D761 /* CompressionDependency in Frameworks */,
 				E98E74C1295B5B9C0024D761 /* BundleInfoDependency in Frameworks */,
 			);
@@ -220,6 +224,8 @@
 				E98E74D0295B5B9C0024D761 /* SwiftUIDependency */,
 				E98E74D2295B5B9C0024D761 /* UserDefaultsDependency */,
 				E98E74D5295B5C070024D761 /* SwiftUINavigation */,
+				E974C275295BE6050027AD74 /* AppStorageDependency */,
+				E974C277295BE6050027AD74 /* PersistentContainerDependency */,
 			);
 			productName = "Dependencies Additions Case Studies";
 			productReference = E9DC4C422958F9BB003F0CA8 /* CaseStudies.app */;
@@ -599,6 +605,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E974C275295BE6050027AD74 /* AppStorageDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AppStorageDependency;
+		};
+		E974C277295BE6050027AD74 /* PersistentContainerDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PersistentContainerDependency;
+		};
 		E98E74C0295B5B9C0024D761 /* BundleInfoDependency */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BundleInfoDependency;
