@@ -58,13 +58,29 @@ public struct PersistentContainer: Sendable {
 
   @_spi(Internals)
   public let _viewContext: @Sendable () -> UncheckedSendable<NSManagedObjectContext>
+  let _newChildViewContext: @Sendable () -> UncheckedSendable<NSManagedObjectContext>
   let _newBackgroundContext: @Sendable () -> UncheckedSendable<NSManagedObjectContext>
   //  let lock = NSRecursiveLock()
 
-  init(_ persistentContainer: NSPersistentContainer) {
+  public init(_ persistentContainer: NSPersistentContainer) {
     let persistentContainer = UncheckedSendable(persistentContainer)
     self._viewContext = { .init(persistentContainer.viewContext) }
     self._newBackgroundContext = { .init(persistentContainer.wrappedValue.newBackgroundContext()) }
+    self._newChildViewContext = {
+      let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+      context.parent = persistentContainer.viewContext
+      return .init(context)
+    }
+  }
+
+  public init(
+    viewContext: @escaping @Sendable () -> NSManagedObjectContext,
+    newChildViewContext: @escaping @Sendable () -> NSManagedObjectContext,
+    newBackgroundContext: @escaping @Sendable () -> NSManagedObjectContext
+  ) {
+    self._viewContext = { .init(viewContext()) }
+    self._newChildViewContext = { .init(newChildViewContext()) }
+    self._newBackgroundContext = { .init(newBackgroundContext()) }
   }
 
   @MainActor
@@ -76,12 +92,22 @@ public struct PersistentContainer: Sendable {
     self._newBackgroundContext().wrappedValue
   }
 
-  // TODO: Check if we can improve with inheritsActorContext
+  public func newChildViewContext() -> NSManagedObjectContext {
+    self._newChildViewContext().wrappedValue
+  }
+
   @MainActor
   public func withViewContext<R: Sendable>(
     perform: @MainActor @escaping (NSManagedObjectContext) throws -> R
   ) rethrows -> R {
     try perform(self.viewContext)
+  }
+
+  @MainActor
+  public func withNewChildViewContext<R: Sendable>(
+    perform: @MainActor @escaping (NSManagedObjectContext) throws -> R
+  ) rethrows -> R {
+    try perform(self.newChildViewContext())
   }
 
   public func withNewBackgroundContext<R: Sendable>(

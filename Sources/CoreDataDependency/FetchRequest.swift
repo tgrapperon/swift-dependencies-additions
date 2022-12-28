@@ -53,9 +53,10 @@ extension PersistentContainer {
 
 @dynamicMemberLookup
 public struct Fetched<ManagedObject: NSManagedObject>: Identifiable, Sendable, Hashable {
-
   public let id: NSManagedObjectID
-  public let context: NSManagedObjectContext
+  // This can be approximatively retrieved by users using `managedObjectContext`'s from dynamic
+  // lookup.
+  let context: NSManagedObjectContext
   public let viewContext: NSManagedObjectContext
 
   var object: ManagedObject { self.context.object(with: self.id) as! ManagedObject }
@@ -154,6 +155,66 @@ extension Fetched {
           continuation.resume(
             with: .init {
               try perform(self.object)
+            }
+          )
+        }
+      }
+    }
+  }
+  
+  @discardableResult
+  public func withManagedObjectContext<T>(perform: (NSManagedObjectContext) -> T) -> T {
+    var result: Swift.Result<T, Never>?
+    self.context.performAndWait {
+      result = .success(perform(self.context))
+    }
+    switch result! {
+    case let .success(value):
+      return value
+    }
+  }
+
+  @discardableResult
+  public func withManagedObjectContext<T>(perform: (NSManagedObjectContext) throws -> T) throws -> T {
+    var result: Swift.Result<T, Error>?
+    self.context.performAndWait {
+      result = .init(catching: { try perform(self.context) })
+    }
+    return try result!.get()
+  }
+
+  @discardableResult
+  public func withManagedObjectContext<T>(
+    schedule: ScheduledTaskType = .immediate, perform: @escaping (NSManagedObjectContext) -> T
+  ) async -> T {
+    return await withCheckedContinuation { continuation in
+      switch schedule {
+      case .immediate:
+        continuation.resume(returning: self.withManagedObjectContext(perform: perform))
+      case .enqueued:
+        self.context.perform {
+          continuation.resume(returning: perform(self.context))
+        }
+      }
+    }
+  }
+
+  @discardableResult
+  public func withManagedObjectContext<T>(
+    schedule: ScheduledTaskType = .immediate, perform: @escaping (NSManagedObjectContext) throws -> T
+  ) async throws -> T {
+    return try await withCheckedThrowingContinuation { continuation in
+      switch schedule {
+      case .immediate:
+        continuation.resume(
+          with: .init {
+            try self.withManagedObjectContext(perform: perform)
+          })
+      case .enqueued:
+        self.context.perform {
+          continuation.resume(
+            with: .init {
+              try perform(self.context)
             }
           )
         }

@@ -17,4 +17,15 @@ extension PersistentContainer {
     try context.obtainPermanentIDs(for: [object])
     return Fetched(id: object.objectID, context: context, viewContext: context)
   }
+  
+  @_disfavoredOverload
+  @MainActor
+  public func withNewChildViewContext<ManagedObject>(
+    perform: @MainActor @escaping (NSManagedObjectContext) throws -> ManagedObject
+  ) throws -> Fetched<ManagedObject> {
+    let context = self.newChildViewContext()
+    let object = try perform(context)
+    try context.obtainPermanentIDs(for: [object])
+    return Fetched(id: object.objectID, context: context, viewContext: context)
+  }
 }

@@ -2,7 +2,7 @@ import CoreDataDependency
 import Dependencies
 import SwiftUI
 import SwiftUINavigation
-
+import SwiftUIDependency
 @MainActor
 final class CoreDataStudy: ObservableObject {
   enum Destination {
@@ -12,7 +12,7 @@ final class CoreDataStudy: ObservableObject {
   @Dependency(\.persistentContainer) var persistentContainer
   @Dependency(\.logger["CoreDataStudy"]) var logger
   @Dependency(\.uuid) var uuid
-
+  
   @Published var composers: Composer.FetchedResults = .empty
   @Published var songsByYear: Song.SectionedFetchedResults<Int64> = .empty
 
@@ -93,9 +93,13 @@ final class CoreDataStudy: ObservableObject {
   func userDidTapAddNewSongButton() {
     do {
       destination = try DependencyValues.withValues(from: self) {
+        // We create a temporary `ViewContext` so:
+        // - We can drive the API with it
+        // - We can simply throw it away if the user doesn't effectively
+        // save the new song.
         Destination.addSong(
           .init(
-            song: try persistentContainer.withViewContext { context in
+            song: try persistentContainer.withNewChildViewContext { context in
               let song = Song(context: context)
               song.identifier = self.uuid()
               song.name = "Let It Be"
@@ -119,7 +123,6 @@ final class CoreDataStudy: ObservableObject {
 
 struct CoreDataStudyView: View {
   @ObservedObject var model: CoreDataStudy
-  #warning("Do better onDismiss")
   var body: some View {
     List {
       Section {
@@ -171,29 +174,10 @@ struct CoreDataStudyView: View {
     }
     .sheet(
       unwrapping: $model.destination,
-      case: /CoreDataStudy.Destination.addSong,
-      onDismiss: {
-        model.persistentContainer.withViewContext {
-          $0.reset()
-        }
-      }
-    ) { $songModel in
+      case: /CoreDataStudy.Destination.addSong
+    ) { $model in
       NavigationStack {
-        AddSongView(model: songModel)
-          .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-              Button("Done") {
-                songModel.userDidTapDone()
-                model.destination = nil
-              }
-            }
-            ToolbarItem(placement: .cancellationAction) {
-              Button("Cancel") {
-                songModel.userDidTapCancel()
-                model.destination = nil
-              }
-            }
-          }
+        AddSongView(model: model)
       }
     }
     .headerProminence(.increased)
@@ -205,26 +189,31 @@ struct CoreDataStudyView: View {
 final class AddSongModel: ObservableObject {
   @Dependency(\.persistentContainer) var persistentContainer
   @Dependency(\.logger["CoreDataStudy"]) var logger
+  @Dependency(\.environment.dismiss) var dismiss
 
   @Published var song: Fetched<Song>
-
+  private var isDismissalInteractive: Bool = false
+  
   init(song: Fetched<Song>) {
     self.song = song
   }
 
   func userDidTapDone() {
-    persistentContainer.withViewContext {
-      do {
-        try $0.save()
-      } catch {
-        self.logger.error("Failed to save ")
-      }
-    }
+    saveSong()
+    dismiss?()
   }
 
   func userDidTapCancel() {
-    persistentContainer.withViewContext { context in
-      context.delete(context.object(with: self.song.id))
+    dismiss?()
+  }
+  
+  func saveSong() {
+    do {
+      try song.withManagedObjectContext {
+        try $0.save()
+      }
+    } catch {
+      self.logger.error("Failed to save")
     }
   }
 }
@@ -239,7 +228,20 @@ struct AddSongView: View {
         LabeledContent("Year", value: "\(model.song.year)")
       }
     }
+    .toolbar {
+      ToolbarItem(placement: .confirmationAction) {
+        Button("Done") {
+          self.model.userDidTapDone()
+        }
+      }
+      ToolbarItem(placement: .cancellationAction) {
+        Button("Cancel") {
+          self.model.userDidTapCancel()
+        }
+      }
+    }
     .navigationTitle("Add Song")
+    .observeEnvironmentAsDependency(\.dismiss)
   }
 }
 
@@ -359,3 +361,4 @@ extension Song {
       .formatted(.list(type: .and))
   }
 }
+
