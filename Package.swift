@@ -19,7 +19,8 @@ let package = Package(
 /// Temporary helpers
 define("DependenciesAdditions")
 define("BundleInfoDependency")
-define("CoreDataDependency", dependencies: "DependenciesAdditions")
+define("PersistentContainerDependency")
+define("CoreDataDependency", dependencies: "DependenciesAdditions", "PersistentContainerDependency")
 define("CodableDependency")
 define("LoggerDependency", dependencies: "BundleInfoDependency")
 define("CompressionDependency")
