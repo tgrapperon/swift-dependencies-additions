@@ -2,7 +2,7 @@
 @_spi(Internals) @_exported import PersistentContainerDependency
 import DependenciesAdditions
 import Foundation
-
+import Dependencies
 
 public enum ScheduledTaskType {
   case immediate

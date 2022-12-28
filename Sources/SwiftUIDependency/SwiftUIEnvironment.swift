@@ -1,5 +1,5 @@
 import Combine
-@_exported import Dependencies
+import Dependencies
 import Foundation
 import SwiftUI
 

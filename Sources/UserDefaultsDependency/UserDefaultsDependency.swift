@@ -1,4 +1,4 @@
-@_exported import Dependencies
+import Dependencies
 import Foundation
 
 extension DependencyValues {

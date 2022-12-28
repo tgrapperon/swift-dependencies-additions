@@ -1,4 +1,4 @@
-@_exported import Dependencies
+import Dependencies
 import Security
 
 // Allows DependencyValues.withValue(\.withRandomNumberGenerator, .init(.secure)) { … }

@@ -1,5 +1,5 @@
 import Compression
-@_exported import Dependencies
+import Dependencies
 import Foundation
 
 extension DependencyValues {

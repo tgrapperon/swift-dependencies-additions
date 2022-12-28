@@ -1,5 +1,6 @@
 import CodableDependency
 import CompressionDependency
+import Dependencies
 import LoggerDependency
 import SwiftUI
 
@@ -106,8 +107,9 @@ struct CompressionStudyView: View {
       }.disabled(true)
     }
     .headerProminence(.increased)
+
     #if os(iOS)
-    .listStyle(.grouped)
+      .listStyle(.grouped)
     #endif
     .navigationTitle("Codable & Compression")
   }

@@ -1,5 +1,5 @@
 @_exported import CoreData
-@_exported import Dependencies
+import Dependencies
 
 extension DependencyValues {
   public var persistentContainer: PersistentContainer {

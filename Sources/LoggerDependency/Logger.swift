@@ -1,5 +1,5 @@
 #if canImport(OSLog)
-  @_exported import Dependencies
+  import Dependencies
 
   import BundleInfoDependency
   // Because of safety reasons, the compiler prevents to pass non-literal `OSLogMessage`s to a

@@ -1,4 +1,4 @@
-@_exported import Dependencies
+import Dependencies
 
 extension RandomNumberGenerator where Self == SystemRandomNumberGenerator {
   /// The system random number generator.

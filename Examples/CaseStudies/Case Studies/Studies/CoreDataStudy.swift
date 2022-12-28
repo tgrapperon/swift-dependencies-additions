@@ -90,8 +90,6 @@ final class CoreDataStudy: ObservableObject {
     }
   }
 
-  #warning("Fix crash in Previews")
-  @Published var error: Error?
   func userDidTapAddNewSongButton() {
     do {
       destination = try DependencyValues.withValues(from: self) {
@@ -108,7 +106,7 @@ final class CoreDataStudy: ObservableObject {
         )
       }
     } catch {
-      self.error = error
+      logger.error("Failed to insert a new song: \(error)")
     }
   }
 
@@ -124,9 +122,6 @@ struct CoreDataStudyView: View {
   #warning("Do better onDismiss")
   var body: some View {
     List {
-      if let error = model.error {
-        Text(String(describing: error))
-      }
       Section {
         ForEach(model.composers) { composer in
           VStack(alignment: .leading) {
