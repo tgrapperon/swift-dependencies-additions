@@ -96,20 +96,20 @@ public struct PersistentContainer: Sendable {
 extension PersistentContainer {
   @MainActor
   public func withViewContext<R: Sendable>(
-    perform: @MainActor @escaping (NSManagedObjectContext) throws -> R
+    perform: @MainActor (NSManagedObjectContext) throws -> R
   ) rethrows -> R {
     try perform(self.viewContext)
   }
     
   @MainActor
   public func withNewChildViewContext<R: Sendable>(
-    perform: @MainActor @escaping (NSManagedObjectContext) throws -> R
+    perform: @MainActor (NSManagedObjectContext) throws -> R
   ) rethrows -> R {
     try perform(self.newChildViewContext())
   }
     
   public func withNewBackgroundContext<R: Sendable>(
-    perform: @escaping (NSManagedObjectContext) throws -> R
+    perform: (NSManagedObjectContext) throws -> R
   ) async throws -> R {
     try await self.withContext(self.newBackgroundContext(), perform: perform)
   }
@@ -117,16 +117,16 @@ extension PersistentContainer {
   // Rethrows diagnostic doesn't work well, so we explicitly provide an overload for non-throwing
   // closures.
   public func withNewBackgroundContext<R: Sendable>(
-    perform: @escaping (NSManagedObjectContext) -> R
+    perform: (NSManagedObjectContext) -> R
   ) async -> R {
     try! await self.withContext(self.newBackgroundContext(), perform: perform)
   }
     
   private func withContext<R: Sendable>(
     _ context: NSManagedObjectContext,
-    perform: @escaping (NSManagedObjectContext) throws -> R
+    perform: (NSManagedObjectContext) throws -> R
   ) async throws -> R {
-    return try await withCheckedThrowingContinuation { continuation in
+    try await withCheckedThrowingContinuation { continuation in
       context.performAndWait {
         continuation.resume(
           with: Result {
@@ -150,7 +150,7 @@ extension PersistentContainer {
   /// - Returns: The ``PersistentContainer``
   @MainActor
   public func with(
-    operation: @escaping @MainActor(NSManagedObjectContext) throws -> Void
+    operation: @MainActor (NSManagedObjectContext) throws -> Void
   ) rethrows -> Self {
     try self.withViewContext(perform: operation)
     return self
@@ -171,14 +171,18 @@ extension PersistentContainer {
     catch onFailureHandler: @escaping (NSManagedObjectContext, Error) -> Void = { _, _ in () }
   ) -> Self {
     let context = self.newBackgroundContext()
-    context.perform {
-      do {
-        try operation(context)
-        if context.hasChanges {
-          try context.save()
+    DependencyValues.escape { escaped in
+      context.perform {
+        escaped.continue {
+          do {
+            try operation(context)
+            if context.hasChanges {
+              try context.save()
+            }
+          } catch {
+            onFailureHandler(context, error)
+          }
         }
-      } catch {
-        onFailureHandler(context, error)
       }
     }
     return self

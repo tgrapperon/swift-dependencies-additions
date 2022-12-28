@@ -1,10 +1,8 @@
 @preconcurrency import CoreData
-@_spi(Internals) @_exported import PersistentContainerDependency
+import Dependencies
 import DependenciesAdditions
 import Foundation
-import Dependencies
-
-
+@_spi(Internals) @_exported import PersistentContainerDependency
 
 extension NSFetchRequestResult where Self: NSManagedObject {
   public typealias Fetched = CoreDataDependency.Fetched<Self>
@@ -14,12 +12,15 @@ extension NSFetchRequestResult where Self: NSManagedObject {
 }
 
 extension PersistentContainer {
-
   @MainActor
-  public func insert<ManagedObject: NSManagedObject>(_ type: ManagedObject.Type, configure: (ManagedObject) -> Void = { _ in () }) throws
-  -> Fetched<
-    ManagedObject
-  > {
+  public func insert<ManagedObject: NSManagedObject>(
+    _ type: ManagedObject.Type,
+    configure: (ManagedObject) -> Void = { _ in () }
+  ) throws
+    -> Fetched<
+      ManagedObject
+    >
+  {
     let context = self.viewContext
     let object = ManagedObject(context: context)
     try context.obtainPermanentIDs(for: [object])
@@ -71,7 +72,7 @@ public struct Fetched<ManagedObject: NSManagedObject>: Identifiable, Sendable, H
 
   @MainActor
   public subscript<Value>(dynamicMember keyPath: KeyPath<ManagedObject, Value>) -> Value {
-    get { (self.viewContext.object(with: self.id) as! ManagedObject)[keyPath: keyPath] }
+    (self.viewContext.object(with: self.id) as! ManagedObject)[keyPath: keyPath]
   }
 }
 
@@ -130,13 +131,17 @@ extension Fetched {
   public func withManagedObject<T>(
     schedule: ScheduledTaskType = .immediate, perform: @escaping (ManagedObject) -> T
   ) async -> T {
-    return await withCheckedContinuation { continuation in
+    await withCheckedContinuation { continuation in
       switch schedule {
       case .immediate:
         continuation.resume(returning: self.withManagedObject(perform: perform))
       case .enqueued:
-        self.context.perform {
-          continuation.resume(returning: perform(self.object))
+        DependencyValues.escape { escaped in
+          self.context.perform {
+            escaped.continue {
+              continuation.resume(returning: perform(self.object))
+            }
+          }
         }
       }
     }
@@ -154,17 +159,21 @@ extension Fetched {
             try self.withManagedObject(perform: perform)
           })
       case .enqueued:
-        self.context.perform {
-          continuation.resume(
-            with: .init {
-              try perform(self.object)
+        DependencyValues.escape { escaped in
+          self.context.perform {
+            escaped.continue {
+              continuation.resume(
+                with: .init {
+                  try perform(self.object)
+                }
+              )
             }
-          )
+          }
         }
       }
     }
   }
-  
+
   @discardableResult
   public func withManagedObjectContext<T>(perform: (NSManagedObjectContext) -> T) -> T {
     var result: Swift.Result<T, Never>?
@@ -195,8 +204,12 @@ extension Fetched {
       case .immediate:
         continuation.resume(returning: self.withManagedObjectContext(perform: perform))
       case .enqueued:
-        self.context.perform {
-          continuation.resume(returning: perform(self.context))
+        DependencyValues.escape { escaped in
+          self.context.perform {
+            escaped.continue {
+              continuation.resume(returning: perform(self.context))
+            }
+          }
         }
       }
     }
@@ -214,12 +227,16 @@ extension Fetched {
             try self.withManagedObjectContext(perform: perform)
           })
       case .enqueued:
-        self.context.perform {
-          continuation.resume(
-            with: .init {
-              try perform(self.context)
+        DependencyValues.escape { escaped in
+          self.context.perform {
+            escaped.continue {
+              continuation.resume(
+                with: .init {
+                  try perform(self.context)
+                }
+              )
             }
-          )
+          }
         }
       }
     }
@@ -277,7 +294,8 @@ extension PersistentContainer.FetchRequest {
 
     if fetchRequest.sortDescriptors!.first?.keyPath != sectionIdentifier {
       fetchRequest.sortDescriptors?.insert(
-        .init(keyPath: sectionIdentifier, ascending: true), at: 0)
+        .init(keyPath: sectionIdentifier, ascending: true), at: 0
+      )
     }
 
     return stream(
@@ -314,6 +332,7 @@ extension PersistentContainer.FetchRequest {
     init(sections: [Section] = []) {
       self.sections = sections
     }
+
     public static var empty: Self {
       .init()
     }
@@ -326,6 +345,7 @@ extension PersistentContainer.FetchRequest {
     init(fetchedObjects: [Fetched<ManagedObject>] = []) {
       self.fetchedObjects = fetchedObjects
     }
+
     public static var empty: Self {
       .init()
     }
@@ -407,14 +427,14 @@ extension PersistentContainer.FetchRequest {
               let results = try context.wrappedValue.fetch(fetchRequest.wrappedValue)
               currentValue = .init(
                 fetchedObjects:
-                  results.map {
-                    Fetched(
-                      id: $0.objectID,
-                      context: context.wrappedValue,
-                      viewContext: viewContext,
-                      token: tokens[$0.objectID]
-                    )
-                  }
+                results.map {
+                  Fetched(
+                    id: $0.objectID,
+                    context: context.wrappedValue,
+                    viewContext: viewContext,
+                    token: tokens[$0.objectID]
+                  )
+                }
               )
               continuation.yield(currentValue)
             }
@@ -469,21 +489,21 @@ extension PersistentContainer.FetchRequest {
 
               currentValue = SectionedResults<SectionIdentifier, T>(
                 sections:
-                  results
+                results
                   .chunkedOn(keyPath: sectionIdentifier.wrappedValue)
                   .map {
                     SectionedResults<SectionIdentifier, T>.Section(
                       id: $0.0,
                       fetchedObjects: .init(
                         fetchedObjects:
-                          $0.1.map {
-                            Fetched(
-                              id: $0.objectID,
-                              context: context.wrappedValue,
-                              viewContext: viewContext,
-                              token: tokens[$0.objectID, default: UUID()]
-                            )
-                          }
+                        $0.1.map {
+                          Fetched(
+                            id: $0.objectID,
+                            context: context.wrappedValue,
+                            viewContext: viewContext,
+                            token: tokens[$0.objectID, default: UUID()]
+                          )
+                        }
                       )
                     )
                   }

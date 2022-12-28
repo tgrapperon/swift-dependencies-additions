@@ -10,7 +10,7 @@ extension PersistentContainer {
   @_disfavoredOverload
   @MainActor
   public func withViewContext<ManagedObject>(
-    perform: @MainActor @escaping (NSManagedObjectContext) throws -> ManagedObject
+    perform: @MainActor (NSManagedObjectContext) throws -> ManagedObject
   ) throws -> Fetched<ManagedObject> {
     let context = self.viewContext
     let object = try perform(self.viewContext)
@@ -21,7 +21,7 @@ extension PersistentContainer {
   @_disfavoredOverload
   @MainActor
   public func withNewChildViewContext<ManagedObject>(
-    perform: @MainActor @escaping (NSManagedObjectContext) throws -> ManagedObject
+    perform: @MainActor (NSManagedObjectContext) throws -> ManagedObject
   ) throws -> Fetched<ManagedObject> {
     let context = self.newChildViewContext()
     let object = try perform(context)
