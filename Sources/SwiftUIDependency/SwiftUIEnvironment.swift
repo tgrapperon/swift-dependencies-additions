@@ -27,9 +27,9 @@ extension DependencyValues {
 @MainActor
 @dynamicMemberLookup
 public final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
-  nonisolated public static var defaultValue: SwiftUIEnvironment { .shared }
-  nonisolated public static var liveValue: SwiftUIEnvironment { .shared }
-  nonisolated public static var testValue: SwiftUIEnvironment { .shared }
+  public nonisolated static var defaultValue: SwiftUIEnvironment { .shared }
+  public nonisolated static var liveValue: SwiftUIEnvironment { .shared }
+  public nonisolated static var testValue: SwiftUIEnvironment { .shared }
 
   internal static let shared = SwiftUIEnvironment()
 
@@ -51,12 +51,12 @@ public final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
   }
 
   // Identified proxy
-  nonisolated public subscript<ID: Hashable>(id: ID) -> Identified<ID> {
+  public nonisolated subscript(id: AnyHashable) -> Identified {
     Identified(id: id, swiftuiEnvironment: self)
   }
 
   // Streams
-  nonisolated public var streams: Streams {
+  public nonisolated var streams: Streams {
     .init(swiftuiEnvironment: self)
   }
 
@@ -111,29 +111,29 @@ extension SwiftUIEnvironment {
   // A proxy for identified values. Created using the `id` subscript on `SwiftUIEnvironment`.
   @MainActor
   @dynamicMemberLookup
-  public struct Identified<ID: Hashable> {
-    let id: ID
+  public struct Identified {
+    let id: AnyHashable
     let swiftuiEnvironment: SwiftUIEnvironment
 
     // Value
     public subscript<Value>(dynamicMember keyPath: KeyPath<EnvironmentValues, Value>) -> Value? {
-      swiftuiEnvironment.dependencies[Key(id: id, keypath: keyPath)] as? Value
+      self.swiftuiEnvironment.dependencies[Key(id: self.id, keypath: keyPath)] as? Value
     }
 
     // Streams
     public var streams: Streams {
-      Streams(id: id, swiftuiEnvironment: swiftuiEnvironment)
+      Streams(id: self.id, swiftuiEnvironment: self.swiftuiEnvironment)
     }
 
     @MainActor
     @dynamicMemberLookup
     public struct Streams {
-      let id: ID
+      let id: AnyHashable
       let swiftuiEnvironment: SwiftUIEnvironment
       public subscript<Value: Sendable>(dynamicMember keyPath: KeyPath<EnvironmentValues, Value>)
         -> AsyncStream<Value?>
       {
-        self.swiftuiEnvironment.stream(keyPath, id: id)
+        self.swiftuiEnvironment.stream(keyPath, id: self.id)
       }
     }
   }
@@ -142,9 +142,7 @@ extension SwiftUIEnvironment {
 extension View {
   public func observeEnvironmentAsDependency<Value: Sendable, ID: Hashable>(
     _ keyPath: KeyPath<EnvironmentValues, Value>, id: ID? = String?.none
-  )
-    -> some View
-  {
+  ) -> some View {
     self.modifier(EnvironmentalDependencyModifier(keyPath: keyPath, id: id))
   }
 }

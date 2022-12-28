@@ -78,20 +78,21 @@ public struct Fetched<ManagedObject: NSManagedObject>: Identifiable, Sendable, H
 extension Fetched {
   public var editable: Editor {
     get { .init(fetched: self) }
-    nonmutating set {}
+    set { self = newValue.fetched }
   }
 
   @dynamicMemberLookup
   public struct Editor {
-    let fetched: Fetched
+    var fetched: Fetched
     @MainActor
     public subscript<Value>(dynamicMember keyPath: WritableKeyPath<ManagedObject, Value>) -> Value {
       get {
         (self.fetched.viewContext.object(with: self.fetched.id) as! ManagedObject)[keyPath: keyPath]
       }
-      nonmutating set {
+      set {
         var object = (self.fetched.viewContext.object(with: self.fetched.id) as! ManagedObject)
         object[keyPath: keyPath] = newValue
+        self.fetched.token = .init()
         self.fetched.context.processPendingChanges()
       }
     }

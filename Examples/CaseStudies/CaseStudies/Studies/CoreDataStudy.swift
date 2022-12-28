@@ -185,13 +185,28 @@ struct CoreDataStudyView: View {
   }
 }
 
+extension ObservableObject {
+  public static var id: ObjectIdentifier { ObjectIdentifier(Self.self) }
+}
+
 @MainActor
 final class AddSongModel: ObservableObject {
-  @Dependency(\.persistentContainer) var persistentContainer
+  // A logger dependency that we use if saving fails
   @Dependency(\.logger["CoreDataStudy"]) var logger
-  @Dependency(\.environment.dismiss) var dismiss
+  
+  // In this example, we could use directly:
+  // @Dependency(\.environment.dismiss) var dismiss
+  // but it is probably safer to namespace this dependency with an
+  // `Hashable` identifier. We use here the static `id` property on
+  // `ObservableObject` that ties this dependency to this model. We
+  // could have used a `String` or any kind of value, but `Self.id`
+  // locks the dependency's from the model with the environment
+  // from its view.
+  // We need to use the same identifier on the view's side when calling:
+  // .observeEnvironmentAsDependency(\.dismiss, id: AddSongModel.id)
+  @Dependency(\.environment[AddSongModel.id].dismiss) var dismiss
 
-  @Published var song: Fetched<Song>
+  @Published var song: Fetched<Song> 
   private var isDismissalInteractive: Bool = false
   
   init(song: Fetched<Song>) {
@@ -241,7 +256,7 @@ struct AddSongView: View {
       }
     }
     .navigationTitle("Add Song")
-    .observeEnvironmentAsDependency(\.dismiss)
+    .observeEnvironmentAsDependency(\.dismiss, id: AddSongModel.id)
   }
 }
 
