@@ -3,6 +3,22 @@ import Foundation
 
 extension DateGenerator {
   @available(iOS 16, macOS 13, tvOS 16, watchOS 9, *)
+  /// A `Date` generator that this driven by a `Clock`.
+  ///
+  /// The generator will create a point of reference in time the first time it generates a `Date`.
+  /// Subsequent dates will be generated according to the time that has passed using the provided
+  /// clock.
+  ///
+  /// - Note: As this generator is stateful, it is recommened to create and store the value
+  /// somewhere in order to produce meaninful results if you're using it as some `Reducer`'s
+  /// dependency in TCA.
+  ///
+  /// - Parameters:
+  ///   - originOfTime: The reference date that is returned the first time this generator produces
+  ///   a `date`, or 00:00:00 UTC on 1 January 2001 by default.
+  ///   - clock: The `KeyPath` of a `Clock` dependency that is used to measure time between
+  ///   generated dates, or `.\continuousClock` by default.
+  /// - Returns: A `DateGenerator` that generates dates using a `Clock`.
   public static func ticking(
     from originOfTime: Date = Date(timeIntervalSinceReferenceDate: 0),  // or .now?
     with clock: (KeyPath<DependencyValues, any Clock<Duration>>) = \.continuousClock

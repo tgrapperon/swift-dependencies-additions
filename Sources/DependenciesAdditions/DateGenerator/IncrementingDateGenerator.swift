@@ -2,7 +2,7 @@ import Dependencies
 import Foundation
 
 extension DateGenerator {
-  /// A generator that generates dates in incrementing order.
+  /// A `Date` generator that generates dates in incrementing order.
   ///
   /// For example:
   ///
