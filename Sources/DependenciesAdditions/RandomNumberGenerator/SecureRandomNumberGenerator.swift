@@ -3,14 +3,18 @@
   import Security
   // Allows DependencyValues.withValue(\.withRandomNumberGenerator, .init(.secure)) { … }
   extension RandomNumberGenerator where Self == SecureRandomNumberGenerator {
+    /// A cryptographically secure random number generator
     public static var secure: SecureRandomNumberGenerator { .init() }
   }
 
   extension WithRandomNumberGenerator {
+    /// A `WithRandomNumberGenerator` using a cryptographically secure random number generator
     public static var secure: WithRandomNumberGenerator { .init(.secure) }
   }
 
+  /// A cryptographically secure random number generator
   public struct SecureRandomNumberGenerator: RandomNumberGenerator, Sendable {
+    /// Generates a cryptographically secure `UInt64` number.
     public func next() -> UInt64 {
       var result: UInt64 = 0
       let status = withUnsafeMutablePointer(to: &result) {
