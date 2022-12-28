@@ -12,7 +12,7 @@ func notification(_ int: Int = 0) -> Notification {
 }
 
 extension Notifications {
-  var testNotificationWithBidirectionalTransform: ObservationOf<Int> {
+  var testNotificationWithBidirectionalTransform: NotificationOf<Int> {
     .init(notificationName) {
       guard let value = $0.userInfo?[""] as? Int else {
         throw NotificationError.extractionFailed
@@ -22,7 +22,7 @@ extension Notifications {
       notification($0)
     }
   }
-  var testNotificationWithUnidirectionalTransform: ObservationOf<Int> {
+  var testNotificationWithUnidirectionalTransform: NotificationOf<Int> {
     .init(notificationName) {
       guard let value = $0.userInfo?[""] as? Int else {
         throw NotificationError.extractionFailed
@@ -31,7 +31,7 @@ extension Notifications {
     }
   }
 
-  var testNotificationWithoutTransform: ObservationOf<Notification> {
+  var testNotificationWithoutTransform: NotificationOf<Notification> {
     .init(notificationName)
   }
 }

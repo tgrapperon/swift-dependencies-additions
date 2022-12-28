@@ -3,7 +3,7 @@
   extension Notifications {
     /// A notification that posts when a person takes a screenshot on the device.
     @MainActor
-    public var userDidTakeScreenshot: ObservationOf<Void> {
+    public var userDidTakeScreenshot: NotificationOf<Void> {
       .init(UIApplication.userDidTakeScreenshotNotification) { _ in
         ()
       } notify: {
@@ -11,7 +11,7 @@
       }
     }
     @MainActor
-    public var applicationWillEnterForeground: ObservationOf<Void> {
+    public var applicationWillEnterForeground: NotificationOf<Void> {
       .init(UIApplication.willEnterForegroundNotification) { _ in
         ()
       } notify: {
@@ -19,7 +19,7 @@
       }
     }
     @MainActor
-    public var applicationDidEnterBackground: ObservationOf<Void> {
+    public var applicationDidEnterBackground: NotificationOf<Void> {
       .init(UIApplication.didEnterBackgroundNotification) { _ in
         ()
       } notify: {
@@ -35,7 +35,7 @@
     /// A notification that indicates that a scene is about to begin running in the foreground and
     /// become visible to the user.
     @MainActor
-    public var sceneWillEnterForeground: ObservationOf<UIScene> {
+    public var sceneWillEnterForeground: NotificationOf<UIScene> {
       .init(UIScene.willEnterForegroundNotification) {
         $0.object as! UIScene
       } notify: {

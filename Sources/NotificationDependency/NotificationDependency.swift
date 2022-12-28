@@ -20,7 +20,7 @@ enum NotificationCenterKey: DependencyKey {
 public struct Notifications {}
 //// Test
 //extension Notifications {
-//  var didBecomeSingleTreaded: ObservationOf<Notification> {
+//  var didBecomeSingleTreaded: NotificationOf<Notification> {
 //    .init(.NSDidBecomeSingleThreaded)
 //  }
 //}
@@ -33,7 +33,7 @@ public struct Notifications {}
 //}
 
 extension Notifications {
-  public struct ObservationOf<Value>: Hashable, Sendable {
+  public struct NotificationOf<Value>: Hashable, Sendable {
     let name: Notification.Name
     let object: UncheckedSendable<NSObject>?
     let transform: @Sendable (Notification) throws -> Value
@@ -78,7 +78,7 @@ extension Notifications {
       notify: (@Sendable (T) -> Value?)? = nil,
       file: StaticString = #fileID,
       line: UInt = #line
-    ) -> ObservationOf<T> {
+    ) -> NotificationOf<T> {
       return .init(
         self.name,
         object: self.object?.wrappedValue
@@ -130,15 +130,15 @@ extension Notifications {
 @dynamicMemberLookup
 public protocol NotificationCenterProtocol: Sendable {
   func post(_ notification: Notification)
-  subscript<Value>(notification: Notifications.ObservationOf<Value>) -> Notifications.StreamOf<Value> { get }
+  subscript<Value>(notification: Notifications.NotificationOf<Value>) -> Notifications.StreamOf<Value> { get }
   // The subscript for @dynamicMemberLookup needs to be declared at the protocol
   // level or it crashes when trying to build of testing
   // TODO: Report this
-  subscript<Value>(dynamicMember keyPath: KeyPath<Notifications, Notifications.ObservationOf<Value>>) -> Notifications.StreamOf<Value> { get }
+  subscript<Value>(dynamicMember keyPath: KeyPath<Notifications, Notifications.NotificationOf<Value>>) -> Notifications.StreamOf<Value> { get }
 }
 
 extension NotificationCenterProtocol {
-  public subscript<Value>(dynamicMember keyPath: KeyPath<Notifications, Notifications.ObservationOf<Value>>) -> Notifications.StreamOf<Value> {
+  public subscript<Value>(dynamicMember keyPath: KeyPath<Notifications, Notifications.NotificationOf<Value>>) -> Notifications.StreamOf<Value> {
     self[Notifications()[keyPath: keyPath]]
   }
 }
@@ -158,7 +158,7 @@ public struct _DefaultNotificationCenter: NotificationCenterProtocol {
     NotificationCenter.default.post(notification)
   }
   
-  public subscript<Value>(notification: Notifications.ObservationOf<Value>) -> Notifications.StreamOf<Value> {
+  public subscript<Value>(notification: Notifications.NotificationOf<Value>) -> Notifications.StreamOf<Value> {
     self.streams.withValue { (streams) -> Notifications.StreamOf<Value> in
       if let existing = streams[notification.id] as! Notifications.StreamOf<Value>? {
         return existing
@@ -236,7 +236,7 @@ public struct _ControllableNotificationCenter: NotificationCenterProtocol {
     notifications.yield(notification)
   }
   
-  public subscript<Value>(notification: Notifications.ObservationOf<Value>) -> Notifications.StreamOf<Value> {
+  public subscript<Value>(notification: Notifications.NotificationOf<Value>) -> Notifications.StreamOf<Value> {
     return self.streams.withValue { streams in
       if let existing = streams[notification.id]?.notificationStream(of: Value.self) {
         return existing

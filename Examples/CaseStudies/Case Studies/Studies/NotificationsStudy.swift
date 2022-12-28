@@ -3,10 +3,10 @@ import Dependencies
 import SwiftUI
 
 extension Notifications {
-  var countNotification: ObservationOf<Int> {
+  var countNotification: NotificationOf<Int> {
     let notificationName = Notification.Name("CounterNotification")
     let countValue = "countValue"
-    return ObservationOf(notificationName) {
+    return NotificationOf(notificationName) {
       ($0.userInfo?[countValue] as? Int) ?? 0
     } notify: { value in
       var notification = Notification(name: notificationName)
@@ -15,8 +15,8 @@ extension Notifications {
     }
   }
   #if os(iOS)
-  var screenshots: ObservationOf<Void> {
-    ObservationOf(UIApplication.userDidTakeScreenshotNotification) { notification in () }
+  var screenshots: NotificationOf<Void> {
+    NotificationOf(UIApplication.userDidTakeScreenshotNotification) { notification in () }
   }
   #endif
 }
