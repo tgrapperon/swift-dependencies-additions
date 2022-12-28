@@ -36,6 +36,7 @@ define("CompressionDependency")
 define("ProcessInfoDependency")
 define("NotificationDependency", dependencies: "DependenciesAdditions")
 define("UserDefaultsDependency")
+//define("UIDevice")
 define("SwiftUIDependency", testingDependencies: "DependenciesAdditions")
 
 func define(_ target: String, dependencies: String..., testingDependencies: String...) {

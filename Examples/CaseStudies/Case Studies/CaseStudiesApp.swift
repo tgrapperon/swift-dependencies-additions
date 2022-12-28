@@ -9,7 +9,7 @@ struct Case_StudiesApp: App {
         model: DependencyValues.withValues {
           $0.persistentContainer = .canonical(inMemory: true).withInitialData()
         } operation: {
-          .init(destination: .coreDataStudy(.init()))
+          .init()
         }
       )
     }

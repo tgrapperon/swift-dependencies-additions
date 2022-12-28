@@ -1,5 +1,5 @@
-import NotificationDependency
 import Dependencies
+import NotificationDependency
 import SwiftUI
 
 extension Notifications {
@@ -14,9 +14,10 @@ extension Notifications {
       return notification
     }
   }
+
   #if os(iOS)
   var screenshots: NotificationOf<Void> {
-    NotificationOf(UIApplication.userDidTakeScreenshotNotification) { notification in () }
+    NotificationOf(UIApplication.userDidTakeScreenshotNotification) { _ in () }
   }
   #endif
 }
@@ -28,7 +29,7 @@ final class NotificationStudy: ObservableObject {
   
   @Dependency(\.notifications.countNotification) var countsNotification
   @Dependency(\.continuousClock) var clock
-  
+  @Dependency(\.withRandomNumberGenerator) var withRandomNumberGenerator
   private var notificationObservation: Task<Void, Never>?
   
   init(count: Int = 0) {
@@ -67,35 +68,50 @@ final class NotificationStudy: ObservableObject {
     // Post the updated value
     self.countsNotification.post(self.count)
   }
+  
+  func userDidTapSendRandomNotificationButton() {
+    self.withRandomNumberGenerator {
+      self.countsNotification.post(Int.random(in: 0 ... 1_000, using: &$0))
+    }
+  }
 }
 
 struct NotificationsStudyView: View {
   @ObservedObject var model: NotificationStudy
   var body: some View {
-    HStack(alignment: .firstTextBaseline) {
-      VStack {
-        Text("Count from model")
-        Text(self.model.count.formatted())
-          .bold()
+    List {
+      Section {
         Stepper {
-          Text("Update model")
+          LabeledContent("Count from model", value: self.model.count.formatted())
         } onIncrement: {
           self.model.userDidTapIncrementButton()
         } onDecrement: {
           self.model.userDidTapDecrementButton()
         }
-        .labelsHidden()
+      } header: {
+        Text("Model")
       }
       
-      VStack {
-        Text("Count from notifications")
-        Text(
-          self.model.countFromNotification.map {
-            $0.formatted()
-          } ?? "None"
-        )
-        .bold()
+      Section {
+        LabeledContent("Count from notifications", value: self.model.countFromNotification.map {
+          $0.formatted()
+        } ?? "None")
+      } header: {
+        Text("Nofications")
       }
+    }
+    .safeAreaInset(edge: .bottom) {
+      Button {
+        self.model.userDidTapSendRandomNotificationButton()
+      } label: {
+        Label("Send a random notification", systemImage: "dice")
+          .frame(minHeight: 33)
+          .fontWeight(.medium)
+          .padding(.horizontal)
+      }
+      .listRowInsets(.init())
+      .buttonStyle(.borderedProminent)
+      .frame(maxWidth: .infinity)
     }
     .onAppear {
       model.onAppear()

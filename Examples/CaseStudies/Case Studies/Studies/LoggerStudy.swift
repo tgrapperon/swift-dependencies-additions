@@ -8,7 +8,7 @@ final class LoggerStudy: ObservableObject {
     case piano
   }
   enum PurchaseError: Error {
-    case badLuck(UInt64)
+    case badLuck
   }
   let customerName: String
 
@@ -38,9 +38,11 @@ final class LoggerStudy: ObservableObject {
 
   func purchase(instrument: Instrument) async throws {
     try await Task.sleep(for: .milliseconds(250))
-    let randomNumber = withRandomNumberGenerator { $0.next() }
-    if randomNumber.isMultiple(of: 3) {
-      throw PurchaseError.badLuck(randomNumber)
+    let randomNumber = self.withRandomNumberGenerator {
+      Int.random(in: 0...2, using: &$0)
+    }
+    if randomNumber == 1 {
+      throw PurchaseError.badLuck
     }
   }
 }
