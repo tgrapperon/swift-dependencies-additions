@@ -1,5 +1,5 @@
 import Dependencies
-import NotificationDependency
+import _NotificationDependency
 import SwiftUI
 
 extension Notifications {

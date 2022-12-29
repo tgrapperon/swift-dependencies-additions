@@ -1,4 +1,4 @@
-import AppStorageDependency
+import _AppStorageDependency
 import Combine
 import Dependencies
 import SwiftUI

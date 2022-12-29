@@ -1,4 +1,4 @@
-import CoreDataDependency
+import _CoreDataDependency
 import Dependencies
 import SwiftUI
 import SwiftUINavigation

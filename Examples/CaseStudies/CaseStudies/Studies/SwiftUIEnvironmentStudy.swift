@@ -1,6 +1,6 @@
 import Dependencies
 import SwiftUI
-import SwiftUIDependency
+import _SwiftUIDependency
 
 @MainActor
 final class SwiftUIEnvironmentStudy: ObservableObject {
