@@ -1,6 +1,7 @@
 import Dependencies
 @_spi(Internal) import DependenciesAdditions
 import UserDefaultsDependency
+import _AppStorageDependency
 import XCTest
 
 final class AppStorageTests: XCTestCase {

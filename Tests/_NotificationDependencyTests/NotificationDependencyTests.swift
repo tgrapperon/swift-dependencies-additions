@@ -1,4 +1,4 @@
-import NotificationDependency
+import _NotificationDependency
 @_spi(Internal) import DependenciesAdditions
 import XCTest
 import Dependencies

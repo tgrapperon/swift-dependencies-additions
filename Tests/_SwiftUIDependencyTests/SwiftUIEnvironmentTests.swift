@@ -3,7 +3,7 @@ import Dependencies
 import SwiftUI
 import XCTest
 
-@testable import SwiftUIDependency
+@testable import _SwiftUIDependency
 
 enum TestEnvironmentKey: EnvironmentKey {
   static var defaultValue: Int { 0 }
