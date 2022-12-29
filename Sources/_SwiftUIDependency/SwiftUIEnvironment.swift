@@ -97,7 +97,6 @@ final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
           // We still need to remove duplicates as `dependencies` can be updated
           // multiple types by different observed environment values.
           .removeDuplicates(by: isDuplicate(v1:v2:))
-          .print()
           .sink { continuation.yield($0) }
       )
       continuation.onTermination = { _ in

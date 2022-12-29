@@ -280,13 +280,9 @@ public struct _DefaultNotificationCenter: NotificationCenterProtocol {
         }
       } stream: {
         AsyncStream(Value.self, bufferingPolicy: .bufferingNewest(0)) { continuation in
-          print("create async stream…")
-          dump(notification.id)
           let observer = NotificationObserver {
             do {
-              print("Received notification")
               let value = try notification.transform($0)
-              print("yielding \(value)")
               continuation.yield(value)
             } catch {
               continuation.finish()
