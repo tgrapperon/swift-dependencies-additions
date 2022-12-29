@@ -6,27 +6,15 @@
     /// A notification that posts when a person takes a screenshot on the device.
     @MainActor
     public var userDidTakeScreenshot: NotificationOf<Void> {
-      .init(UIApplication.userDidTakeScreenshotNotification) { _ in
-        ()
-      } notify: {
-        .init(name: UIApplication.userDidTakeScreenshotNotification)
-      }
+      .init(UIApplication.userDidTakeScreenshotNotification)
     }
     @MainActor
     public var applicationWillEnterForeground: NotificationOf<Void> {
-      .init(UIApplication.willEnterForegroundNotification) { _ in
-        ()
-      } notify: {
-        .init(name: UIApplication.willEnterForegroundNotification)
-      }
+      .init(UIApplication.willEnterForegroundNotification)
     }
     @MainActor
     public var applicationDidEnterBackground: NotificationOf<Void> {
-      .init(UIApplication.didEnterBackgroundNotification) { _ in
-        ()
-      } notify: {
-        .init(name: UIApplication.didEnterBackgroundNotification)
-      }
+      .init(UIApplication.didEnterBackgroundNotification)
     }
   }
 #endif
@@ -38,10 +26,11 @@
     /// become visible to the user.
     @MainActor
     public var sceneWillEnterForeground: NotificationOf<UIScene> {
-      .init(UIScene.willEnterForegroundNotification) {
+      let name = UIScene.willEnterForegroundNotification
+      return .init(name) {
         $0.object as! UIScene
       } notify: {
-        .init(name: UIScene.willEnterForegroundNotification, object: $0)
+        .init(name: name, object: $0)
       }
     }
   }

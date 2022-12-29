@@ -37,9 +37,7 @@ extension Dependency {
     }
 
     public var wrappedValue: Notifications.StreamOf<Value> {
-      DependencyValues.escape { escaped in
-        notificationCenter[notification.updated(with: escaped)]
-      }
+      self.notificationCenter[self.notification.updated(with: self.dependencies)]
     }
   }
 }
@@ -91,16 +89,40 @@ extension Notifications {
       )
     }
 
-    func updated(with escaped: EscapedDependencies) -> Self {
-      let escaped = UncheckedSendable(escaped)
+    @MainActor
+    public init(
+      _ name: Notification.Name,
+      object: NSObject? = nil,
+      file: String = #fileID,
+      line: UInt = #line
+    ) where Value == Void {
+      let object = object.map(UncheckedSendable.init(wrappedValue:))
+      self.name = name
+      self.object = object
+      self.transform = { _ in () }
+      self.notify = { _ in Notification(name: name, object: object?.wrappedValue) }
+      self.id = ID(
+        name: name,
+        object: object.map { ObjectIdentifier($0.wrappedValue) },
+        file: file.description,
+        line: line,
+        valueType: ObjectIdentifier(Value.self)
+      )
+    }
+
+    func updated(with values: DependencyValues) -> Self {
       return NotificationOf(
         self.name,
         object: self.object?.value,
-        transform: {
-          notification in try escaped.wrappedValue.continue { try transform(notification) }
+        transform: { notification in
+          try DependencyValues.withValue(\.self, values) {
+            try transform(notification)
+          }
         },
         notify: self.notify.map { notify in
-          { @Sendable value in escaped.wrappedValue.continue { notify(value) } }
+          DependencyValues.withValue(\.self, values) {
+            { @Sendable value in notify(value) }
+          }
         },
         file: self.id.file,
         line: self.id.line
@@ -220,9 +242,12 @@ public struct _DefaultNotificationCenter: NotificationCenterProtocol {
         }
       } stream: {
         AsyncStream(Value.self, bufferingPolicy: .bufferingNewest(0)) { continuation in
+          print("create async stream…")
           let observer = NotificationObserver {
             do {
+              print("Received notification")
               let value = try notification.transform($0)
+              print("yielding \(value)")
               continuation.yield(value)
             } catch {
               continuation.finish()

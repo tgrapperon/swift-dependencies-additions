@@ -1,7 +1,7 @@
-import _NotificationDependency
+import Dependencies
 @_spi(Internal) import DependenciesAdditions
 import XCTest
-import Dependencies
+import _NotificationDependency
 
 let notificationName = Notification.Name("SomeNotificationName")
 
@@ -34,6 +34,13 @@ extension Notifications {
 
   var testNotificationWithoutTransform: NotificationOf<Notification> {
     .init(notificationName)
+  }
+
+  var testNotificationWithDependency: NotificationOf<UUID> {
+    .init(notificationName) { _ in
+      @Dependency(\.uuid) var uuid
+      return uuid()
+    }
   }
 }
 
@@ -97,9 +104,61 @@ final class NotificationDependencyTests: XCTestCase {
 
   func testLiveFailureToSendNotifications() async throws {
     @Dependency.Notification(\.testNotificationWithUnidirectionalTransform) var testNotification;
-    
+
     XCTExpectFailure {
       testNotification.post(2)
+    }
+  }
+
+  func testNotificationWithDependency() async throws {
+    @Dependency(\.notifications) var notifications
+
+    final class Model: @unchecked Sendable {
+      @Dependency.Notification(\.testNotificationWithDependency) var notification
+    }
+    let defaultModel = Model()
+    let incrementingModel = DependencyValues.withValue(\.uuid, .incrementing) { Model() }
+    
+    let incrementingExpectations = [
+      UUID(uuidString: "00000000-0000-0000-0000-000000000000"),
+      UUID(uuidString: "00000000-0000-0000-0000-000000000001"),
+      UUID(uuidString: "00000000-0000-0000-0000-000000000002"),
+      UUID(uuidString: "00000000-0000-0000-0000-000000000003"),
+    ]
+    
+    try await withTimeout(1000) { group in
+      group.addTask {
+        var index: Int = 0
+        for await value in defaultModel.notification() {
+          XCTAssertNotEqual(value, incrementingExpectations[index])
+          index += 1
+          if index == incrementingExpectations.endIndex {
+            return
+          }
+        }
+      }
+      
+      group.addTask {
+        var index: Int = 0
+        for await value in incrementingModel.notification() {
+          XCTAssertEqual(value, incrementingExpectations[index])
+          index += 1
+          if index == incrementingExpectations.endIndex {
+            return
+          }
+        }
+      }
+      
+      group.addTask {
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        notifications.post(.init(name: notificationName))
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        notifications.post(.init(name: notificationName))
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        notifications.post(.init(name: notificationName))
+        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        notifications.post(.init(name: notificationName))
+      }
     }
   }
 }
