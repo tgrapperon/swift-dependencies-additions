@@ -9,6 +9,7 @@ extension DependencyValues {
   }
 }
 
+/// A type that exposes a few fields from some `Bundle`'s `info.plist`.
 public struct BundleInfo: Sendable, Hashable {
   /// Creates a ``BundleInfo`` value.
   /// - Parameters:
@@ -19,19 +20,19 @@ public struct BundleInfo: Sendable, Hashable {
   ///   - shortVersion: The release or version number of the bundle.
   ///   - version: The version of the build that identifies an iteration of the bundle.
   public init(
-    bundleIdentifier: @autoclosure () -> String,
-    name: @autoclosure () -> String,
-    displayName: @autoclosure () -> String,
-    spokenName: @autoclosure () -> String,
-    shortVersion: @autoclosure () -> String,
-    version: @autoclosure () -> String
+    bundleIdentifier: String,
+    name: String,
+    displayName: String,
+    spokenName: String,
+    shortVersion: String,
+    version: String
   ) {
-    self.bundleIdentifier = bundleIdentifier()
-    self.name = name()
-    self.displayName = displayName()
-    self.spokenName = spokenName()
-    self.shortVersion = shortVersion()
-    self.version = version()
+    self.bundleIdentifier = bundleIdentifier
+    self.name = name
+    self.displayName = displayName
+    self.spokenName = spokenName
+    self.shortVersion = shortVersion
+    self.version = version
   }
 
   /// A unique identifier for a bundle.
