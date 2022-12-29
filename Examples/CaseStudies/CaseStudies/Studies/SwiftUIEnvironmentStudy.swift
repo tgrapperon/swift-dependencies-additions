@@ -1,34 +1,18 @@
 import Dependencies
 import SwiftUI
 import _SwiftUIDependency
+import LoggerDependency
 
 @MainActor
 final class SwiftUIEnvironmentStudy: ObservableObject {
-  // This is the value itself, in the form of an `Optional<ColorScheme>`
-  @Dependency(\.environment.colorScheme) var colorScheme
-  
-  // This is an `AsyncStream<ColorScheme>` of succesive values
-  @Dependency(\.environment.streams.colorScheme) var colorSchemes
-
-  var description: String {
-    switch colorScheme {
-    case .light:
-      return "light"
-    case .dark:
-      return "dark"
-    case .none:
-      return "nil"
-    case .some:
-      return "I have no memories of this place"
-    }
-  }
-  
+  @Dependency.Environment(\.colorScheme) var colorScheme
+  @Dependency(\.logger["SwiftUIEnvironmentStudy"]) var logger
   var observation: Task<Void, Never>?
   init() {
     self.observation = Task { [weak self] in
       guard let self else { return }
-      for await _ in self.colorSchemes {
-        self.objectWillChange.send()
+      for await colorScheme in self.$colorScheme.dropFirst() {
+        logger.info("User did select \(colorScheme.localizedDescription, privacy: .public)")
       }
     }
   }
@@ -41,13 +25,17 @@ final class SwiftUIEnvironmentStudy: ObservableObject {
 struct SwiftUIEnvironmentStudyView: View {
   @ObservedObject var model: SwiftUIEnvironmentStudy
   @State var preferredColorScheme: ColorScheme = .light
+  // By installing this property wrapper in a `View`, we automatically
+  // observe `@Environment(\.colorScheme).
+  @Dependency.Environment(\.colorScheme) var colorScheme
 
   var body: some View {
     List {
       Section {
-        LabeledContent("ColorScheme from Model", value: model.description)
-          .observeEnvironmentAsDependency(\.colorScheme)
+        LabeledContent("ColorScheme from Model", value: model.colorScheme.localizedDescription)
         LabeledContent("ColorScheme from View", value: String(describing: preferredColorScheme))
+        LabeledContent("ColorScheme from wrapper", value: colorScheme.localizedDescription)
+
       }
       Button {
         if preferredColorScheme == .light {
@@ -68,6 +56,21 @@ struct SwiftUIEnvironmentStudyView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationStack {
       SwiftUIEnvironmentStudyView(model: .init())
+    }
+  }
+}
+
+extension Optional where Wrapped == ColorScheme {
+  var localizedDescription: String {
+    switch self {
+    case .light:
+      return "light"
+    case .dark:
+      return "dark"
+    case .none:
+      return "nil"
+    case .some:
+      return "I have no memories of this place"
     }
   }
 }

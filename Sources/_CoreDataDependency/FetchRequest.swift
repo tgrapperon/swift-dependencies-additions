@@ -5,7 +5,7 @@ import Foundation
 @_spi(Internals) @_exported import PersistentContainerDependency
 
 extension NSFetchRequestResult where Self: NSManagedObject {
-  public typealias Fetched = CoreDataDependency.Fetched<Self>
+  public typealias Fetched = _CoreDataDependency.Fetched<Self>
   public typealias FetchedResults = PersistentContainer.FetchRequest.Results<Self>
   public typealias SectionedFetchedResults<SectionIdentifier: Hashable> = PersistentContainer
     .FetchRequest.SectionedResults<SectionIdentifier, Self>

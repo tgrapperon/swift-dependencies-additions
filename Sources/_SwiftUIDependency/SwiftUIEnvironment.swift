@@ -3,32 +3,65 @@ import Dependencies
 import Foundation
 import SwiftUI
 
-// TODO: Add @Dependency.Environment with automatic identification
+// TODO: Explore observing any DynamicProperty instead of only `Environment`
 
-// In SwiftUI, one adds `.observe(\.environmentValue)` or `.observe(\.environmentValue, id: "A")`.
-// Then anywhere:
-//
-// @Dependency(\.environment) var environment // A SwiftUIEnvironment value, where one
-// can extract a value or a stream using dynamic lookup:
-// @Dependency(\.environment.colorScheme) var colorScheme (id == String?.none)
-// @Dependency(\.environment["some"].colorScheme) var colorScheme (id == "some")
-// @Dependency(\.environment.streams.colorScheme) var colorSchemes (AsyncStream<ColorScheme?>)
-// @Dependency(\.environment["some"].streams.colorScheme) var colorSchemes (AsyncStream<ColorScheme?>)
+// Trying to make this a `DynamicProperty` itself to automatically udpate the value
+// at `udpate()` doesn't work as we don't have a guarantee that an internal `@Environment`
+// value would have received its udpate before this value and expose the latest value.
+// Any attempt to defer the call risks getting out of the `update`/`body` cycle and to raise
+// a runtime warning.
+extension Dependency {
+  @MainActor
+  @propertyWrapper
+  public struct Environment {
+    @Dependencies.Dependency(\._swiftuiEnvironment) var environment
+    
+    let keyPath: KeyPath<EnvironmentValues, Value>
+    let id: AnyHashable?
 
-// TODO: `stream` refactor so `stream` appears before the `id` subscript
-// TODO: Rename `id` as `tag`?
-// TODO: Explore observing any DynamicProperty
+    public init(_ keyPath: KeyPath<EnvironmentValues, Value>, id: AnyHashable? = nil) {
+      self.keyPath = keyPath
+      self.id = id
+    }
+    
+    public init(_ keyPath: KeyPath<EnvironmentValues, Value>, id: Any.Type) {
+      self.init(keyPath, id: ObjectIdentifier(id))
+    }
+
+    public var wrappedValue: Value? {
+      self.environment.value(self.keyPath, id: self.id)
+    }
+    public var projectedValue: AsyncStream<Value?> {
+      self.environment.stream(self.keyPath, id: self.id)
+    }
+  }
+}
 
 extension DependencyValues {
-  public var environment: SwiftUIEnvironment {
+  // This environment value is internal, accessed through `@Dependency.Environment(\…)`
+  var _swiftuiEnvironment: SwiftUIEnvironment {
+    get { self[SwiftUIEnvironment.self] }
+    set { self[SwiftUIEnvironment.self] = newValue }
+  }
+}
+extension EnvironmentValues {
+  var _swiftuiEnvironment: SwiftUIEnvironment {
     get { self[SwiftUIEnvironment.self] }
     set { self[SwiftUIEnvironment.self] = newValue }
   }
 }
 
 @MainActor
-@dynamicMemberLookup
-public final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
+final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
+  struct Key: Hashable, @unchecked Sendable {
+    let id: AnyHashable?
+    let keypath: PartialKeyPath<EnvironmentValues>
+    init(id: AnyHashable? = nil, keypath: PartialKeyPath<EnvironmentValues>) {
+      self.id = id
+      self.keypath = keypath
+    }
+  }
+  
   public nonisolated static var defaultValue: SwiftUIEnvironment { .shared }
   public nonisolated static var liveValue: SwiftUIEnvironment { .shared }
   public nonisolated static var testValue: SwiftUIEnvironment { .shared }
@@ -39,7 +72,7 @@ public final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
 
   init() {}
 
-  internal func update<ID: Hashable, Value>(
+  func update<ID: Hashable, Value>(
     _ value: Value?,
     keyPath: KeyPath<EnvironmentValues, Value>,
     id: ID? = String?.none
@@ -47,24 +80,12 @@ public final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
     self.dependencies[Key(id: id, keypath: keyPath)] = value
   }
 
-  // Value with `ID == String?.none`
-  public subscript<Value>(dynamicMember keyPath: KeyPath<EnvironmentValues, Value>) -> Value? {
-    self.dependencies[Key(id: String?.none, keypath: keyPath)] as? Value
+  func value<Value>(_ keyPath: KeyPath<EnvironmentValues, Value>, id: AnyHashable?) -> Value? {
+    self.dependencies[Key(id: id, keypath: keyPath)] as? Value
   }
 
-  // Identified proxy
-  public nonisolated subscript(id: AnyHashable) -> Identified {
-    Identified(id: id, swiftuiEnvironment: self)
-  }
-
-  // Streams
-  public nonisolated var streams: Streams {
-    .init(swiftuiEnvironment: self)
-  }
-
-  // Stream
-  public func stream<Value: Sendable, ID: Hashable>(
-    _ keyPath: KeyPath<EnvironmentValues, Value>, id: ID? = String?.none
+  func stream<Value>(
+    _ keyPath: KeyPath<EnvironmentValues, Value>, id: AnyHashable? = nil
   )
     -> AsyncStream<Value?>
   {
@@ -76,6 +97,7 @@ public final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
           // We still need to remove duplicates as `dependencies` can be updated
           // multiple types by different observed environment values.
           .removeDuplicates(by: isDuplicate(v1:v2:))
+          .print()
           .sink { continuation.yield($0) }
       )
       continuation.onTermination = { _ in
@@ -85,78 +107,22 @@ public final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
   }
 }
 
-extension SwiftUIEnvironment {
-  struct Key: Hashable {
-    let id: AnyHashable?
-    let keypath: PartialKeyPath<EnvironmentValues>
-    init(id: AnyHashable? = nil, keypath: PartialKeyPath<EnvironmentValues>) {
-      self.id = id
-      self.keypath = keypath
-    }
-  }
-}
-
-extension SwiftUIEnvironment {
-  @MainActor
-  @dynamicMemberLookup
-  public struct Streams {
-    let swiftuiEnvironment: SwiftUIEnvironment
-    public subscript<Value: Sendable>(dynamicMember keyPath: KeyPath<EnvironmentValues, Value>)
-      -> AsyncStream<Value?>
-    {
-      self.swiftuiEnvironment.stream(keyPath)
-    }
-  }
-}
-
-extension SwiftUIEnvironment {
-  // A proxy for identified values. Created using the `id` subscript on `SwiftUIEnvironment`.
-  @MainActor
-  @dynamicMemberLookup
-  public struct Identified {
-    let id: AnyHashable
-    let swiftuiEnvironment: SwiftUIEnvironment
-
-    // Value
-    public subscript<Value>(dynamicMember keyPath: KeyPath<EnvironmentValues, Value>) -> Value? {
-      self.swiftuiEnvironment.dependencies[Key(id: self.id, keypath: keyPath)] as? Value
-    }
-
-    // Streams
-    public var streams: Streams {
-      Streams(id: self.id, swiftuiEnvironment: self.swiftuiEnvironment)
-    }
-
-    @MainActor
-    @dynamicMemberLookup
-    public struct Streams {
-      let id: AnyHashable
-      let swiftuiEnvironment: SwiftUIEnvironment
-      public subscript<Value: Sendable>(dynamicMember keyPath: KeyPath<EnvironmentValues, Value>)
-        -> AsyncStream<Value?>
-      {
-        self.swiftuiEnvironment.stream(keyPath, id: self.id)
-      }
-    }
-  }
-}
-
+// TODO: Find a better name
 extension View {
-  public func observeEnvironmentAsDependency<Value: Sendable, ID: Hashable>(
-    _ keyPath: KeyPath<EnvironmentValues, Value>, id: ID? = String?.none
+  public func observeEnvironmentAsDependency<Value>(
+    _ keyPath: KeyPath<EnvironmentValues, Value>, id: AnyHashable? = nil
   ) -> some View {
     self.modifier(EnvironmentalDependencyModifier(keyPath: keyPath, id: id))
   }
-}
-
-extension EnvironmentValues {
-  var _swiftuiEnvironment: SwiftUIEnvironment {
-    get { self[SwiftUIEnvironment.self] }
-    set { self[SwiftUIEnvironment.self] = newValue }
+  
+  public func observeEnvironmentAsDependency<Value>(
+    _ keyPath: KeyPath<EnvironmentValues, Value>, id: Any.Type
+  ) -> some View {
+    self.modifier(EnvironmentalDependencyModifier(keyPath: keyPath, id: ObjectIdentifier(id)))
   }
 }
 
-struct EnvironmentalDependencyModifier<ID: Hashable, Value: Sendable>: ViewModifier {
+struct EnvironmentalDependencyModifier<ID: Hashable, Value>: ViewModifier {
   final class Values {
     let currentValue: CurrentValueSubject<Value?, Never> = .init(nil)
     private(set) lazy var publisher: AnyPublisher<Value?, Never> = self.currentValue

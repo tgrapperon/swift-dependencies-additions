@@ -2,7 +2,7 @@ import _CoreDataDependency
 import Dependencies
 import SwiftUI
 import SwiftUINavigation
-import SwiftUIDependency
+import _SwiftUIDependency
 @MainActor
 final class CoreDataStudy: ObservableObject {
   enum Destination {
@@ -185,10 +185,6 @@ struct CoreDataStudyView: View {
   }
 }
 
-extension ObservableObject {
-  public static var id: ObjectIdentifier { ObjectIdentifier(Self.self) }
-}
-
 @MainActor
 final class AddSongModel: ObservableObject {
   // A logger dependency that we use if saving fails
@@ -203,8 +199,8 @@ final class AddSongModel: ObservableObject {
   // locks the dependency's from the model with the environment
   // from its view.
   // We need to use the same identifier on the view's side when calling:
-  // .observeEnvironmentAsDependency(\.dismiss, id: AddSongModel.id)
-  @Dependency(\.environment[AddSongModel.id].dismiss) var dismiss
+  // .observeEnvironmentAsDependency(\.dismiss, id: AddSongModel)
+  @Dependency.Environment(\.dismiss, id: AddSongModel.self) var dismiss
 
   @Published var song: Fetched<Song> 
   private var isDismissalInteractive: Bool = false
@@ -256,7 +252,7 @@ struct AddSongView: View {
       }
     }
     .navigationTitle("Add Song")
-    .observeEnvironmentAsDependency(\.dismiss, id: AddSongModel.id)
+    .observeEnvironmentAsDependency(\.dismiss, id: AddSongModel.self)
   }
 }
 
