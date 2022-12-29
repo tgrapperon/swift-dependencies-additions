@@ -6,7 +6,7 @@ TODO: Underscore _CoreData, _AppStorage, _Notification and _SwiftUI
 
 A companion library to Point-Free's `swift-dependencies` that provides higher-level dependencies.
 
-## On the menu
+## On the menu // Rewrite this
 `Dependencies` is a fantastic library that helps managing your app's dependencies in a similar fashion SwiftUI handles its `Environment`.
 
 TODO: Reword this
@@ -72,7 +72,7 @@ let compressed = try compress(uncompressed, using: .lzfse)
 let decompressed = try decompress(compressed, using: .lzfse)
 ```
 They can also be called from async contexts, where a more efficient
-variant is used.
+variant is used:
 ```swift
 let compressed = try await compress(uncompressed)
 let decompressed = try await decompress(compressed)
@@ -82,6 +82,36 @@ By default, `compress` and `decompress` are using the `.zlib` algorithm.
 
 ### Logger
 
-
 ### PersistentContainer
+
+### ProcessInfo
+
 ### UserDefaults
+
+### `swift-dependencies` extensions
+
+#### Date generator
+#### RNG
+
+## Higher-level dependencies
+The library proposes a few experimental higher level dependencies. They are currenly "underscored", meaning that their APIs are not finalized. They may be extracted into their own library in the future.
+
+### AppStorage
+```swift
+@Dependency.AppStorage("username") var username: String = "Anonymous"
+```
+The API follows SwiftUI's `AppStorage`, but is backed by `@Dependency(\.userDefaults)`.
+It can operate in your model and be accessed from async contexts. If the same `key` are used, it can inter-operate with `SwiftUI`'s own `AppStorage.
+The projected value is an `AsyncStream<Value>` of this user preference's values. They can be observed from any async context:
+```
+@Dependency.AppStorage("isSoundEnabled") var isSoundEnabled: Bool = false
+
+for await isSoundEnabled in $isSoundEnabled {
+  await isSoundEnabled ? audioEngine.start() : audioEngine.stop()
+}
+```
+### Notifications
+
+### SwiftUI Environment
+
+### Core Data (WIP)
