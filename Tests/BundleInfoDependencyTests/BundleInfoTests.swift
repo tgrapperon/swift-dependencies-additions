@@ -8,12 +8,12 @@ final class BundleInfoTests: XCTestCase {
   func testBundleInfo() {
     DependencyValues.withValues {
       $0.bundleInfo = .init(
-        bundleIdentifier: "com.company.app",
-        name: "Name",
-        displayName: "DisplayName",
-        spokenName: "SpokenName",
-        shortVersion: "1.7",
-        version: "12345"
+        bundleIdentifier: { "com.company.app" },
+        name: { "Name" },
+        displayName: { "DisplayName" },
+        spokenName: { "SpokenName" },
+        shortVersion: { "1.7" },
+        version: { "12345" }
       )
     } operation: {
       XCTAssertEqual(bundleInfo.bundleIdentifier, "com.company.app")

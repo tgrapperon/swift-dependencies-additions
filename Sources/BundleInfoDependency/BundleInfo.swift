@@ -1,4 +1,5 @@
 import Dependencies
+import DependenciesAdditions
 import Foundation
 import XCTestDynamicOverlay
 
@@ -9,8 +10,23 @@ extension DependencyValues {
   }
 }
 
+// TODO: Add infoDictionary
+
 /// A type that exposes a few fields from some `Bundle`'s `info.plist`.
-public struct BundleInfo: Sendable, Hashable {
+public struct BundleInfo: Sendable {
+  /// A unique identifier for a bundle.
+  @LazyProxy public var bundleIdentifier: String
+  /// A user-visible short name for the bundle.
+  @LazyProxy public var name: String
+  /// The user-visible name for the bundle, used by Siri and visible on the iOS Home screen.
+  @LazyProxy public var displayName: String
+  /// A replacement for the app name in text-to-speech operations.
+  @LazyProxy public var spokenName: String
+  /// The release or version number of the bundle.
+  @LazyProxy public var shortVersion: String
+  /// The version of the build that identifies an iteration of the bundle.
+  @LazyProxy public var version: String
+  
   /// Creates a ``BundleInfo`` value.
   /// - Parameters:
   ///   - bundleIdentifier: A unique identifier for a bundle.
@@ -20,41 +36,26 @@ public struct BundleInfo: Sendable, Hashable {
   ///   - shortVersion: The release or version number of the bundle.
   ///   - version: The version of the build that identifies an iteration of the bundle.
   public init(
-    bundleIdentifier: String,
-    name: String,
-    displayName: String,
-    spokenName: String,
-    shortVersion: String,
-    version: String
+    bundleIdentifier: @escaping () -> String,
+    name: @escaping () -> String,
+    displayName: @escaping () -> String,
+    spokenName: @escaping () -> String,
+    shortVersion: @escaping () -> String,
+    version: @escaping () -> String
   ) {
-    self.bundleIdentifier = bundleIdentifier
-    self.name = name
-    self.displayName = displayName
-    self.spokenName = spokenName
-    self.shortVersion = shortVersion
-    self.version = version
+    self._bundleIdentifier = .init(bundleIdentifier)
+    self._name = .init(name)
+    self._displayName = .init(displayName)
+    self._spokenName = .init(spokenName)
+    self._shortVersion = .init(shortVersion)
+    self._version = .init(version)
   }
-
-  /// A unique identifier for a bundle.
-  public var bundleIdentifier: String
-
-  /// A user-visible short name for the bundle.
-  public var name: String
-  /// The user-visible name for the bundle, used by Siri and visible on the iOS Home screen.
-  public var displayName: String
-  /// A replacement for the app name in text-to-speech operations.
-  public var spokenName: String
-
-  /// The release or version number of the bundle.
-  public var shortVersion: String
-  /// The version of the build that identifies an iteration of the bundle.
-  public var version: String
 }
 
 extension BundleInfo {
   public init(bundle: Bundle) {
-    let get: (String) -> String = {
-      bundle.object(forInfoDictionaryKey: $0) as? String ?? ""
+    let get: (String) -> () -> String = { key in
+      { bundle.object(forInfoDictionaryKey: key) as? String ?? "" }
     }
     self = BundleInfo(
       bundleIdentifier: get("CFBundleIdentifier"),
@@ -72,14 +73,24 @@ extension BundleInfo: DependencyKey {
     BundleInfo(bundle: .main)
   }
   static public var testValue: BundleInfo {
-    XCTFail(#"Unimplemented: @Dependency(\.bundleInfo)"#)
-    return BundleInfo(
-      bundleIdentifier: "",
-      name: "",
-      displayName: "",
-      spokenName: "",
-      shortVersion: "",
-      version: ""
+    .unimplemented
+  }
+}
+
+extension BundleInfo {
+  static var unimplemented: BundleInfo {
+    BundleInfo(
+      bundleIdentifier: XCTestDynamicOverlay.unimplemented(
+        #"Unimplemented: @Dependency(\.bundleInfo.bundleIdentifier)"#),
+      name: XCTestDynamicOverlay.unimplemented(#"Unimplemented: @Dependency(\.bundleInfo.name)"#),
+      displayName: XCTestDynamicOverlay.unimplemented(
+        #"Unimplemented: @Dependency(\.bundleInfo.displayName)"#),
+      spokenName: XCTestDynamicOverlay.unimplemented(
+        #"Unimplemented: @Dependency(\.bundleInfo.spokenName)"#),
+      shortVersion: XCTestDynamicOverlay.unimplemented(
+        #"Unimplemented: @Dependency(\.bundleInfo.shortVersion)"#),
+      version: XCTestDynamicOverlay.unimplemented(
+        #"Unimplemented: @Dependency(\.bundleInfo.version)"#)
     )
   }
 }

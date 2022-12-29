@@ -24,7 +24,7 @@ define(
   dependencies: "UserDefaultsDependency",
   testingDependencies: "DependenciesAdditions"
 )
-define("BundleInfoDependency")
+define("BundleInfoDependency", dependencies: "DependenciesAdditions")
 define("PersistentContainerDependency")
 define("_CoreDataDependency", dependencies: "DependenciesAdditions", "PersistentContainerDependency")
 define("CodableDependency")
@@ -37,6 +37,8 @@ define("_NotificationDependency", dependencies: "DependenciesAdditions")
 define("UserDefaultsDependency")
 //define("UIDevice")
 define("_SwiftUIDependency", testingDependencies: "DependenciesAdditions")
+define("DeviceDependency", dependencies: "DependenciesAdditions")
+
 
 func define(_ target: String, dependencies: String..., testingDependencies: String...) {
   var targetDependencies: [Target.Dependency] = [
