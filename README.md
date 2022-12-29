@@ -58,9 +58,30 @@ let decoded = try decode(Point.self, from: encoded) // A `Point` value
 ```
 As you can see, the API is very similar to JSON or PropertyList encoder and decoder.
 
-By default, encode and decode are producing/consuming `JSON` data.
+By default, `encode` and `decode` are producing/consuming `JSON` data.
 
 ### Compression
+In the same fashion as `encode` and `decode`, the library exposes two
+dependencies to compress and decompress `Data`, using Apple's Compression framework:
+```swift
+@Dependency(\.compress) var compress
+@Dependency(\.decompress) var decompress
+
+let uncompressed = "Lorem ipsum dolor sit amet".data(using: .utf8)!
+let compressed = try compress(uncompressed, using: .lzfse)
+let decompressed = try decompress(compressed, using: .lzfse)
+```
+They can also be called from async contexts, where a more efficient
+variant is used.
+```swift
+let compressed = try await compress(uncompressed)
+let decompressed = try await decompress(compressed)
+```
+
+By default, `compress` and `decompress` are using the `.zlib` algorithm.
+
 ### Logger
+
+
 ### PersistentContainer
 ### UserDefaults
