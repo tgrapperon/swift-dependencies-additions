@@ -2,6 +2,45 @@ import Dependencies
 import Foundation
 @_spi(Internal) import DependenciesAdditions
 
+extension Dependency {
+  @propertyWrapper
+  public struct Notification: Sendable {
+    @Dependencies.Dependency(\.notifications) var notificationCenter
+    
+    let notification: Notifications.NotificationOf<Value>
+    
+    public init(_ notification: Notifications.NotificationOf<Value>) {
+      self.notification = notification
+    }
+    
+    public init(_ notification: KeyPath<Notifications, Notifications.NotificationOf<Value>>) {
+      self.notification = Notifications()[keyPath: notification]
+    }
+    
+    public init(
+      _ name: Foundation.Notification.Name,
+      object: NSObject? = nil,
+      file: StaticString = #fileID,
+      line: UInt = #line
+    ) where Value == Foundation.Notification {
+      self.init(
+        .init(
+          name,
+          object: object,
+          transform: { $0 },
+          notify: { $0 },
+          file: file,
+          line: line
+        )
+      )
+    }
+    
+    public var wrappedValue: Notifications.StreamOf<Value> {
+      notificationCenter[notification]
+    }
+  }
+}
+
 extension DependencyValues {
   public var notifications: any NotificationCenterProtocol {
     get { self[NotificationCenterKey.self] }
@@ -18,19 +57,6 @@ enum NotificationCenterKey: DependencyKey {
 }
 
 public struct Notifications {}
-//// Test
-//extension Notifications {
-//  var didBecomeSingleTreaded: NotificationOf<Notification> {
-//    .init(.NSDidBecomeSingleThreaded)
-//  }
-//}
-//
-//func test() {
-//  @Dependency(\.notifications) var notifications
-//  @Dependency(\.notifications.didBecomeSingleTreaded) var didBecomeSingleTreaded;
-//
-//  notifications.post(.init(name: .NSDidBecomeSingleThreaded))
-//}
 
 extension Notifications {
   public struct NotificationOf<Value>: Hashable, Sendable {
@@ -38,6 +64,7 @@ extension Notifications {
     let object: UncheckedSendable<NSObject>?
     let transform: @Sendable (Notification) throws -> Value
     let notify: (@Sendable (Value) -> Notification?)?
+    
     let id: ID
 
     public init(
@@ -127,7 +154,7 @@ extension Notifications {
   }
 }
 
-@dynamicMemberLookup
+//@dynamicMemberLookup
 public protocol NotificationCenterProtocol: Sendable {
   func post(_ notification: Notification)
   subscript<Value>(notification: Notifications.NotificationOf<Value>) -> Notifications.StreamOf<Value> { get }

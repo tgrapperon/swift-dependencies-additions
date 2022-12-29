@@ -14,12 +14,6 @@ extension Notifications {
       return notification
     }
   }
-
-  #if os(iOS)
-  var screenshots: NotificationOf<Void> {
-    NotificationOf(UIApplication.userDidTakeScreenshotNotification) { _ in () }
-  }
-  #endif
 }
 
 @MainActor
@@ -27,7 +21,7 @@ final class NotificationStudy: ObservableObject {
   @Published var count: Int
   @Published var countFromNotification: Int?
   
-  @Dependency(\.notifications.countNotification) var countsNotification
+  @Dependency.Notification(\.countNotification) var countsNotification
   @Dependency(\.continuousClock) var clock
   @Dependency(\.withRandomNumberGenerator) var withRandomNumberGenerator
   private var notificationObservation: Task<Void, Never>?

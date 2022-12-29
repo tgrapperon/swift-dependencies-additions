@@ -1,7 +1,7 @@
 import XCTest
 @testable import CaseStudies
 import Dependencies
-import AppStorage
+import _AppStorageDependency
 
 @MainActor
 final class AppStorageStudyTests: XCTestCase {
@@ -10,7 +10,7 @@ final class AppStorageStudyTests: XCTestCase {
       @Dependency.AppStorage("number") var number: Int?
       @Dependency.AppStorage("string") var string: String?
       
-      let model = AppStorageStudy()
+      let model = UserDefaultsStudy()
       
       XCTAssertEqual(model.publishedNumber, 42)
       XCTAssertEqual(model.publishedString, nil)

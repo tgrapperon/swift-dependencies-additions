@@ -39,7 +39,7 @@ extension Notifications {
 
 final class NotificationDependencyTests: XCTestCase {
   func testLiveNotifications() async throws {
-    @Dependency(\.notifications.testNotificationWithBidirectionalTransform) var testNotification
+    @Dependency.Notification(\.testNotificationWithBidirectionalTransform) var testNotification
 
     try await withTimeout(1000) { group in
       group.addTask {
@@ -67,7 +67,7 @@ final class NotificationDependencyTests: XCTestCase {
   }
 
   func testLiveNotificationsFailureToExtract() async throws {
-    @Dependency(\.notifications.testNotificationWithBidirectionalTransform) var testNotification
+    @Dependency.Notification(\.testNotificationWithBidirectionalTransform) var testNotification
     @Dependency(\.notifications) var notificationCenter
 
     try await withTimeout { group in
@@ -96,7 +96,7 @@ final class NotificationDependencyTests: XCTestCase {
   }
 
   func testLiveFailureToSendNotifications() async throws {
-    @Dependency(\.notifications.testNotificationWithUnidirectionalTransform) var testNotification;
+    @Dependency.Notification(\.testNotificationWithUnidirectionalTransform) var testNotification;
     
     XCTExpectFailure {
       testNotification.post(2)
