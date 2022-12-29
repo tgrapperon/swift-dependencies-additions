@@ -80,17 +80,25 @@ extension BundleInfo: DependencyKey {
 extension BundleInfo {
   static var unimplemented: BundleInfo {
     BundleInfo(
-      bundleIdentifier: unimplementedAutoclosure(
-        #"Unimplemented: @Dependency(\.bundleInfo.bundleIdentifier)"#)(),
-      name: unimplementedAutoclosure(#"Unimplemented: @Dependency(\.bundleInfo.name)"#)(),
-      displayName: unimplementedAutoclosure(
-        #"Unimplemented: @Dependency(\.bundleInfo.displayName)"#)(),
-      spokenName: unimplementedAutoclosure(
-        #"Unimplemented: @Dependency(\.bundleInfo.spokenName)"#)(),
-      shortVersion: unimplementedAutoclosure(
-        #"Unimplemented: @Dependency(\.bundleInfo.shortVersion)"#)(),
-      version: unimplementedAutoclosure(
-        #"Unimplemented: @Dependency(\.bundleInfo.version)"#)()
+      bundleIdentifier: XCTestDynamicOverlay.unimplemented(
+        #"Unimplemented: @Dependency(\.bundleInfo.bundleIdentifier)"#),
+      name: XCTestDynamicOverlay.unimplemented(#"Unimplemented: @Dependency(\.bundleInfo.name)"#),
+      displayName: XCTestDynamicOverlay.unimplemented(
+        #"Unimplemented: @Dependency(\.bundleInfo.displayName)"#),
+      spokenName: XCTestDynamicOverlay.unimplemented(
+        #"Unimplemented: @Dependency(\.bundleInfo.spokenName)"#),
+      shortVersion: XCTestDynamicOverlay.unimplemented(
+        #"Unimplemented: @Dependency(\.bundleInfo.shortVersion)"#),
+      version: XCTestDynamicOverlay.unimplemented(
+        #"Unimplemented: @Dependency(\.bundleInfo.version)"#)
     )
+  }
+}
+
+
+struct Func {
+  var run: (String) -> Void
+  func run(_ string: String) -> Void {
+    run(string)
   }
 }

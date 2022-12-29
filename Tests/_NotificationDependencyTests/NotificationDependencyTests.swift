@@ -103,7 +103,7 @@ final class NotificationDependencyTests: XCTestCase {
   }
 
   func testLiveFailureToSendNotifications() async throws {
-    @Dependency.Notification(\.testNotificationWithUnidirectionalTransform) var testNotification;
+    @Dependency.Notification(\.testNotificationWithUnidirectionalTransform) var testNotification
 
     XCTExpectFailure {
       testNotification.post(2)
@@ -116,16 +116,22 @@ final class NotificationDependencyTests: XCTestCase {
     final class Model: @unchecked Sendable {
       @Dependency.Notification(\.testNotificationWithDependency) var notification
     }
+
     let defaultModel = Model()
-    let incrementingModel = DependencyValues.withValue(\.uuid, .incrementing) { Model() }
-    
+    let incrementingModel = DependencyValues.withValues {
+      $0.uuid = .incrementing
+      $0.path = .empty.pushing(1)
+    } operation: {
+      Model()
+    }
+
     let incrementingExpectations = [
       UUID(uuidString: "00000000-0000-0000-0000-000000000000"),
       UUID(uuidString: "00000000-0000-0000-0000-000000000001"),
       UUID(uuidString: "00000000-0000-0000-0000-000000000002"),
       UUID(uuidString: "00000000-0000-0000-0000-000000000003"),
     ]
-    
+
     try await withTimeout(1000) { group in
       group.addTask {
         var index: Int = 0
@@ -137,7 +143,7 @@ final class NotificationDependencyTests: XCTestCase {
           }
         }
       }
-      
+
       group.addTask {
         var index: Int = 0
         for await value in incrementingModel.notification() {
@@ -148,7 +154,23 @@ final class NotificationDependencyTests: XCTestCase {
           }
         }
       }
-      
+      Date(timeIntervalSinceReferenceDate: 0)
+      group.addTask {
+        await DependencyValues.withValue(
+          \.uuid,
+          .init{ UUID(uuidString: "11111111-1111-1111-1111-111111111111")! }
+        ) {
+          var index: Int = 0
+          for await value in defaultModel.notification() {
+            XCTAssertEqual(value, UUID(uuidString: "11111111-1111-1111-1111-111111111111")!)
+            index += 1
+            if index == incrementingExpectations.endIndex {
+              return
+            }
+          }
+        }
+      }
+
       group.addTask {
         try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
         notifications.post(.init(name: notificationName))

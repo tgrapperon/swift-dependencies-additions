@@ -1,21 +1,36 @@
 import Dependencies
 import Foundation
 @_spi(Internal) import DependenciesAdditions
+import PathDependency
 
 extension Dependency {
   @propertyWrapper
   public struct Notification: Sendable {
     @Dependencies.Dependency(\.notifications) var notificationCenter
+    @Dependencies.Dependency(\.path) var path
     @Dependencies.Dependency(\.self) var dependencies
 
     let notification: Notifications.NotificationOf<Value>
-
-    public init(_ notification: Notifications.NotificationOf<Value>) {
+    let file: StaticString
+    let line: UInt
+    public init(
+      _ notification: Notifications.NotificationOf<Value>,
+      file: StaticString = #fileID,
+      line: UInt = #line
+    ) {
       self.notification = notification
+      self.file = file
+      self.line = line
     }
 
-    public init(_ notification: KeyPath<Notifications, Notifications.NotificationOf<Value>>) {
+    public init(
+      _ notification: KeyPath<Notifications, Notifications.NotificationOf<Value>>,
+      file: StaticString = #fileID,
+      line: UInt = #line
+    ) {
       self.notification = Notifications()[keyPath: notification]
+      self.file = file
+      self.line = line
     }
 
     public init(
@@ -32,12 +47,21 @@ extension Dependency {
           notify: { $0 },
           file: file.description,
           line: line
-        )
+        ),
+        file: file,
+        line: line
       )
     }
 
     public var wrappedValue: Notifications.StreamOf<Value> {
-      self.notificationCenter[self.notification.updated(with: self.dependencies)]
+      self.notificationCenter[
+        self.notification.updated(
+          with: self.dependencies,
+          path: path,
+          file: file,
+          line: line
+        )
+      ]
     }
   }
 }
@@ -76,6 +100,8 @@ extension Notifications {
       file: String = #fileID,
       line: UInt = #line
     ) {
+      @Dependency(\.path) var path;
+      
       self.name = name
       self.object = object.map(UncheckedSendable.init(wrappedValue:))
       self.transform = transform
@@ -85,7 +111,8 @@ extension Notifications {
         object: object.map { ObjectIdentifier($0) },
         file: file.description,
         line: line,
-        valueType: ObjectIdentifier(Value.self)
+        valueType: ObjectIdentifier(Value.self),
+        path: path
       )
     }
 
@@ -93,9 +120,11 @@ extension Notifications {
     public init(
       _ name: Notification.Name,
       object: NSObject? = nil,
-      file: String = #fileID,
+      file: StaticString = #fileID,
       line: UInt = #line
     ) where Value == Void {
+      @Dependency(\.path) var path;
+
       let object = object.map(UncheckedSendable.init(wrappedValue:))
       self.name = name
       self.object = object
@@ -106,27 +135,35 @@ extension Notifications {
         object: object.map { ObjectIdentifier($0.wrappedValue) },
         file: file.description,
         line: line,
-        valueType: ObjectIdentifier(Value.self)
+        valueType: ObjectIdentifier(Value.self),
+        path: path
       )
     }
 
-    func updated(with values: DependencyValues) -> Self {
-      return NotificationOf(
-        self.name,
-        object: self.object?.value,
-        transform: { notification in
-          try DependencyValues.withValue(\.self, values) {
-            try transform(notification)
-          }
-        },
-        notify: self.notify.map { notify in
-          DependencyValues.withValue(\.self, values) {
-            { @Sendable value in notify(value) }
-          }
-        },
-        file: self.id.file,
-        line: self.id.line
-      )
+    func updated(
+      with values: DependencyValues,
+      path: Path,
+      file: StaticString,
+      line: UInt
+    ) -> Self {
+      DependencyValues.withValue(\.path, path) {
+        NotificationOf(
+          self.name,
+          object: self.object?.value,
+          transform: { notification in
+            try DependencyValues.withValue(\.self, values) {
+              try transform(notification)
+            }
+          },
+          notify: self.notify.map { notify in
+            DependencyValues.withValue(\.self, values) {
+              { @Sendable value in notify(value) }
+            }
+          },
+          file: file.description,
+          line: line
+        )
+      }
     }
 
     public static func == (lhs: Self, rhs: Self) -> Bool {
@@ -193,6 +230,7 @@ extension Notifications {
     let file: String
     let line: UInt
     let valueType: ObjectIdentifier
+    let path: Path
   }
 }
 
@@ -243,6 +281,7 @@ public struct _DefaultNotificationCenter: NotificationCenterProtocol {
       } stream: {
         AsyncStream(Value.self, bufferingPolicy: .bufferingNewest(0)) { continuation in
           print("create async stream…")
+          dump(notification.id)
           let observer = NotificationObserver {
             do {
               print("Received notification")

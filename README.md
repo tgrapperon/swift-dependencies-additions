@@ -20,6 +20,7 @@ The library proposes a few low-level additional dependencies to interface with:
 - `Logger`
 - `PersistentContainer`
 - `UserDefaults`
+- `Path`
 
 It also ships with more experimental and higher level abstractions for:
 - `AppStorage`, that proposes an `@Dependency.AppStorage` which mimics `SwiftUI`s `@AppStorage`, but usable from your model and or any concurrent context.
