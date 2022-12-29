@@ -103,7 +103,7 @@ The library proposes a few experimental higher level dependencies. They are curr
 The API follows SwiftUI's `AppStorage`, but is backed by `@Dependency(\.userDefaults)`.
 It can operate in your model and be accessed from async contexts. If the same `key` are used, it can inter-operate with `SwiftUI`'s own `AppStorage`.
 The projected value is an `AsyncStream<Value>` of this user preference's values. They can be observed from any async context:
-```
+```swift
 @Dependency.AppStorage("isSoundEnabled") var isSoundEnabled: Bool = false
 
 for await isSoundEnabled in $isSoundEnabled {
@@ -111,7 +111,36 @@ for await isSoundEnabled in $isSoundEnabled {
 }
 ```
 ### Notifications
+// TODO: Change this example, or propose an UIDevice dependency!
+
+This dependency allows to expose `(NS)Notification`s as typed `AsyncSequence`.
+```swift
+extension Notifications {
+  /// A typed `Notification` that publishes the current device's battery level.
+  @MainActor
+  public var batterLevelDidChange: NotificationOf<Float> {
+    .init(UIDevice.batteryLevelDidChangeNotification) { notification in
+      UIDevice.current.batteryLevel
+    }
+  }
+}
+```
+You can then expose this notification with a dedicated property wrapper:
+```swift
+@Dependency.Notification(\.batteryLevelDidChange) var batteryLevel
+```
+The exposed value is an async sequence of `Float` representing the `batteryLevel`:
+```swift
+for await level in batteryLevel {
+  if level < 0.2 {
+    self.isLowPowerModeEnabled = true
+  }
+}
+```
 
 ### SwiftUI Environment
+
+
+
 
 ### Core Data (WIP)
