@@ -101,7 +101,7 @@ The library proposes a few experimental higher level dependencies. They are curr
 @Dependency.AppStorage("username") var username: String = "Anonymous"
 ```
 The API follows SwiftUI's `AppStorage`, but is backed by `@Dependency(\.userDefaults)`.
-It can operate in your model and be accessed from async contexts. If the same `key` are used, it can inter-operate with `SwiftUI`'s own `AppStorage.
+It can operate in your model and be accessed from async contexts. If the same `key` are used, it can inter-operate with `SwiftUI`'s own `AppStorage`.
 The projected value is an `AsyncStream<Value>` of this user preference's values. They can be observed from any async context:
 ```
 @Dependency.AppStorage("isSoundEnabled") var isSoundEnabled: Bool = false
