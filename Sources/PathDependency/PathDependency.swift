@@ -2,31 +2,35 @@ import Dependencies
 import Foundation
 
 extension Path: DependencyKey {
-  public static var liveValue: Path { .init() }
-  public static var testValue: Path { .init() }
+  public static var liveValue: Path { .empty }
+  public static var testValue: Path { .empty }
 }
 
 extension DependencyValues {
+  /// A generalized `Path` value
   public var path: Path {
     get { self[Path.self] }
     set { self[Path.self] = newValue }
   }
 }
 
-public struct Path: Hashable, Sendable {
-  private let _components = LockIsolated([AnyHashable]())
+public struct Path: Hashable, @unchecked Sendable {
+  let lock = NSRecursiveLock()
+  private var _components = [AnyHashable]()
 
   public static var empty: Path { .init() }
 
   public var components: [AnyHashable] {
     // components are guaranteed to be `Sendable` by the exposed API.
-    _components.withValue { UncheckedSendable($0) }.wrappedValue
+    lock.lock()
+    defer { lock.unlock() }
+    return _components
   }
 
-  public func push<Component: Hashable & Sendable>(_ component: Component) {
-    self._components.withValue {
-      $0.append(component)
-    }
+  public mutating func push<Component: Hashable & Sendable>(_ component: Component) {
+    lock.lock()
+    defer { lock.unlock() }
+    _components.append(components)
   }
 
   public func pushing<Component: Hashable & Sendable>(_ component: Component) -> Self {
@@ -35,11 +39,11 @@ public struct Path: Hashable, Sendable {
     return path
   }
 
-  public func popLast() {
-    self._components.withValue {
-      if !$0.isEmpty {
-        $0.removeLast()
-      }
+  public mutating func popLast() {
+    lock.lock()
+    defer { lock.unlock() }
+    if !_components.isEmpty {
+      _components.removeLast()
     }
   }
 
