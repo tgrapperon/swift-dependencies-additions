@@ -103,7 +103,7 @@ final class NotificationDependencyTests: XCTestCase {
   }
 
   func testLiveFailureToSendNotifications() async throws {
-    @Dependency.Notification(\.testNotificationWithUnidirectionalTransform) var testNotification
+    @Dependency.Notification(\.testNotificationWithUnidirectionalTransform) var testNotification;
 
     XCTExpectFailure {
       testNotification.post(2)
