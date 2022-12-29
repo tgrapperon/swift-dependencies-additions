@@ -1,3 +1,7 @@
+# WIP
+
+TODO: Underscore _CoreData, _AppStorage, _Notification and _SwiftUI
+
 # Dependencies Additions
 
 A companion library to Point-Free's `swift-dependencies` that provides higher-level dependencies.
@@ -5,11 +9,11 @@ A companion library to Point-Free's `swift-dependencies` that provides higher-le
 ## On the menu
 `Dependencies` is a fantastic library that helps managing your app's dependencies in a similar fashion SwiftUI handles its `Environment`.
 
-`Dependencies` already ships with many dependencies, like `clock`, `uuid`, `date`, etc., but its fundamental nature prevents it to ship with too many built-in dependencies.
+TODO: Reword this
+// `Dependencies` already ships with many dependencies, like `clock`, `uuid`, `date`, etc., but its fundamental nature prevents it to ship with too many built-in dependencies.
+// `Dependencies Additions` intends to bridge the gap between these very fundamental dependencies and every-day development on Apple's platforms.
 
-//`Dependencies Additions` intends to bridge the gap between these very fundamental dependencies and every-day development on Apple's platforms.
-
-As of today, the library propose a few low-level additional dependencies to interface with:
+The library proposes a few low-level additional dependencies to interface with:
 - `BundleInfo`
 - `Codable`
 - `Compression`
