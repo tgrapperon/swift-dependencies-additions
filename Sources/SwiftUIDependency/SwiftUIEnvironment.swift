@@ -3,6 +3,8 @@ import Dependencies
 import Foundation
 import SwiftUI
 
+// TODO: Add @Dependency.Environment with automatic identification
+
 // In SwiftUI, one adds `.observe(\.environmentValue)` or `.observe(\.environmentValue, id: "A")`.
 // Then anywhere:
 //
