@@ -154,7 +154,7 @@ final class NotificationDependencyTests: XCTestCase {
           }
         }
       }
-      Date(timeIntervalSinceReferenceDate: 0)
+
       group.addTask {
         await DependencyValues.withValue(
           \.uuid,
