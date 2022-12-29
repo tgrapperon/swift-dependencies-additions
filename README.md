@@ -120,7 +120,8 @@ extension Notifications {
   @MainActor
   public var batterLevelDidChange: NotificationOf<Float> {
     .init(UIDevice.batteryLevelDidChangeNotification) { notification in
-      UIDevice.current.batteryLevel
+      @Dependency(\.device.batteryLevel) var level;
+      return level
     }
   }
 }

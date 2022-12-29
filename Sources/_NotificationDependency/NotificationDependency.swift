@@ -6,17 +6,18 @@ extension Dependency {
   @propertyWrapper
   public struct Notification: Sendable {
     @Dependencies.Dependency(\.notifications) var notificationCenter
-    
+    @Dependencies.Dependency(\.self) var dependencies
+
     let notification: Notifications.NotificationOf<Value>
-    
+
     public init(_ notification: Notifications.NotificationOf<Value>) {
       self.notification = notification
     }
-    
+
     public init(_ notification: KeyPath<Notifications, Notifications.NotificationOf<Value>>) {
       self.notification = Notifications()[keyPath: notification]
     }
-    
+
     public init(
       _ name: Foundation.Notification.Name,
       object: NSObject? = nil,
@@ -29,14 +30,16 @@ extension Dependency {
           object: object,
           transform: { $0 },
           notify: { $0 },
-          file: file,
+          file: file.description,
           line: line
         )
       )
     }
-    
+
     public var wrappedValue: Notifications.StreamOf<Value> {
-      notificationCenter[notification]
+      DependencyValues.escape { escaped in
+        notificationCenter[notification.updated(with: escaped)]
+      }
     }
   }
 }
@@ -64,15 +67,15 @@ extension Notifications {
     let object: UncheckedSendable<NSObject>?
     let transform: @Sendable (Notification) throws -> Value
     let notify: (@Sendable (Value) -> Notification?)?
-    
+
     let id: ID
 
     public init(
       _ name: Notification.Name,
       object: NSObject? = nil,
-      @_inheritActorContext transform: @escaping @Sendable (Notification) throws -> Value = { $0 },
-      @_inheritActorContext notify: (@Sendable (Value) -> Notification?)? = nil,
-      file: StaticString = #fileID,
+      transform: @escaping @Sendable (Notification) throws -> Value = { $0 },
+      notify: (@Sendable (Value) -> Notification?)? = nil,
+      file: String = #fileID,
       line: UInt = #line
     ) {
       self.name = name
@@ -88,6 +91,22 @@ extension Notifications {
       )
     }
 
+    func updated(with escaped: EscapedDependencies) -> Self {
+      let escaped = UncheckedSendable(escaped)
+      return NotificationOf(
+        self.name,
+        object: self.object?.value,
+        transform: {
+          notification in try escaped.wrappedValue.continue { try transform(notification) }
+        },
+        notify: self.notify.map { notify in
+          { @Sendable value in escaped.wrappedValue.continue { notify(value) } }
+        },
+        file: self.id.file,
+        line: self.id.line
+      )
+    }
+
     public static func == (lhs: Self, rhs: Self) -> Bool {
       lhs.id == rhs.id
     }
@@ -95,11 +114,11 @@ extension Notifications {
     public func hash(into hasher: inout Hasher) {
       hasher.combine(self.id)
     }
-    
+
     var notification: Notification {
       Notification(name: self.name, object: self.object?.wrappedValue)
     }
-    
+
     public func map<T>(
       transform: @escaping @Sendable (Value) throws -> T,
       notify: (@Sendable (T) -> Value?)? = nil,
@@ -134,10 +153,11 @@ extension Notifications {
       self.post = post
       self.stream = stream
     }
-    
+
     public func callAsFunction() -> AsyncStream<Value> {
       self.stream()
     }
+
     public func post(_ value: Value) {
       self.post(value)
     }
@@ -154,7 +174,7 @@ extension Notifications {
   }
 }
 
-//@dynamicMemberLookup
+// @dynamicMemberLookup
 public protocol NotificationCenterProtocol: Sendable {
   func post(_ notification: Notification)
   subscript<Value>(notification: Notifications.NotificationOf<Value>) -> Notifications.StreamOf<Value> { get }
@@ -184,9 +204,9 @@ public struct _DefaultNotificationCenter: NotificationCenterProtocol {
   public func post(_ notification: Notification) {
     NotificationCenter.default.post(notification)
   }
-  
+
   public subscript<Value>(notification: Notifications.NotificationOf<Value>) -> Notifications.StreamOf<Value> {
-    self.streams.withValue { (streams) -> Notifications.StreamOf<Value> in
+    self.streams.withValue { streams -> Notifications.StreamOf<Value> in
       if let existing = streams[notification.id] as! Notifications.StreamOf<Value>? {
         return existing
       }
@@ -229,13 +249,14 @@ public struct _DefaultNotificationCenter: NotificationCenterProtocol {
       return stream
     }
   }
-  
+
   private final class NotificationObserver: NSObject, Sendable {
     let onNotification: @Sendable (Notification) -> Void
     init(onNotification: @escaping @Sendable (Notification) -> Void) {
       self.onNotification = onNotification
       super.init()
     }
+
     @objc func onNotification(notification: Notification) {
       self.onNotification(notification)
     }
@@ -247,29 +268,30 @@ public struct _ControllableNotificationCenter: NotificationCenterProtocol {
   internal struct StreamAndSharedContinuations: Sendable {
     let notificationStream: any Sendable
     let postedSharedContinuations: any Sendable
-    
+
     func notificationStream<T>(of type: T.Type) -> Notifications.StreamOf<T> {
-      notificationStream as! Notifications.StreamOf<T>
+      self.notificationStream as! Notifications.StreamOf<T>
     }
+
     func postedSharedContinuation<T>(of type: T.Type) -> _AsyncSharedSubject<T> {
-      postedSharedContinuations as! _AsyncSharedSubject<T>
+      self.postedSharedContinuations as! _AsyncSharedSubject<T>
     }
   }
-  
+
   private let notifications = _AsyncSharedSubject<Notification>()
   private let streams = LockIsolated([Notifications.ID: StreamAndSharedContinuations]())
-  
+
   public func post(_ notification: Notification) {
-    notifications.yield(notification)
+    self.notifications.yield(notification)
   }
-  
+
   public subscript<Value>(notification: Notifications.NotificationOf<Value>) -> Notifications.StreamOf<Value> {
     return self.streams.withValue { streams in
       if let existing = streams[notification.id]?.notificationStream(of: Value.self) {
         return existing
       }
       let postedValues = _AsyncSharedSubject<Result<Value, Error>>()
-      let notificationStream = Notifications.StreamOf<Value>{ postedValue in
+      let notificationStream = Notifications.StreamOf<Value> { postedValue in
         if let notification = notification.notify?(postedValue) {
           self.post(notification)
         } else {
@@ -306,7 +328,7 @@ public struct _ControllableNotificationCenter: NotificationCenterProtocol {
               group.cancelAll()
             }
           }
-          
+
           continuation.onTermination = { _ in
             task.cancel()
           }
@@ -320,4 +342,3 @@ public struct _ControllableNotificationCenter: NotificationCenterProtocol {
     }
   }
 }
-
