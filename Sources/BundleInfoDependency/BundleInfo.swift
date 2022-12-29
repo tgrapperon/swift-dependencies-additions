@@ -26,7 +26,7 @@ public struct BundleInfo: Sendable {
   @LazyProxy public var shortVersion: String
   /// The version of the build that identifies an iteration of the bundle.
   @LazyProxy public var version: String
-  
+
   /// Creates a ``BundleInfo`` value.
   /// - Parameters:
   ///   - bundleIdentifier: A unique identifier for a bundle.
@@ -36,12 +36,12 @@ public struct BundleInfo: Sendable {
   ///   - shortVersion: The release or version number of the bundle.
   ///   - version: The version of the build that identifies an iteration of the bundle.
   public init(
-    bundleIdentifier: @escaping () -> String,
-    name: @escaping () -> String,
-    displayName: @escaping () -> String,
-    spokenName: @escaping () -> String,
-    shortVersion: @escaping () -> String,
-    version: @escaping () -> String
+    bundleIdentifier: @escaping @autoclosure () -> String,
+    name: @escaping @autoclosure () -> String,
+    displayName: @escaping @autoclosure () -> String,
+    spokenName: @escaping @autoclosure () -> String,
+    shortVersion: @escaping @autoclosure () -> String,
+    version: @escaping @autoclosure () -> String
   ) {
     self._bundleIdentifier = .init(bundleIdentifier)
     self._name = .init(name)
@@ -58,12 +58,12 @@ extension BundleInfo {
       { bundle.object(forInfoDictionaryKey: key) as? String ?? "" }
     }
     self = BundleInfo(
-      bundleIdentifier: get("CFBundleIdentifier"),
-      name: get("CFBundleName"),
-      displayName: get("CFBundleDisplayName"),
-      spokenName: get("CFBundleSpokenName"),
-      shortVersion: get("CFBundleShortVersionString"),
-      version: get("CFBundleVersion")
+      bundleIdentifier: get("CFBundleIdentifier")(),
+      name: get("CFBundleName")(),
+      displayName: get("CFBundleDisplayName")(),
+      spokenName: get("CFBundleSpokenName")(),
+      shortVersion: get("CFBundleShortVersionString")(),
+      version: get("CFBundleVersion")()
     )
   }
 }
@@ -80,17 +80,17 @@ extension BundleInfo: DependencyKey {
 extension BundleInfo {
   static var unimplemented: BundleInfo {
     BundleInfo(
-      bundleIdentifier: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.bundleInfo.bundleIdentifier)"#),
-      name: XCTestDynamicOverlay.unimplemented(#"Unimplemented: @Dependency(\.bundleInfo.name)"#),
-      displayName: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.bundleInfo.displayName)"#),
-      spokenName: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.bundleInfo.spokenName)"#),
-      shortVersion: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.bundleInfo.shortVersion)"#),
-      version: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.bundleInfo.version)"#)
+      bundleIdentifier: unimplementedAutoclosure(
+        #"Unimplemented: @Dependency(\.bundleInfo.bundleIdentifier)"#)(),
+      name: unimplementedAutoclosure(#"Unimplemented: @Dependency(\.bundleInfo.name)"#)(),
+      displayName: unimplementedAutoclosure(
+        #"Unimplemented: @Dependency(\.bundleInfo.displayName)"#)(),
+      spokenName: unimplementedAutoclosure(
+        #"Unimplemented: @Dependency(\.bundleInfo.spokenName)"#)(),
+      shortVersion: unimplementedAutoclosure(
+        #"Unimplemented: @Dependency(\.bundleInfo.shortVersion)"#)(),
+      version: unimplementedAutoclosure(
+        #"Unimplemented: @Dependency(\.bundleInfo.version)"#)()
     )
   }
 }
