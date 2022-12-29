@@ -33,7 +33,7 @@ Each dependency is self contained in its own module, so you can import only the 
 
 ### `BundleInfo`
 
-This very simple dependency exposes a `BundleInfo` type that allows to simply retrieve a few `Bundle`-related fields, like the `bundleIdentifier` or the app's `version`. 
+This very simple dependency exposes a `BundleInfo` type that allows to simply retrieve a few `info.plist`-related fields, like the `bundleIdentifier` or the app's `version`. 
 
 For example:
 ```swift
@@ -42,6 +42,24 @@ For example:
 As this value is often used to prefix identifiers, having this value exposed as a dependency allows you control it at distance when testing for example.
 
 ### Codable
+The library exposes two dependencies to helps with coding or decoding of your `Codable` types.
+```swift
+@Dependency(\.encode) var encode
+@Dependency(\.decode) var decode
+
+struct Point: Codable {
+  var x: Double
+  var y: Double
+}
+
+let point = Point(x: 12, y: 35)
+let encoded = try encode(point) // A `Data` value
+let decoded = try decode(Point.self, from: encoded) // A `Point` value
+```
+As you can see, the API is very similar to JSON or PropertyList encoder and decoder.
+
+By default, encode and decode are producing/consuming `JSON` data.
+
 ### Compression
 ### Logger
 ### PersistentContainer
