@@ -113,7 +113,7 @@ for await isSoundEnabled in $isSoundEnabled {
 ### Notifications
 // TODO: Change this example, or propose an UIDevice dependency!
 
-This dependency allows to expose `(NS)Notification`s as typed `AsyncSequence`.
+This dependency allows to expose `Notification`s as typed `AsyncSequence`s.
 ```swift
 extension Notifications {
   /// A typed `Notification` that publishes the current device's battery level.
