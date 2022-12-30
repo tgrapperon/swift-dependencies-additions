@@ -1,6 +1,8 @@
-import XCTest
-@testable import DependenciesAdditions
+//
+//  File.swift
+//  
+//
+//  Created by Thomas on 30/12/2022.
+//
 
-final class DependenciesAdditionsTests: XCTestCase {
-
-}
+import Foundation

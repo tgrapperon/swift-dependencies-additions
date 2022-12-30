@@ -1,6 +1,6 @@
 import Dependencies
 import Foundation
-@_spi(Internal) import DependenciesAdditions
+@_spi(Internal) import DependenciesBaseAdditions
 import PathDependency
 
 extension NotificationCenterProtocol where Self == _DefaultNotificationCenter {

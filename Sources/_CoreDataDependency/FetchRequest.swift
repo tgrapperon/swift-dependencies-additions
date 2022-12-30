@@ -1,6 +1,6 @@
 @preconcurrency import CoreData
 import Dependencies
-import DependenciesAdditions
+import DependenciesBaseAdditions
 import Foundation
 @_spi(Internals) @_exported import PersistentContainerDependency
 
