@@ -7,14 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E974C278295BE6050027AD74 /* PersistentContainerDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E974C277295BE6050027AD74 /* PersistentContainerDependency */; };
-		E98E74C1295B5B9C0024D761 /* BundleInfoDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74C0295B5B9C0024D761 /* BundleInfoDependency */; };
-		E98E74C3295B5B9C0024D761 /* CodableDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74C2295B5B9C0024D761 /* CodableDependency */; };
-		E98E74C5295B5B9C0024D761 /* CompressionDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74C4295B5B9C0024D761 /* CompressionDependency */; };
-		E98E74C9295B5B9C0024D761 /* DependenciesAdditions in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74C8295B5B9C0024D761 /* DependenciesAdditions */; };
-		E98E74CB295B5B9C0024D761 /* LoggerDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74CA295B5B9C0024D761 /* LoggerDependency */; };
-		E98E74CF295B5B9C0024D761 /* ProcessInfoDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74CE295B5B9C0024D761 /* ProcessInfoDependency */; };
-		E98E74D3295B5B9C0024D761 /* UserDefaultsDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74D2295B5B9C0024D761 /* UserDefaultsDependency */; };
 		E98E74D6295B5C070024D761 /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = E98E74D5295B5C070024D761 /* SwiftUINavigation */; };
 		E992399C295C917200586AA0 /* LoggerStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E992398D295C917200586AA0 /* LoggerStudy.swift */; };
 		E992399D295C917200586AA0 /* SwiftUIEnvironmentStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E992398E295C917200586AA0 /* SwiftUIEnvironmentStudy.swift */; };
@@ -28,12 +20,9 @@
 		E99239A5295C917200586AA0 /* StudiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9923997295C917200586AA0 /* StudiesView.swift */; };
 		E99239A6295C917200586AA0 /* CaseStudiesApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9923999295C917200586AA0 /* CaseStudiesApp.swift */; };
 		E99239A7295C917200586AA0 /* CaseStudies.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E992399A295C917200586AA0 /* CaseStudies.xcdatamodeld */; };
+		E9AF45F4295F1FB600D7F3FD /* DependenciesAdditions in Frameworks */ = {isa = PBXBuildFile; productRef = E9AF45F3295F1FB600D7F3FD /* DependenciesAdditions */; };
 		E9C3B93F29596715000263AD /* CaseStudiesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B93E29596715000263AD /* CaseStudiesTests.swift */; };
 		E9C3B946295967AE000263AD /* AppStorageStudyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B945295967AE000263AD /* AppStorageStudyTests.swift */; };
-		E9D6D8A4295D2B1600FCDDDE /* _AppStorageDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E9D6D8A3295D2B1600FCDDDE /* _AppStorageDependency */; };
-		E9D6D8A6295D2B1600FCDDDE /* _CoreDataDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E9D6D8A5295D2B1600FCDDDE /* _CoreDataDependency */; };
-		E9D6D8A8295D2B1600FCDDDE /* _NotificationDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E9D6D8A7295D2B1600FCDDDE /* _NotificationDependency */; };
-		E9D6D8AA295D2B1600FCDDDE /* _SwiftUIDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E9D6D8A9295D2B1600FCDDDE /* _SwiftUIDependency */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,19 +69,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E98E74CB295B5B9C0024D761 /* LoggerDependency in Frameworks */,
 				E98E74D6295B5C070024D761 /* SwiftUINavigation in Frameworks */,
-				E98E74C3295B5B9C0024D761 /* CodableDependency in Frameworks */,
-				E9D6D8AA295D2B1600FCDDDE /* _SwiftUIDependency in Frameworks */,
-				E98E74C9295B5B9C0024D761 /* DependenciesAdditions in Frameworks */,
-				E98E74CF295B5B9C0024D761 /* ProcessInfoDependency in Frameworks */,
-				E98E74D3295B5B9C0024D761 /* UserDefaultsDependency in Frameworks */,
-				E974C278295BE6050027AD74 /* PersistentContainerDependency in Frameworks */,
-				E9D6D8A4295D2B1600FCDDDE /* _AppStorageDependency in Frameworks */,
-				E9D6D8A8295D2B1600FCDDDE /* _NotificationDependency in Frameworks */,
-				E98E74C5295B5B9C0024D761 /* CompressionDependency in Frameworks */,
-				E98E74C1295B5B9C0024D761 /* BundleInfoDependency in Frameworks */,
-				E9D6D8A6295D2B1600FCDDDE /* _CoreDataDependency in Frameworks */,
+				E9AF45F4295F1FB600D7F3FD /* DependenciesAdditions in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,9 +96,9 @@
 			children = (
 				E992398D295C917200586AA0 /* LoggerStudy.swift */,
 				E992398E295C917200586AA0 /* SwiftUIEnvironmentStudy.swift */,
+				E9923991295C917200586AA0 /* CoreDataStudy.swift */,
 				E992398F295C917200586AA0 /* UserDefaultsStudy.swift */,
 				E9923990295C917200586AA0 /* CompressionStudy.swift */,
-				E9923991295C917200586AA0 /* CoreDataStudy.swift */,
 				E9923992295C917200586AA0 /* NotificationsStudy.swift */,
 				E9923993295C917200586AA0 /* NavigationButtonStyle.swift */,
 			);
@@ -215,19 +193,8 @@
 			);
 			name = CaseStudies;
 			packageProductDependencies = (
-				E98E74C0295B5B9C0024D761 /* BundleInfoDependency */,
-				E98E74C2295B5B9C0024D761 /* CodableDependency */,
-				E98E74C4295B5B9C0024D761 /* CompressionDependency */,
-				E98E74C8295B5B9C0024D761 /* DependenciesAdditions */,
-				E98E74CA295B5B9C0024D761 /* LoggerDependency */,
-				E98E74CE295B5B9C0024D761 /* ProcessInfoDependency */,
-				E98E74D2295B5B9C0024D761 /* UserDefaultsDependency */,
 				E98E74D5295B5C070024D761 /* SwiftUINavigation */,
-				E974C277295BE6050027AD74 /* PersistentContainerDependency */,
-				E9D6D8A3295D2B1600FCDDDE /* _AppStorageDependency */,
-				E9D6D8A5295D2B1600FCDDDE /* _CoreDataDependency */,
-				E9D6D8A7295D2B1600FCDDDE /* _NotificationDependency */,
-				E9D6D8A9295D2B1600FCDDDE /* _SwiftUIDependency */,
+				E9AF45F3295F1FB600D7F3FD /* DependenciesAdditions */,
 			);
 			productName = "Dependencies Additions Case Studies";
 			productReference = E9DC4C422958F9BB003F0CA8 /* CaseStudies.app */;
@@ -607,58 +574,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E974C277295BE6050027AD74 /* PersistentContainerDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PersistentContainerDependency;
-		};
-		E98E74C0295B5B9C0024D761 /* BundleInfoDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = BundleInfoDependency;
-		};
-		E98E74C2295B5B9C0024D761 /* CodableDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CodableDependency;
-		};
-		E98E74C4295B5B9C0024D761 /* CompressionDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CompressionDependency;
-		};
-		E98E74C8295B5B9C0024D761 /* DependenciesAdditions */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = DependenciesAdditions;
-		};
-		E98E74CA295B5B9C0024D761 /* LoggerDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LoggerDependency;
-		};
-		E98E74CE295B5B9C0024D761 /* ProcessInfoDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = ProcessInfoDependency;
-		};
-		E98E74D2295B5B9C0024D761 /* UserDefaultsDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = UserDefaultsDependency;
-		};
 		E98E74D5295B5C070024D761 /* SwiftUINavigation */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E98E74D4295B5C060024D761 /* XCRemoteSwiftPackageReference "swiftui-navigation" */;
 			productName = SwiftUINavigation;
 		};
-		E9D6D8A3295D2B1600FCDDDE /* _AppStorageDependency */ = {
+		E9AF45F3295F1FB600D7F3FD /* DependenciesAdditions */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = _AppStorageDependency;
-		};
-		E9D6D8A5295D2B1600FCDDDE /* _CoreDataDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = _CoreDataDependency;
-		};
-		E9D6D8A7295D2B1600FCDDDE /* _NotificationDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = _NotificationDependency;
-		};
-		E9D6D8A9295D2B1600FCDDDE /* _SwiftUIDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = _SwiftUIDependency;
+			productName = DependenciesAdditions;
 		};
 /* End XCSwiftPackageProductDependency section */
 

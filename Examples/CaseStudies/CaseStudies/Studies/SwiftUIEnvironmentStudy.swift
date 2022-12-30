@@ -5,13 +5,15 @@ import LoggerDependency
 
 @MainActor
 final class SwiftUIEnvironmentStudy: ObservableObject {
-  @Dependency.Environment(\.colorScheme) var colorScheme
+  @Dependency.Environment(\.colorScheme) var swiftUIColorScheme
+  @Published var modelColorScheme: ColorScheme?
   @Dependency(\.logger["SwiftUIEnvironmentStudy"]) var logger
   var observation: Task<Void, Never>?
   init() {
     self.observation = Task { [weak self] in
       guard let self else { return }
-      for await colorScheme in self.$colorScheme.dropFirst() {
+      for await colorScheme in self.$swiftUIColorScheme {
+        self.modelColorScheme = colorScheme
         logger.info("User did select \(colorScheme.localizedDescription, privacy: .public)")
       }
     }
@@ -25,17 +27,14 @@ final class SwiftUIEnvironmentStudy: ObservableObject {
 struct SwiftUIEnvironmentStudyView: View {
   @ObservedObject var model: SwiftUIEnvironmentStudy
   @State var preferredColorScheme: ColorScheme = .light
-  // By installing this property wrapper in a `View`, we automatically
-  // observe `@Environment(\.colorScheme).
-  @Dependency.Environment(\.colorScheme) var colorScheme
+  @Environment(\.colorScheme) var colorScheme
 
   var body: some View {
     List {
       Section {
-        LabeledContent("ColorScheme from Model", value: model.colorScheme.localizedDescription)
+        LabeledContent("ColorScheme from Model", value: model.modelColorScheme.localizedDescription)
+          .observeEnvironmentAsDependency(\.colorScheme)
         LabeledContent("ColorScheme from View", value: String(describing: preferredColorScheme))
-        LabeledContent("ColorScheme from wrapper", value: colorScheme.localizedDescription)
-
       }
       Button {
         if preferredColorScheme == .light {
