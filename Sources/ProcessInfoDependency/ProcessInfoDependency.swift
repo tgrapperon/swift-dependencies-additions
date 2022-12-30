@@ -327,61 +327,61 @@ extension ProcessInfo.Value {
   static var unimplemented: Self {
     .init(
       environment: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.environment)"#),
+        #"@Dependency(\.processInfo.environment)"#),
       arguments: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.arguments)"#),
+        #"@Dependency(\.processInfo.arguments)"#),
       hostName: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.hostName)"#),
+        #"@Dependency(\.processInfo.hostName)"#),
       processName: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.processName)"#),
+        #"@Dependency(\.processInfo.processName)"#),
       processIdentifier: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.processIdentifier)"#),
+        #"@Dependency(\.processInfo.processIdentifier)"#),
       globallyUniqueString: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.globallyUniqueString)"#),
+        #"@Dependency(\.processInfo.globallyUniqueString)"#),
       operatingSystemVersionString: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.operatingSystemVersionString)"#),
+        #"@Dependency(\.processInfo.operatingSystemVersionString)"#),
       operatingSystemVersion: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.operatingSystemVersion)"#,
+        #"@Dependency(\.processInfo.operatingSystemVersion)"#,
         placeholder: .init(majorVersion: 0, minorVersion: 0, patchVersion: 0)),
       processorCount: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.processorCount)"#),
+        #"@Dependency(\.processInfo.processorCount)"#),
       activeProcessorCount: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.activeProcessorCount)"#),
+        #"@Dependency(\.processInfo.activeProcessorCount)"#),
       physicalMemory: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.physicalMemory)"#),
+        #"@Dependency(\.processInfo.physicalMemory)"#),
       systemUptime: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.systemUptime)"#),
+        #"@Dependency(\.processInfo.systemUptime)"#),
       thermalState: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.thermalState)"#),
+        #"@Dependency(\.processInfo.thermalState)"#),
       isLowPowerModeEnabled: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.isLowPowerModeEnabled)"#),
+        #"@Dependency(\.processInfo.isLowPowerModeEnabled)"#),
       isMacCatalystApp: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.isMacCatalystApp)"#),
+        #"@Dependency(\.processInfo.isMacCatalystApp)"#),
       isiOSAppOnMac: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.isiOSAppOnMac)"#),
+        #"@Dependency(\.processInfo.isiOSAppOnMac)"#),
       userName: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.userName)"#),
+        #"@Dependency(\.processInfo.userName)"#),
       fullUserName: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.fullUserName)"#),
+        #"@Dependency(\.processInfo.fullUserName)"#),
       automaticTerminationSupportEnabled: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.automaticTerminationSupportEnabled)"#),
+        #"@Dependency(\.processInfo.automaticTerminationSupportEnabled)"#),
       isOperatingSystemAtLeast: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.isOperatingSystemAtLeast)"#),
+        #"@Dependency(\.processInfo.isOperatingSystemAtLeast)"#),
       beginActivity: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.beginActivity)"#, placeholder: NSObject()),
+        #"@Dependency(\.processInfo.beginActivity)"#, placeholder: NSObject()),
       endActivity: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.endActivity)"#),
+        #"@Dependency(\.processInfo.endActivity)"#),
       performActivity: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.performActivity)"#),
+        #"@Dependency(\.processInfo.performActivity)"#),
       performExpiringActivity: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.performExpiringActivity)"#),
+        #"@Dependency(\.processInfo.performExpiringActivity)"#),
       disableSuddenTermination: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.disableSuddenTermination)"#),
+        #"@Dependency(\.processInfo.disableSuddenTermination)"#),
       enableSuddenTermination: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.enableSuddenTermination)"#),
+        #"@Dependency(\.processInfo.enableSuddenTermination)"#),
       disableAutomaticTermination: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.disableAutomaticTermination)"#),
+        #"@Dependency(\.processInfo.disableAutomaticTermination)"#),
       enableAutomaticTermination: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.processInfo.enableAutomaticTermination)"#))
+        #"@Dependency(\.processInfo.enableAutomaticTermination)"#))
   }
 }
