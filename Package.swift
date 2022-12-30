@@ -29,6 +29,7 @@ define("_NotificationDependency", dependencies: "DependenciesAdditions", "PathDe
 define("_SwiftUIDependency", testingDependencies: "DependenciesAdditions")
 //define("CryptoDependency")
 //define("KeyChainDependency")
+//define("Version")?
 define("BundleInfoDependency", dependencies: "DependenciesAdditions")
 define("CodableDependency")
 define("CompressionDependency")

@@ -13,6 +13,7 @@ extension Dependency {
     let notification: Notifications.NotificationOf<Value>
     let file: StaticString
     let line: UInt
+    
     public init(
       _ notification: Notifications.NotificationOf<Value>,
       file: StaticString = #fileID,
@@ -40,12 +41,10 @@ extension Dependency {
       line: UInt = #line
     ) where Value == Foundation.Notification {
       self.init(
-        .init(
+        Notifications.NotificationOf<Value>(
           name,
           object: object,
-          transform: { $0 },
-          notify: { $0 },
-          file: file.description,
+          file: file,
           line: line
         ),
         file: file,
@@ -55,12 +54,13 @@ extension Dependency {
 
     public var wrappedValue: Notifications.StreamOf<Value> {
       self.notificationCenter[
-        self.notification.updated(
-          with: self.dependencies,
-          path: path,
-          file: file,
-          line: line
-        )
+        DependencyValues.withValue(\.path, self.path) {
+          self.notification.operatingWithDependencyValues(
+            self.dependencies,
+            file: file,
+            line: line
+          )
+        }
       ]
     }
   }
@@ -84,125 +84,228 @@ enum NotificationCenterKey: DependencyKey {
 public struct Notifications {}
 
 extension Notifications {
-  public struct NotificationOf<Value>: Hashable, Sendable {
+  public struct NotificationOf<Value>: Sendable, Identifiable {
+    public let id: ID
     let name: Notification.Name
     let object: UncheckedSendable<NSObject>?
-    let transform: @Sendable (Notification) throws -> Value
-    let notify: (@Sendable (Value) -> Notification?)?
-
-    let id: ID
-
-    public init(
-      _ name: Notification.Name,
-      object: NSObject? = nil,
-      transform: @escaping @Sendable (Notification) throws -> Value = { $0 },
-      notify: (@Sendable (Value) -> Notification?)? = nil,
-      file: String = #fileID,
-      line: UInt = #line
-    ) {
-      @Dependency(\.path) var path;
-      
-      self.name = name
-      self.object = object.map(UncheckedSendable.init(wrappedValue:))
-      self.transform = transform
-      self.notify = notify
-      self.id = ID(
-        name: name,
-        object: object.map { ObjectIdentifier($0) },
-        file: file.description,
-        line: line,
-        valueType: ObjectIdentifier(Value.self),
-        path: path
-      )
-    }
-
-    @MainActor
-    public init(
-      _ name: Notification.Name,
-      object: NSObject? = nil,
-      file: StaticString = #fileID,
-      line: UInt = #line
-    ) where Value == Void {
-      @Dependency(\.path) var path;
-
-      let object = object.map(UncheckedSendable.init(wrappedValue:))
-      self.name = name
-      self.object = object
-      self.transform = { _ in () }
-      self.notify = { _ in Notification(name: name, object: object?.wrappedValue) }
-      self.id = ID(
-        name: name,
-        object: object.map { ObjectIdentifier($0.wrappedValue) },
-        file: file.description,
-        line: line,
-        valueType: ObjectIdentifier(Value.self),
-        path: path
-      )
-    }
-
-    func updated(
-      with values: DependencyValues,
-      path: Path,
-      file: StaticString,
-      line: UInt
-    ) -> Self {
-      DependencyValues.withValue(\.path, path) {
-        NotificationOf(
-          self.name,
-          object: self.object?.value,
-          transform: { notification in
-            try DependencyValues.withValue(\.self, values) {
-              try transform(notification)
-            }
-          },
-          notify: self.notify.map { notify in
-            DependencyValues.withValue(\.self, values) {
-              { @Sendable value in notify(value) }
-            }
-          },
-          file: file.description,
-          line: line
-        )
-      }
-    }
-
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-      lhs.id == rhs.id
-    }
-
-    public func hash(into hasher: inout Hasher) {
-      hasher.combine(self.id)
-    }
-
-    var notification: Notification {
-      Notification(name: self.name, object: self.object?.wrappedValue)
-    }
-
-    public func map<T>(
-      transform: @escaping @Sendable (Value) throws -> T,
-      notify: (@Sendable (T) -> Value?)? = nil,
-      file: StaticString = #fileID,
-      line: UInt = #line
-    ) -> NotificationOf<T> {
-      return .init(
-        self.name,
-        object: self.object?.wrappedValue
-      ) {
-        try transform(self.transform($0))
-      } notify: {
-        guard
-          let selfNotify = self.notify,
-          let value = notify?($0)
-        else { return nil }
-        return selfNotify(value)
-      }
+    let extract: @Sendable (Notification) throws -> Value
+    let embed: @Sendable (Value, inout Notification) -> Void
+    
+    var notification: Foundation.Notification {
+      .init(name: name, object: object?.wrappedValue)
     }
   }
 }
 
+extension NotificationCenterProtocol {
+  func stream<Value>(notification: Notifications.NotificationOf<Value>) -> Notifications.StreamOf<Value> {
+    fatalError()
+//    self[notification]
+  }
+}
+
+extension Notifications.NotificationOf {
+  
+  public init(
+    _ name: Notification.Name,
+    object: NSObject? = nil,
+    extract: @escaping @Sendable (Notification) throws -> Value = { $0 },
+    embed: @escaping @Sendable (Value, inout Notification) -> Void = { _, _ in () },
+    file: StaticString = #fileID,
+    line: UInt = #line
+  ) {
+    @Dependency(\.path) var path;
+    
+    self.name = name
+    self.object = object.map(UncheckedSendable.init(wrappedValue:))
+    self.extract = extract
+    self.embed = embed
+    self.id = .init(
+      Value.self,
+      name: name,
+      object: object,
+      path: path,
+      file: file,
+      line: line
+    )
+  }
+  
+  public init(
+    _ name: Notification.Name,
+    object: NSObject? = nil,
+    file: StaticString = #fileID,
+    line: UInt = #line
+  ) where Value == Void {
+    @Dependency(\.path) var path;
+    
+    self.name = name
+    self.object = object.map(UncheckedSendable.init(wrappedValue:))
+    self.extract = { _ in () }
+    self.embed = { _, _ in () }
+    self.id = .init(
+      Value.self,
+      name: name,
+      object: object,
+      path: path,
+      file: file,
+      line: line
+    )
+  }
+  
+  // TODO: Add map operation?
+}
+
+extension Notifications.NotificationOf {
+  func operatingWithDependencyValues(
+    _ dependencyValues: DependencyValues,
+    file: StaticString = #fileID,
+    line: UInt = #line
+  ) -> Self {
+    .init(
+      self.name,
+      object: self.object?.wrappedValue,
+      extract: { notification in
+       try DependencyValues.withValue(\.self, dependencyValues) {
+         try self.extract(notification)
+        }
+      },
+      embed: { value, notification in
+        DependencyValues.withValue(\.self, dependencyValues) {
+          self.embed(value, &notification)
+         }
+      },
+      file: file,
+      line: line
+    )
+  }
+}
+
+
+extension Notifications {
+//  public struct NotificationOf<Value>: Hashable, Sendable {
+//
+//    let name: Notification.Name
+//    let object: UncheckedSendable<NSObject>?
+//    let transform: @Sendable (Notification) throws -> Value
+//    let notify: (@Sendable (Value) -> Notification?)?
+//
+//    let id: ID
+//
+//    public init(
+//      _ name: Notification.Name,
+//      object: NSObject? = nil,
+//      transform: @escaping @Sendable (Notification) throws -> Value = { $0 },
+//      notify: (@Sendable (Value) -> Notification?)? = nil,
+//      file: String = #fileID,
+//      line: UInt = #line
+//    ) {
+////      @Dependency(\.path) var path;
+//      @Dependency(\.self) var dependencies
+//
+//      self.name = name
+//      self.object = object.map(UncheckedSendable.init(wrappedValue:))
+//      self.transform = transform
+//      self.notify = notify
+//      self.id = .init(
+//        Value.self,
+//        name: name,
+//        object: object,
+//        path: dependencies.path,
+//        file: file,
+//        line: line
+//      )
+//    }
+//
+//
+//
+//
+//
+//    @MainActor
+//    public init(
+//      _ name: Notification.Name,
+//      object: NSObject? = nil,
+//      file: StaticString = #fileID,
+//      line: UInt = #line
+//    ) where Value == Void {
+//      @Dependency(\.path) var path;
+//
+//      let object = object.map(UncheckedSendable.init(wrappedValue:))
+//      self.name = name
+//      self.object = object
+//      self.transform = { _ in () }
+//      self.notify = { _ in Notification(name: name, object: object?.wrappedValue) }
+//      self.id = .init(
+//        Void.self,
+//        name: name,
+//        object: object?.wrappedValue,
+//        path: path,
+//        file: file.description,
+//        line: line
+//      )
+//    }
+//
+//    func updated(
+//      with values: DependencyValues,
+//      path: Path,
+//      file: StaticString,
+//      line: UInt
+//    ) -> Self {
+//      DependencyValues.withValue(\.path, path) {
+//        NotificationOf(
+//          self.name,
+//          object: self.object?.value,
+//          transform: { notification in
+//            try DependencyValues.withValue(\.self, values) {
+//              try transform(notification)
+//            }
+//          },
+//          notify: self.notify.map { notify in
+//            DependencyValues.withValue(\.self, values) {
+//              { @Sendable value in notify(value) }
+//            }
+//          },
+//          file: file.description,
+//          line: line
+//        )
+//      }
+//    }
+//
+//    public static func == (lhs: Self, rhs: Self) -> Bool {
+//      lhs.id == rhs.id
+//    }
+//
+//    public func hash(into hasher: inout Hasher) {
+//      hasher.combine(self.id)
+//    }
+//
+//    var notification: Notification {
+//      Notification(name: self.name, object: self.object?.wrappedValue)
+//    }
+//
+//    public func map<T>(
+//      transform: @escaping @Sendable (Value) throws -> T,
+//      notify: (@Sendable (T) -> Value?)? = nil,
+//      file: StaticString = #fileID,
+//      line: UInt = #line
+//    ) -> NotificationOf<T> {
+//      return .init(
+//        self.name,
+//        object: self.object?.wrappedValue
+//      ) {
+//        try transform(self.transform($0))
+//      } notify: {
+//        guard
+//          let selfNotify = self.notify,
+//          let value = notify?($0)
+//        else { return nil }
+//        return selfNotify(value)
+//      }
+//    }
+//  }
+}
+
 extension Notifications {
   public struct StreamOf<Value>: Sendable {
-    // TODO: Implement throwing version?
     private let post: @Sendable (Value) -> Void
     private let stream: @Sendable () -> AsyncStream<Value>
     init(
@@ -213,192 +316,44 @@ extension Notifications {
       self.stream = stream
     }
 
-    public func callAsFunction() -> AsyncStream<Value> {
-      self.stream()
-    }
-
     public func post(_ value: Value) {
       self.post(value)
     }
   }
 }
 
+extension Notifications.StreamOf: AsyncSequence {
+  public typealias AsyncIterator = AsyncStream<Value>.Iterator
+  public typealias Element = Value
+  
+  public func makeAsyncIterator() -> AsyncStream<Value>.Iterator {
+    self.stream().makeAsyncIterator()
+  }
+}
+
 extension Notifications {
-  struct ID: Hashable, Sendable {
+  public struct ID: Hashable, Sendable {
     let name: Notification.Name
     let object: ObjectIdentifier?
-    let file: String
-    let line: UInt
     let valueType: ObjectIdentifier
     let path: Path
-  }
-}
-
-// @dynamicMemberLookup
-public protocol NotificationCenterProtocol: Sendable {
-  func post(_ notification: Notification)
-  subscript<Value>(notification: Notifications.NotificationOf<Value>) -> Notifications.StreamOf<Value> { get }
-  // The subscript for @dynamicMemberLookup needs to be declared at the protocol
-  // level or it crashes when trying to build of testing
-  // TODO: Report this
-  subscript<Value>(dynamicMember keyPath: KeyPath<Notifications, Notifications.NotificationOf<Value>>) -> Notifications.StreamOf<Value> { get }
-}
-
-extension NotificationCenterProtocol {
-  public subscript<Value>(dynamicMember keyPath: KeyPath<Notifications, Notifications.NotificationOf<Value>>) -> Notifications.StreamOf<Value> {
-    self[Notifications()[keyPath: keyPath]]
-  }
-}
-
-extension NotificationCenterProtocol where Self == _DefaultNotificationCenter {
-  public static var `default`: _DefaultNotificationCenter { _DefaultNotificationCenter() }
-}
-
-extension NotificationCenterProtocol where Self == _ControllableNotificationCenter {
-  public static var controllable: _ControllableNotificationCenter { _ControllableNotificationCenter() }
-}
-
-public struct _DefaultNotificationCenter: NotificationCenterProtocol {
-  private let streams = LockIsolated([Notifications.ID: any Sendable]())
-
-  public func post(_ notification: Notification) {
-    NotificationCenter.default.post(notification)
-  }
-
-  public subscript<Value>(notification: Notifications.NotificationOf<Value>) -> Notifications.StreamOf<Value> {
-    self.streams.withValue { streams -> Notifications.StreamOf<Value> in
-      if let existing = streams[notification.id] as! Notifications.StreamOf<Value>? {
-        return existing
-      }
-      let stream = Notifications.StreamOf<Value> { value in
-        if let notification = notification.notify?(value) {
-          NotificationCenter.default.post(notification)
-        } else if let notification = value as? Notification {
-          NotificationCenter.default.post(notification)
-        } else {
-          XCTFail("TODO: Explain why it is not supported to send values directly without `notify`")
-        }
-      } stream: {
-        AsyncStream(Value.self, bufferingPolicy: .bufferingNewest(0)) { continuation in
-          let observer = NotificationObserver {
-            do {
-              let value = try notification.transform($0)
-              continuation.yield(value)
-            } catch {
-              continuation.finish()
-            }
-          }
-
-          NotificationCenter.default.addObserver(
-            observer,
-            selector: #selector(NotificationObserver.onNotification(notification:)),
-            name: notification.name,
-            object: notification.object?.value
-          )
-
-          continuation.onTermination = { _ in
-            NotificationCenter.default.removeObserver(
-              observer,
-              name: notification.name,
-              object: notification.object?.value
-            )
-          }
-        }
-      }
-      streams[notification.id] = stream
-      return stream
-    }
-  }
-
-  private final class NotificationObserver: NSObject, Sendable {
-    let onNotification: @Sendable (Notification) -> Void
-    init(onNotification: @escaping @Sendable (Notification) -> Void) {
-      self.onNotification = onNotification
-      super.init()
-    }
-
-    @objc func onNotification(notification: Notification) {
-      self.onNotification(notification)
-    }
-  }
-}
-
-public struct _ControllableNotificationCenter: NotificationCenterProtocol {
-  // Bundles a `Notifications.StreamOf` and its `SharedAsyncStreamsContinuation`
-  internal struct StreamAndSharedContinuations: Sendable {
-    let notificationStream: any Sendable
-    let postedSharedContinuations: any Sendable
-
-    func notificationStream<T>(of type: T.Type) -> Notifications.StreamOf<T> {
-      self.notificationStream as! Notifications.StreamOf<T>
-    }
-
-    func postedSharedContinuation<T>(of type: T.Type) -> _AsyncSharedSubject<T> {
-      self.postedSharedContinuations as! _AsyncSharedSubject<T>
-    }
-  }
-
-  private let notifications = _AsyncSharedSubject<Notification>()
-  private let streams = LockIsolated([Notifications.ID: StreamAndSharedContinuations]())
-
-  public func post(_ notification: Notification) {
-    self.notifications.yield(notification)
-  }
-
-  public subscript<Value>(notification: Notifications.NotificationOf<Value>) -> Notifications.StreamOf<Value> {
-    return self.streams.withValue { streams in
-      if let existing = streams[notification.id]?.notificationStream(of: Value.self) {
-        return existing
-      }
-      let postedValues = _AsyncSharedSubject<Result<Value, Error>>()
-      let notificationStream = Notifications.StreamOf<Value> { postedValue in
-        if let notification = notification.notify?(postedValue) {
-          self.post(notification)
-        } else {
-          postedValues.yield(.success(postedValue))
-        }
-      } stream: {
-        AsyncStream(Value.self, bufferingPolicy: .bufferingNewest(0)) { continuation in
-          let task = Task {
-            await withTaskGroup(of: Void.self) { group in
-              // Loop over regular notifications
-              group.addTask {
-                for await emitted in notifications.stream() {
-                  do {
-                    let value = try notification.transform(emitted)
-                    continuation.yield(value)
-                  } catch {
-                    continuation.finish()
-                    return
-                  }
-                }
-              }
-              // Loop over sent values
-              group.addTask {
-                for await posted in postedValues.stream() {
-                  switch posted {
-                  case let .success(value):
-                    continuation.yield(value)
-                  case .failure:
-                    continuation.finish()
-                  }
-                }
-              }
-              await group.next()
-              group.cancelAll()
-            }
-          }
-
-          continuation.onTermination = { _ in
-            task.cancel()
-          }
-        }
-      }
-      streams[notification.id] = StreamAndSharedContinuations(
-        notificationStream: notificationStream,
-        postedSharedContinuations: postedValues
-      )
-      return notificationStream
+    let file: String
+    let line: UInt
+    
+    init<V>(
+      _ value: V.Type,
+      name: Notification.Name,
+      object: NSObject?,
+      path: Path,
+      file: StaticString,
+      line: UInt
+    ) {
+      self.name = name
+      self.object = object.map(ObjectIdentifier.init)
+      self.valueType = ObjectIdentifier(V.self)
+      self.path = path
+      self.file = file.description
+      self.line = line
     }
   }
 }

@@ -52,7 +52,7 @@ final class NotificationDependencyTests: XCTestCase {
       group.addTask {
         let expectations = [2, 4, 7, -1]
         var index: Int = 0
-        for await value in testNotification() {
+        for await value in testNotification {
           XCTAssertEqual(value, expectations[index])
           index += 1
           if index == expectations.endIndex {
@@ -81,7 +81,7 @@ final class NotificationDependencyTests: XCTestCase {
       group.addTask {
         let expectations = [2, 4, 7, -1]
         var index: Int = 0
-        for await value in testNotification() {
+        for await value in testNotification {
           XCTAssertEqual(value, expectations[index])
           index += 1
           if index == expectations.endIndex {
@@ -135,7 +135,7 @@ final class NotificationDependencyTests: XCTestCase {
     try await withTimeout(1000) { group in
       group.addTask {
         var index: Int = 0
-        for await value in defaultModel.notification() {
+        for await value in defaultModel.notification {
           XCTAssertNotEqual(value, incrementingExpectations[index])
           index += 1
           if index == incrementingExpectations.endIndex {
@@ -146,7 +146,7 @@ final class NotificationDependencyTests: XCTestCase {
 
       group.addTask {
         var index: Int = 0
-        for await value in incrementingModel.notification() {
+        for await value in incrementingModel.notification {
           XCTAssertEqual(value, incrementingExpectations[index])
           index += 1
           if index == incrementingExpectations.endIndex {
@@ -161,7 +161,7 @@ final class NotificationDependencyTests: XCTestCase {
           .init{ UUID(uuidString: "11111111-1111-1111-1111-111111111111")! }
         ) {
           var index: Int = 0
-          for await value in defaultModel.notification() {
+          for await value in defaultModel.notification {
             XCTAssertEqual(value, UUID(uuidString: "11111111-1111-1111-1111-111111111111")!)
             index += 1
             if index == incrementingExpectations.endIndex {
