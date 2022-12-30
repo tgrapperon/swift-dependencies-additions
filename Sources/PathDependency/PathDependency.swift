@@ -30,7 +30,7 @@ public struct Path: Hashable, @unchecked Sendable {
   public mutating func push<Component: Hashable & Sendable>(_ component: Component) {
     lock.lock()
     defer { lock.unlock() }
-    _components.append(components)
+    _components.append(component)
   }
 
   public func pushing<Component: Hashable & Sendable>(_ component: Component) -> Self {
