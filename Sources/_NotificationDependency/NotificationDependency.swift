@@ -55,7 +55,7 @@ extension Dependency {
     public var wrappedValue: Notifications.StreamOf<Value> {
       self.notificationCenter[
         DependencyValues.withValue(\.path, self.path) {
-          self.notification.operatingWithDependencyValues(
+          self.notification.withContextualDependencies(
             self.dependencies,
             file: file,
             line: line
@@ -84,12 +84,28 @@ enum NotificationCenterKey: DependencyKey {
 public struct Notifications {}
 
 extension Notifications {
-  public struct NotificationOf<Value>: Sendable, Identifiable {
-    public let id: ID
+  public struct NotificationOf<Value>: Sendable {
+    private(set) var id: ID
     let name: Notification.Name
     let object: UncheckedSendable<NSObject>?
-    let extract: @Sendable (Notification) throws -> Value
-    let embed: @Sendable (Value, inout Notification) -> Void
+    let _extract: @Sendable (Notification) throws -> Value
+    let _embed: @Sendable (Value, inout Notification) -> Void
+    
+    private var contextualDependencies: DependencyValues?
+    
+    func extract(from notification: Notification) throws -> Value {
+      @Dependency(\.self) var current;
+      return try DependencyValues.withValue(\.self, contextualDependencies ?? current) {
+        try _extract(notification)
+      }
+    }
+    
+    func embed(_ value: Value, into notification: inout Notification) -> Void {
+      @Dependency(\.self) var current;
+      return DependencyValues.withValue(\.self, contextualDependencies ?? current) {
+        _embed(value, &notification)
+      }
+    }
     
     var notification: Foundation.Notification {
       .init(name: name, object: object?.wrappedValue)
@@ -111,8 +127,8 @@ extension Notifications.NotificationOf {
     
     self.name = name
     self.object = object.map(UncheckedSendable.init(wrappedValue:))
-    self.extract = extract
-    self.embed = embed
+    self._extract = extract
+    self._embed = embed
     self.id = .init(
       Value.self,
       name: name,
@@ -143,31 +159,33 @@ extension Notifications.NotificationOf {
 }
 
 extension Notifications.NotificationOf {
-  func operatingWithDependencyValues(
+  func withContextualDependencies(
     _ dependencyValues: DependencyValues,
     file: StaticString = #fileID,
     line: UInt = #line
   ) -> Self {
-    return .init(
-      self.name,
+    @Dependency(\.path) var path
+
+    var contextualized = self
+    contextualized.contextualDependencies = dependencyValues
+    contextualized.id = Notifications.ID(
+      Value.self,
+      name: self.name,
       object: self.object?.wrappedValue,
-      extract: { notification in
-       try DependencyValues.withValue(\.self, dependencyValues) {
-         try self.extract(notification)
-        }
-      },
-      embed: { value, notification in
-        DependencyValues.withValue(\.self, dependencyValues) {
-          self.embed(value, &notification)
-         }
-      },
+      path: path,
       file: file,
       line: line
     )
+    return contextualized
   }
 }
 
 extension Notifications {
+  /// An `AsyncSequence` of a ``NotificationOf``'s `Value` that can be enumerated, and to which you
+  /// can also post `Value`s
+  ///
+  /// This `AsyncSequence` can be enumerated by multiple clients, as each notification will be
+  /// delivered to all of them.
   public struct StreamOf<Value>: Sendable {
     private let post: @Sendable (Value) -> Void
     private let stream: @Sendable () -> AsyncStream<Value>
@@ -185,15 +203,60 @@ extension Notifications {
       self.stream = stream
     }
 
+    /// Embeds a `Value` in a `Notification` that is then posted to the `NotificationCenter`.
     public func post(_ value: Value) {
       self.post(value)
     }
     
-    public func withLocalDepencies(file: StaticString = #file, line: UInt = #line) -> Self {
+    /// Returns a new ``Notifications/StreamOf`` where the `DependenciesValues` used to extract or
+    /// embed the `Value` are the one from the current context.
+    ///
+    /// In case you're using local a `@Dependency(\.someDependency)` inside
+    /// ``Notifications/NotificationOf/init(_:object:extract:embed:file:line:)``'s
+    /// `extract` or `embed` closures, the corresponding `DependencyValues`'s are extracted by
+    /// default from the context where you declared the `@Dependency.Notification` property wrapper
+    /// that this ``Notifications/StreamOf`` was extracted from.
+    ///
+    /// By calling this method, you generate a new stream where the `DependencyValues` are resolved
+    /// using the current context instead.
+    ///
+    /// For example, if the `extract` closure uses a `@Dependency(\.timeZone) var timeZone`
+    /// dependency to generate its value:
+    ///
+    /// ```swift
+    /// @Dependency.Notification(\.timeZoneDidChange) var timeZoneNotification // (context "A")
+    ///
+    /// Task {
+    ///   for await timeZone in timeZoneNotification {
+    ///     // `timeZone` was generated using the `\.timeZone` dependency resolved in
+    ///     // the context "A"
+    ///   }
+    /// }
+    ///
+    /// Task {
+    ///   DependencyValue.withValue(\.timeZone, TimeZone(secondsFromGMT: 0)) {
+    ///     for await timeZone in timeZoneNotification {
+    ///       // `timeZone` was still generated using the `\.timeZone` dependency resolved
+    ///       // in the context "A"
+    ///     }
+    ///   }
+    /// }
+    ///
+    /// Task {
+    ///   DependencyValue.withValue(\.timeZone, TimeZone(secondsFromGMT: 0)) { // (context "B")
+    ///     for await timeZone in timeZoneNotification.withCurrentDependencyValues() {
+    ///       // `timeZone` was generated using the `\.timeZone` dependency resolved in
+    ///       // the context "B", that is, using `TimeZone(secondsFromGMT: 0)`.
+    ///     }
+    ///   }
+    /// }
+    /// ```
+    ///
+    public func withCurrentDependencyValues(file: StaticString = #file, line: UInt = #line) -> Self {
       let updatedNotification = DependencyValues.withValue(
         \.path, self.notification.id.path
       ) {
-        return notification.operatingWithDependencyValues(
+        self.notification.withContextualDependencies(
           self.dependencies,
           file: file,
           line: line
@@ -214,7 +277,7 @@ extension Notifications.StreamOf: AsyncSequence {
 }
 
 extension Notifications {
-  public struct ID: Hashable, Sendable {
+  struct ID: Hashable, Sendable {
     let name: Notification.Name
     let object: ObjectIdentifier?
     let valueType: ObjectIdentifier

@@ -21,13 +21,13 @@ public struct _DefaultNotificationCenter: NotificationCenterProtocol {
       }
       let stream = Notifications.StreamOf<Value>(notification: notification) { value in
         var nsNotification = notification.notification
-        notification.embed(value, &nsNotification)
+        notification.embed(value, into: &nsNotification)
         NotificationCenter.default.post(nsNotification)
       } stream: {
         AsyncStream(Value.self, bufferingPolicy: .bufferingNewest(0)) { continuation in
           let observer = NotificationObserver {
             do {
-              let value = try notification.extract($0)
+              let value = try notification.extract(from: $0)
               continuation.yield(value)
             } catch {
               continuation.finish()

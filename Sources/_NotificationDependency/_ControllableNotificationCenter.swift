@@ -40,7 +40,7 @@ public struct _ControllableNotificationCenter: NotificationCenterProtocol {
       let postedValues = _AsyncSharedSubject<Result<Value, Error>>()
       let notificationStream = Notifications.StreamOf<Value>(notification: notification) { postedValue in
         var nsNotification = notification.notification
-        notification.embed(postedValue, &nsNotification)
+        notification.embed(postedValue, into: &nsNotification)
         self.post(nsNotification)
       } stream: {
         AsyncStream(Value.self, bufferingPolicy: .bufferingNewest(0)) { continuation in
@@ -50,7 +50,7 @@ public struct _ControllableNotificationCenter: NotificationCenterProtocol {
               group.addTask {
                 for await emitted in notifications.stream() {
                   do {
-                    let value = try notification.extract(emitted)
+                    let value = try notification.extract(from: emitted)
                     continuation.yield(value)
                   } catch {
                     continuation.finish()

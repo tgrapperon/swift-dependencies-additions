@@ -6,12 +6,10 @@ extension Notifications {
   var countNotification: NotificationOf<Int> {
     let notificationName = Notification.Name("CounterNotification")
     let countValue = "countValue"
-    return NotificationOf(notificationName) {
-      ($0.userInfo?[countValue] as? Int) ?? 0
-    } notify: { value in
-      var notification = Notification(name: notificationName)
+    return NotificationOf(notificationName) { notification in
+      (notification.userInfo?[countValue] as? Int) ?? 0
+    } embed: { value, notification in
       notification.userInfo = [countValue: value]
-      return notification
     }
   }
 }
@@ -34,7 +32,7 @@ final class NotificationStudy: ObservableObject {
     // Loop over the notification values to update `countFromNotification`
     self.notificationObservation = Task { [weak self] in
       guard let self else { return }
-      for await count in self.countsNotification() {
+      for await count in self.countsNotification {
         self.countFromNotification = count
       }
     }

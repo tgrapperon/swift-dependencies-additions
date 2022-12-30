@@ -29,8 +29,8 @@
       let name = UIScene.willEnterForegroundNotification
       return .init(name) {
         $0.object as! UIScene
-      } notify: {
-        .init(name: name, object: $0)
+      } embed: {
+        $1.object = $0
       }
     }
   }

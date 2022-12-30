@@ -15,27 +15,22 @@ extension NotificationCenterProtocol {
   }
 }
 
-extension Notifications {
-  public struct NotificationCenter: Sendable {
-    
-    var _post: @Sendable (_ notification: Notification) -> Void
-    var _stream: @Sendable (Any) -> StreamOf<Any>
-    
-    init(
-      post: @escaping @Sendable (Notification) -> Void,
-      stream: @escaping @Sendable (Any) -> StreamOf<Any>) {
-      self._post = post
-      self._stream = stream
-    }
-    
-    func stream<Value>(_ notification: NotificationOf<Value>) -> StreamOf<Value> {
-      _stream(notification) as! StreamOf<Value>
-    }
-  }
-}
-
 //extension Notifications {
-//  func test() {
-//    NotificationOf(<#T##name: Notification.Name##Notification.Name#>, object: <#T##NSObject?#>)
+//  public struct NotificationCenter: Sendable {
+//    
+//    var _post: @Sendable (_ notification: Notification) -> Void
+//    var _stream: @Sendable (Any) -> StreamOf<Any>
+//    
+//    init(
+//      post: @escaping @Sendable (Notification) -> Void,
+//      stream: @escaping @Sendable (Any) -> StreamOf<Any>) {
+//      self._post = post
+//      self._stream = stream
+//    }
+//    
+//    func stream<Value>(_ notification: NotificationOf<Value>) -> StreamOf<Value> {
+//      _stream(notification) as! StreamOf<Value>
+//    }
 //  }
 //}
+
