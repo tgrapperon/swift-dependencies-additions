@@ -27,13 +27,15 @@ final class PathDependencyTests: XCTestCase {
           DependencyValues.withValues {
             $0.path.push("b1")
           } operation: {
-            .init(model1: {
+            .init {
               DependencyValues.withValues {
                 $0.path.push("c1")
               } operation: {
                 .init()
               }
-            })
+            } model2: {
+              .init()
+            }
           }
         } model2: {
           DependencyValues.withValues {
@@ -64,6 +66,7 @@ final class PathDependencyTests: XCTestCase {
     }
 
     XCTAssertEqual(model.model1?.model1?.model1?.path.components, ["a1", "b1", "c1"])
+    XCTAssertEqual(model.model1?.model1?.model2?.path.components, ["a1", "b1"])
     XCTAssertEqual(model.model1?.model2?.model1?.path.components, ["a1", "b2", "c1"])
     XCTAssertEqual(model.model1?.model2?.model2?.path.components, ["a1", "b2", "c2"])
     XCTAssertEqual(model.model2?.path.components, ["a2"])
