@@ -75,7 +75,7 @@ import XCTestDynamicOverlay
         playInputClick: @escaping @MainActor () -> Void
       )
     {
-      self._name = .init { name() }
+      self._name = .init (name)
       self._model = .init(model)
       self._localizedModel = .init(localizedModel)
       self._systemName = .init(systemName)

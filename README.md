@@ -89,6 +89,8 @@ By default, `compress` and `decompress` are using the `.zlib` algorithm.
 
 ### UserDefaults
 
+### Device
+
 ### `swift-dependencies` extensions
 
 #### Date generator
@@ -102,7 +104,7 @@ The library proposes a few experimental higher level dependencies. They are curr
 @Dependency.AppStorage("username") var username: String = "Anonymous"
 ```
 The API follows SwiftUI's `AppStorage`, but is backed by `@Dependency(\.userDefaults)`.
-It can operate in your model and be accessed from async contexts. If the same `key` are used, it can inter-operate with `SwiftUI`'s own `AppStorage`.
+It can operate within your model and be accessed from async contexts. If the same `key` are used, it can inter-operate with `SwiftUI`'s own `AppStorage`.
 The projected value is an `AsyncStream<Value>` of this user preference's values. They can be observed from any async context:
 ```swift
 @Dependency.AppStorage("isSoundEnabled") var isSoundEnabled: Bool = false
@@ -112,8 +114,6 @@ for await isSoundEnabled in $isSoundEnabled {
 }
 ```
 ### Notifications
-// TODO: Change this example, or propose an UIDevice dependency!
-
 This dependency allows to expose `Notification`s as typed `AsyncSequence`s.
 ```swift
 extension Notifications {
@@ -139,10 +139,27 @@ for await level in batteryLevel {
   }
 }
 ```
-
 ### SwiftUI Environment
-
-
-
-
+This dependency brings SwiftUI's `Environment` into your model:
+```swift
+@Dependency.Environment(\.colorScheme) var colorScheme
+@Dependency.Environment(\.dismiss) var dismiss
+```
+Then, in any `View`, you use the `.observeEnvironmentAsDependency(\.colorScheme)` modifier to 
+bubble up this value into the model:
+```swift
+HStack { … }
+  .observeEnvironmentAsDependency(\.colorScheme)
+  .observeEnvironmentAsDependency(\.dismiss)
+```
+In the example above, `self.colorScheme` is a `ColorScheme?`, and `self.dismissAction` is a 
+`DismissAction?`. Both are optional because they're conditionned by the existence of the `View`, and
+they can become `nil` again if this view goes away.
+You can observe their value through the projected value which is an `AsyncSequence` of the wrapped
+value:
+```swift
+for await colorScheme in self.$colorScheme.compactMap{ $0 }.dropFirst() {
+  self.logger.info("ColorScheme did change: \(colorScheme)")
+}
+```
 ### Core Data (WIP)

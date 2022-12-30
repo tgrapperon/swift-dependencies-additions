@@ -50,3 +50,18 @@ public struct MainActorLazyProxy<Value> {
     }
   }
 }
+
+
+struct Test {
+  
+  var string: @MainActor () -> String
+  
+  init(string: @MainActor @escaping () -> String) {
+    self.string = string
+  }
+
+}
+import UIKit
+let test = Test {
+  UIDevice.current.name
+}
