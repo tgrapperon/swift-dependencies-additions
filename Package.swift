@@ -49,7 +49,6 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-dependencies", branch: "main"),
     .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
-    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", branch: "autoclosures"),
   ],
   targets: [
     .target(
@@ -73,7 +72,6 @@ let package = Package(
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
         "DependenciesAdditions",
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
     .testTarget(
@@ -223,7 +221,8 @@ let package = Package(
     .target(
       name: "ProcessInfoDependency",
       dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies")
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        "DependenciesAdditions",
       ]
     ),
 

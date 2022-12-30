@@ -54,7 +54,6 @@
 		E9C3B945295967AE000263AD /* AppStorageStudyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageStudyTests.swift; sourceTree = "<group>"; };
 		E9DC4C422958F9BB003F0CA8 /* CaseStudies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CaseStudies.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9DC4C552958F9F1003F0CA8 /* swift-dependencies-additions */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "swift-dependencies-additions"; path = ../..; sourceTree = "<group>"; };
-		E9E29A87295EFCF50059F408 /* xctest-dynamic-overlay */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "xctest-dynamic-overlay"; path = "../../../xctest-dynamic-overlay"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,7 +125,6 @@
 			isa = PBXGroup;
 			children = (
 				E9DC4C542958F9F1003F0CA8 /* Packages */,
-				E9E29A87295EFCF50059F408 /* xctest-dynamic-overlay */,
 				E992398B295C917200586AA0 /* CaseStudies */,
 				E9C3B93D29596715000263AD /* CaseStudiesTests */,
 				E9DC4C432958F9BB003F0CA8 /* Products */,

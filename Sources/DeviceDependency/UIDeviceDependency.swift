@@ -16,41 +16,41 @@ import XCTestDynamicOverlay
   import UIKit.UIDevice
   public struct Device: Sendable {
     /// The name of the device.
-    @MainActorLazyProxy public var name: String
+    @MALP public var name: String
     /// The model of the device.
-    @MainActorLazyProxy public var model: String
+    @MALP public var model: String
     /// The model of the device as a localized string.
-    @MainActorLazyProxy public var localizedModel: String
+    @MALP public var localizedModel: String
     /// The name of the operating system running on the device.
-    @MainActorLazyProxy public var systemName: String
+    @MALP public var systemName: String
     /// The current version of the operating system.
-    @MainActorLazyProxy public var systemVersion: String
+    @MALP public var systemVersion: String
     /// An alphanumeric string that uniquely identifies a device to the app’s vendor.
-    @MainActorLazyProxy public var identifierForVendor: UUID?
+    @MALP public var identifierForVendor: UUID?
     /// The physical orientation of the device.
-    @MainActorLazyProxy public var orientation: UIDeviceOrientation
+    @MALP public var orientation: UIDeviceOrientation
     /// A Boolean value that indicates whether battery monitoring is enabled.
-    @MainActorLazyProxy public var isGeneratingDeviceOrientationNotifications: Bool
+    @MALP public var isGeneratingDeviceOrientationNotifications: Bool
     /// Begins the generation of notifications of device orientation changes.
-    @MainActorLazyProxy public var beginGeneratingDeviceOrientationNotifications: () -> Void
+    @MALP public var beginGeneratingDeviceOrientationNotifications: () -> Void
     /// Ends the generation of notifications of device orientation changes.
-    @MainActorLazyProxy public var endGeneratingDeviceOrientationNotifications: () -> Void
+    @MALP public var endGeneratingDeviceOrientationNotifications: () -> Void
     /// A Boolean value that indicates whether battery monitoring is enabled.
-    @MainActorLazyProxy public var isBatteryMonitoringEnabled: Bool
+    @MALP public var isBatteryMonitoringEnabled: Bool
     /// The battery state for the device.
-    @MainActorLazyProxy public var batteryState: UIDevice.BatteryState
+    @MALP public var batteryState: UIDevice.BatteryState
     /// The battery charge level for the device.
-    @MainActorLazyProxy public var batteryLevel: Float
+    @MALP public var batteryLevel: Float
     /// A Boolean value that indicates whether proximity monitoring is enabled.
-    @MainActorLazyProxy public var isProximityMonitoringEnabled: Bool
+    @MALP public var isProximityMonitoringEnabled: Bool
     /// A Boolean value that indicates whether the proximity sensor is close to the user.
-    @MainActorLazyProxy public var proximityState: Bool
+    @MALP public var proximityState: Bool
     /// A Boolean value that indicates whether the current device supports multitasking.
-    @MainActorLazyProxy public var isMultitaskingSupported: Bool
+    @MALP public var isMultitaskingSupported: Bool
     /// The style of interface to use on the current device.
-    @MainActorLazyProxy public var userInterfaceIdiom: UIUserInterfaceIdiom
+    @MALP public var userInterfaceIdiom: UIUserInterfaceIdiom
     /// Plays an input click in an enabled input view.
-    @MainActorLazyProxy public var playInputClick: () -> Void
+    @MALP public var playInputClick: () -> Void
 
     nonisolated  // Don't know why this is needed, as `Device` is not actor-isolated
       init(

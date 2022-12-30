@@ -7,7 +7,7 @@ final class ProcessInfoDependencyTests: XCTestCase {
   @Dependency(\.processInfo) var processInfo
   func testFailingProcessInfo() {
     XCTExpectFailure {
-      DependencyValues.withValue(\.processInfo, .unimplemented) {
+      DependencyValues.withTestValues {
         let _ = processInfo.processorCount
       }
     }
