@@ -1,5 +1,8 @@
 import Foundation
 import Dependencies
+
+// TODO: Convert to protocol witness?
+
 public protocol NotificationCenterProtocol: Sendable {
   func post(_ notification: Notification)
   subscript<Value>(notification: Notifications.NotificationOf<Value>) -> Notifications.StreamOf<Value> { get }
@@ -14,23 +17,4 @@ extension NotificationCenterProtocol {
     self[Notifications()[keyPath: keyPath]]
   }
 }
-
-//extension Notifications {
-//  public struct NotificationCenter: Sendable {
-//    
-//    var _post: @Sendable (_ notification: Notification) -> Void
-//    var _stream: @Sendable (Any) -> StreamOf<Any>
-//    
-//    init(
-//      post: @escaping @Sendable (Notification) -> Void,
-//      stream: @escaping @Sendable (Any) -> StreamOf<Any>) {
-//      self._post = post
-//      self._stream = stream
-//    }
-//    
-//    func stream<Value>(_ notification: NotificationOf<Value>) -> StreamOf<Value> {
-//      _stream(notification) as! StreamOf<Value>
-//    }
-//  }
-//}
 
