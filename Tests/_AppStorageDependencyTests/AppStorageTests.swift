@@ -43,14 +43,16 @@ final class AppStorageTests: XCTestCase {
   }
 
   func testStream() async throws {
-    @Dependency.AppStorage("SomeKey") var int = 42
-
+    final class Model: Sendable {
+      @Dependency.AppStorage("SomeKey") var int = 42
+    }
+    let model = Model()
     try await DependencyValues.withValue(\.userDefaults, .ephemeral()) {
       try await withTimeout { group in
         group.addTask {
           let expectations: [Int] = [42, 55, 42, 20, 446, 42]
           var index = 0
-          for await element in $int.values() {
+          for await element in model.$int {
             XCTAssertEqual(element, expectations[index])
             index += 1
             if index == expectations.endIndex {
@@ -61,15 +63,15 @@ final class AppStorageTests: XCTestCase {
         group.addTask {
           /// Let the first value hit the enumeration
           try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-          $int.set(55)
+          model.int = 55
           try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-          $int.wrappedValue = 42  // Alternative
+          model.int = 42 
           try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-          $int.set(20)
+          model.int = 20
           try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-          $int.set(446)
+          model.int = 446
           try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-          $int.reset()
+          model.$int.reset()
         }
       }
     }
@@ -106,9 +108,13 @@ final class AppStorageTests: XCTestCase {
     XCTAssertEqual(fileURL, sameFileURL)
   }
 
-  func testLiveStream() async throws {
-    @Dependency.AppStorage("SomeKey") var int = 42
 
+  func testLiveStream() async throws {
+    final class Model: Sendable {
+      @Dependency.AppStorage("SomeKey") var int = 42
+    }
+    let model = Model()
+    
     UserDefaults.standard.removeObject(forKey: "SomeKey")
     defer {
       UserDefaults.standard.removeObject(forKey: "SomeKey")
@@ -117,7 +123,7 @@ final class AppStorageTests: XCTestCase {
       group.addTask {
         let expectations: [Int] = [42, 55, 42, 20, 446, 42]
         var index = 0
-        for await element in $int.values() {
+        for await element in model.$int {
           XCTAssertEqual(element, expectations[index])
           index += 1
           if index == expectations.endIndex {
@@ -128,15 +134,15 @@ final class AppStorageTests: XCTestCase {
       group.addTask {
         /// Let the first value hit the enumeration
         try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        $int.set(55)
+        model.int = 55
         try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        $int.wrappedValue = 42  // Alternative
+        model.int = 42
         try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        $int.set(20)
+        model.int = 20
         try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        $int.set(446)
+        model.int = 446
         try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        $int.reset()
+        model.$int.reset()
       }
     }
   }

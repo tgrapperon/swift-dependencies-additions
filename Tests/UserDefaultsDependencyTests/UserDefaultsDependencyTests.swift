@@ -1,4 +1,3 @@
-import CoreDataDependency
 import Dependencies
 import XCTest
 

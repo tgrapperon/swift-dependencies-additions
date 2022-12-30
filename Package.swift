@@ -21,7 +21,8 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-dependencies", branch: "main"),
-    .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0")
+    .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
+    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", branch: "autoclosures"),
   ],
   targets: [
     .target(
@@ -44,7 +45,8 @@ let package = Package(
       name: "BundleInfoDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesBaseAdditions"
+        "DependenciesBaseAdditions",
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay")
       ]
     ),
     .testTarget(
@@ -84,6 +86,7 @@ let package = Package(
       name: "_CoreDataDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
+        "DependenciesBaseAdditions",
         "PersistentContainerDependency"
       ]
     ),
@@ -234,7 +237,8 @@ let package = Package(
     .testTarget(
       name: "_SwiftUIDependencyTests",
       dependencies: [
-        "_SwiftUIDependency"
+        "_SwiftUIDependency",
+        "DependenciesBaseAdditions",
       ]
     ),
 

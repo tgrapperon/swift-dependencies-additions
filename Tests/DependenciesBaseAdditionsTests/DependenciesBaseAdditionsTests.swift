@@ -1,6 +1,6 @@
 import XCTest
-@testable import DependenciesAdditions
+@testable import DependenciesBaseAdditions
 
-final class DependenciesAdditionsTests: XCTestCase {
+final class DependenciesBaseAdditionsTests: XCTestCase {
 
 }
