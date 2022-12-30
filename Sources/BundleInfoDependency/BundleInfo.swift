@@ -81,17 +81,17 @@ extension BundleInfo {
   static var unimplemented: BundleInfo {
     BundleInfo(
       bundleIdentifier: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.bundleInfo.bundleIdentifier)"#),
+        #"@Dependency(\.bundleInfo.bundleIdentifier)"#),
       name: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.bundleInfo.name)"#),
+        #"@Dependency(\.bundleInfo.name)"#),
       displayName: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.bundleInfo.displayName)"#),
+        #"@Dependency(\.bundleInfo.displayName)"#),
       spokenName: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.bundleInfo.spokenName)"#),
+        #"@Dependency(\.bundleInfo.spokenName)"#),
       shortVersion: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.bundleInfo.shortVersion)"#),
+        #"@Dependency(\.bundleInfo.shortVersion)"#),
       version: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.bundleInfo.version)"#)
+        #"@Dependency(\.bundleInfo.version)"#)
     )
   }
 }
