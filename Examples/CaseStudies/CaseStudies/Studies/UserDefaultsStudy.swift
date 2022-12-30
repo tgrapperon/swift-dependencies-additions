@@ -45,7 +45,7 @@ final class UserDefaultsStudy: ObservableObject {
     self.tasks.insert(
       Task { [weak self] in
         guard let self else { return }
-        for await newValue in self.$number.values() {
+        for await newValue in self.$number {
           self.observedNumberValue = newValue
         }
       }
@@ -54,7 +54,7 @@ final class UserDefaultsStudy: ObservableObject {
     self.tasks.insert(
       Task { [weak self] in
         guard let self else { return }
-        for await newValue in self.$string.values() {
+        for await newValue in self.$string {
           self.observedStringValue = newValue
         }
       }

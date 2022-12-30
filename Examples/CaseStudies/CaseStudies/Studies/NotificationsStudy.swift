@@ -20,6 +20,7 @@ final class NotificationStudy: ObservableObject {
   @Published var countFromNotification: Int?
   
   @Dependency.Notification(\.countNotification) var countsNotification
+  
   @Dependency(\.continuousClock) var clock
   @Dependency(\.withRandomNumberGenerator) var withRandomNumberGenerator
   private var notificationObservation: Task<Void, Never>?

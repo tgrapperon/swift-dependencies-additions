@@ -27,9 +27,6 @@ define(
 define("_CoreDataDependency", dependencies: "DependenciesAdditions", "PersistentContainerDependency")
 define("_NotificationDependency", dependencies: "DependenciesAdditions", "PathDependency")
 define("_SwiftUIDependency", testingDependencies: "DependenciesAdditions")
-//define("CryptoDependency")
-//define("KeyChainDependency")
-//define("Version")?
 define("BundleInfoDependency", dependencies: "DependenciesAdditions")
 define("CodableDependency")
 define("CompressionDependency")
@@ -40,6 +37,9 @@ define("PersistentContainerDependency")
 define("ProcessInfoDependency")
 define("UserDefaultsDependency")
 
+//define("CryptoDependency")
+//define("KeyChainDependency")
+//define("Version")?
 
 
 func define(_ target: String, dependencies: String..., testingDependencies: String...) {

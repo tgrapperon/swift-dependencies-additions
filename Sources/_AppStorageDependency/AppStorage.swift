@@ -1,26 +1,16 @@
 import Dependencies
-@_spi(Internals) @_exported import UserDefaultsDependency
 import Foundation
+@_spi(Internals)@_exported import UserDefaultsDependency
 import XCTestDynamicOverlay
-
 
 // Note: `AppStorage` wrapper is class in order to be able to be captured and mutated in concurrent
 // contexts. All fields are constants and thread safety is deferred to the corresponding
 // `userDefaults`, which are themselve thread safe by construction.
-
-public extension Dependency {
-  // NB: Repeted doc in order to be displayed in Xcode's right side bar.
-  /// A property wrapper type that reflects a value from `UserDefaults`.
-  /// This property wrapper can be used in `ObservableObject` instances, or anywhere the
-  /// ``DependencyValues/userDefaults`` dependency is defined.
-  ///
-  /// - Note: This version of `AppStorage` should inter-operate seamlessly with SwiftUI's own
-  /// version of this property wrapper, provided you're using the same keys to save the same types
-  /// of values.
+extension Dependency {
   @propertyWrapper
   @dynamicMemberLookup
-  final class AppStorage: Sendable where Value: Sendable {
-    let initialValues: DependencyValues
+  public final class AppStorage: @unchecked Sendable where Value: Sendable {
+    @Dependencies.Dependency(\.userDefaults) var currentUserDefaults
 
     let key: String
     let defaultValue: Value
@@ -30,50 +20,25 @@ public extension Dependency {
     let setValue: @Sendable (UserDefaults.Dependency, Value) -> Void
 
     private var userDefaults: UserDefaults.Dependency {
-      #warning("Fix this if possible")
-//      let currentUserDefaults = self.initialValues.merging(DependencyValues._current)[keyPath:\.userDefaults]
-      let currentUserDefaults = self.initialValues[keyPath:\.userDefaults]
-      return self.explicitUserDefaults ?? currentUserDefaults
+      self.explicitUserDefaults ?? self.currentUserDefaults
     }
 
     public var wrappedValue: Value {
-      get {
-        self.getValue(self.userDefaults)
+      get { self.getValue(self.userDefaults) }
+      set { self.setValue(self.userDefaults, newValue) }
+    }
+
+    public var projectedValue: Values {
+      Values {
+        // Note: Passing `Value?.none` is technically incorrect for raw representable, but the value's
+        // type itself is not used to delete a key. This should be fixed at some point though.
+        self.userDefaults.set(Value?.none, forKey: self.key)
+      } stream: {
+        self.userDefaults
+          .values(forKey: self.key)
+          .map { [defaultValue = self.defaultValue] in $0 ?? defaultValue }
+          .eraseToStream()
       }
-      set {
-        self.setValue(self.userDefaults, newValue)
-      }
-    }
-
-    public var projectedValue: AppStorage {
-      self
-    }
-
-    // Convenience getter that mirrors `set` for cross concurrency context access
-    public func get() -> Value {
-      self.wrappedValue
-    }
-
-    // Convenience setter for cross concurrency context access
-    public func set(_ value: Value) {
-      self.wrappedValue = value
-    }
-
-    /// Resets the current value to its defaults.
-    public func reset() {
-      // TODO: Passing `Value?.none` is technically incorrect for raw representable, but the value's
-      // type is not used to delete a key. This should be fixed at some point though.
-      self.userDefaults.set(Value?.none, forKey: self.key)
-    }
-
-    /// An `AsyncStream` of the values for this key as they change.
-    ///
-    /// It always immediately emits the initial value as the first element when you enumerate it.
-    public func values() -> AsyncStream<Value> {
-      self.userDefaults
-        .values(forKey: self.key)
-        .map { [defaultValue = self.defaultValue] in $0 ?? defaultValue }
-        .eraseToStream()
     }
 
     init(
@@ -83,7 +48,6 @@ public extension Dependency {
       getValue: @escaping @Sendable (UserDefaults.Dependency) -> Value,
       setValue: @escaping @Sendable (UserDefaults.Dependency, Value) -> Void
     ) {
-      self.initialValues = DependencyValues._current
       self.explicitUserDefaults = userDefaults
       self.getValue = getValue
       self.setValue = setValue
@@ -106,8 +70,7 @@ public extension Dependency {
 
     // Internal initializer without default value
     convenience init<Wrapped>(key: String, store: UserDefaults.Dependency? = nil)
-      where Value == Wrapped?
-    {
+    where Value == Wrapped? {
       self.init(
         key: key,
         defaultValue: nil,
@@ -120,7 +83,9 @@ public extension Dependency {
     }
 
     @_disfavoredOverload
-    public subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T { self.wrappedValue[keyPath: keyPath] }
+    public subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T {
+      self.wrappedValue[keyPath: keyPath]
+    }
 
     public subscript<T>(dynamicMember keyPath: WritableKeyPath<Value, T>) -> T {
       get { self.wrappedValue[keyPath: keyPath] }
@@ -129,3 +94,25 @@ public extension Dependency {
   }
 }
 
+extension Dependency.AppStorage {
+  /// An `AsyncSequence` of the values for this key as they change.
+  ///
+  /// It always immediately emits the current value as the first element when you enumerate it.
+  public struct Values: Sendable, AsyncSequence {
+    public typealias Element = Value
+    let _reset: @Sendable () -> Void
+    let _stream: @Sendable () -> AsyncStream<Value>
+    init(
+      reset: @escaping @Sendable () -> Void, stream: @escaping @Sendable () -> AsyncStream<Value>
+    ) {
+      self._reset = reset
+      self._stream = stream
+    }
+    /// Resets the current value to its defaults.
+    public func reset() { _reset() }
+
+    public func makeAsyncIterator() -> AsyncStream<Value>.AsyncIterator {
+      self._stream().makeAsyncIterator()
+    }
+  }
+}
