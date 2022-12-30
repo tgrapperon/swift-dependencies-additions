@@ -27,13 +27,14 @@ extension Dependency {
 
     public var projectedValue: Values {
       Values {
-        // Note: Passing `Value?.none` is technically incorrect for raw representable, but the value's
-        // type itself is not used to delete a key. This should be fixed at some point though.
+        // Note: Passing `Value?.none` is technically incorrect for raw representable, but the
+        // value's type itself is not used to delete a key. This should be fixed at some point
+        // though.
         self.userDefaults.set(Value?.none, forKey: self.key)
       } stream: {
         self.userDefaults
           .values(forKey: self.key)
-          .map { [defaultValue = self.defaultValue] in $0 ?? defaultValue }
+          .map { $0 ?? defaultValue }
           .eraseToStream()
       }
     }
@@ -105,8 +106,9 @@ extension Dependency.AppStorage {
       self._reset = reset
       self._stream = stream
     }
+
     /// Resets the current value to its defaults.
-    public func reset() { _reset() }
+    public func reset() { self._reset() }
 
     public func makeAsyncIterator() -> AsyncStream<Value>.AsyncIterator {
       self._stream().makeAsyncIterator()
