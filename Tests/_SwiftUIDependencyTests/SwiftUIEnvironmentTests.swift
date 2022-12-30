@@ -16,15 +16,16 @@ extension EnvironmentValues {
   }
 }
 
+@MainActor
 final class SwiftUIEnvironmentTests: XCTestCase {
   func testSwiftUIEnvironment() async throws {
-    @Dependency(\.environment.streams.test) var testValue
+    @Dependency.Environment(\.test) var testValue
 
     try await withTimeout(1000) { group in
       group.addTask { @MainActor in
         let expected: [Int?] = [nil, 1, 3, nil, 5, 8, 10]
         var index = 0
-        for await value in testValue {
+        for await value in $testValue {
           XCTAssertEqual(value, expected[index])
           index += 1
           if index == expected.endIndex { return }
