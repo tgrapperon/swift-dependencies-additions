@@ -114,7 +114,7 @@ extension PersistentContainer {
     try await self.withContext(self.newBackgroundContext(), perform: perform)
   }
     
-  // Rethrows diagnostic doesn't work well, so we explicitly provide an overload for non-throwing
+  // Rethrow's diagnostic doesn't work well, so we explicitly provide an overload for non-throwing
   // closures.
   public func withNewBackgroundContext<R: Sendable>(
     perform: (NSManagedObjectContext) -> R
