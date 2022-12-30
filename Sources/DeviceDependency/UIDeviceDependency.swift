@@ -140,43 +140,42 @@ import XCTestDynamicOverlay
     public nonisolated  // Don't know why this is needed, as `Device` is not actor-isolated
       static var unimplemented: Device
     {
-      typealias __ = XCTestDynamicOverlay
       Device(
-        name: __.unimplemented(
+        name: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.name)"#),
-        model: __.unimplemented(
+        model: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.model)"#),
-        localizedModel: __.unimplemented(
+        localizedModel: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.localizedModel)"#),
-        systemName: __.unimplemented(
+        systemName: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.systemName)"#),
-        systemVersion: __.unimplemented(
+        systemVersion: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.systemVersion)"#),
-        identifierForVendor: __.unimplemented(
+        identifierForVendor: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.identifierForVendor)"#),
-        orientation: __.unimplemented(
+        orientation: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.orientation)"#),
-        isGeneratingDeviceOrientationNotifications: __.unimplemented(
+        isGeneratingDeviceOrientationNotifications: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.isGeneratingDeviceOrientationNotifications)"#),
-        isBatteryMonitoringEnabled: __.unimplemented(
+        isBatteryMonitoringEnabled: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.isBatteryMonitoringEnabled)"#),
-        batteryState: __.unimplemented(
+        batteryState: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.batteryState)"#),
-        batteryLevel: __.unimplemented(
+        batteryLevel: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.batteryLevel)"#),
-        isProximityMonitoringEnabled: __.unimplemented(
+        isProximityMonitoringEnabled: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.isProximityMonitoringEnabled)"#),
-        proximityState: __.unimplemented(
+        proximityState: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.proximityState)"#),
-        isMultitaskingSupported: __.unimplemented(
+        isMultitaskingSupported: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.isMultitaskingSupported)"#),
-        userInterfaceIdiom: __.unimplemented(
+        userInterfaceIdiom: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.userInterfaceIdiom)"#),
-        beginGeneratingDeviceOrientationNotifications: __.unimplemented(
+        beginGeneratingDeviceOrientationNotifications: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.beginGeneratingDeviceOrientationNotifications)"#),
-        endGeneratingDeviceOrientationNotifications: __.unimplemented(
+        endGeneratingDeviceOrientationNotifications: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.endGeneratingDeviceOrientationNotifications)"#),
-        playInputClick: __.unimplemented(
+        playInputClick: XCTestDynamicOverlay.unimplemented(
           #"Unimplemented: @Dependency(\.device.playInputClick)"#)
       )
     }
