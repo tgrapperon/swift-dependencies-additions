@@ -120,7 +120,7 @@ final class NotificationDependencyTests: XCTestCase {
     let defaultModel = Model()
     let incrementingModel = DependencyValues.withValues {
       $0.uuid = .incrementing
-      $0.path = .empty.pushing(1)
+      $0.path.push(1)
     } operation: {
       Model()
     }
