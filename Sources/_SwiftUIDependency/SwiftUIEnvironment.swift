@@ -8,7 +8,7 @@ import SwiftUI
 // Trying to make this a `DynamicProperty` itself to automatically udpate the value
 // at `udpate()` doesn't work as we don't have a guarantee that an internal `@Environment`
 // value would have received its udpate before this value and expose the latest value.
-// Any attempt to defer the call risks getting out of the `update`/`body` cycle and to raise
+// Any attempt to defer the call risks getting out of the `update`/`body` cycle and raise
 // a runtime warning.
 extension Dependency {
   @MainActor
