@@ -1,4 +1,5 @@
 // WIP - Should we ship a bunch of common notifications?
+import Dependencies
 
 #if canImport(UIKit.UIApplication)
   import UIKit.UIApplication
@@ -16,6 +17,8 @@
     public var applicationDidEnterBackground: NotificationOf<Void> {
       .init(UIApplication.didEnterBackgroundNotification)
     }
+    
+    
   }
 #endif
 
@@ -34,4 +37,30 @@
       }
     }
   }
+#endif
+
+#if canImport(UIKit.UIDevice)
+import UIKit.UIDevice
+import DeviceDependency
+extension Notifications {
+  /// A notification that posts when the battery level changes.
+  @MainActor
+  public var batteryLevelDidChange: NotificationOf<Float> {
+    let name = UIDevice.batteryLevelDidChangeNotification
+    return .init(name) { _ in
+      @Dependency(\.device.batteryLevel) var batteryLevel;
+      return batteryLevel
+    }
+  }
+  
+  /// A notification that posts when the battery level changes.
+  @MainActor
+  public var batteryStateDidChange: NotificationOf<UIDevice.BatteryState> {
+    let name = UIDevice.batteryStateDidChangeNotification
+    return .init(name) { _ in
+      @Dependency(\.device.batteryState) var batteryState;
+      return batteryState
+    }
+  }
+}
 #endif

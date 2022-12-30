@@ -110,6 +110,9 @@ import XCTestDynamicOverlay
     public static var testValue: Device {
       .unimplemented
     }
+    static var previewValue: Device {
+      .current
+    }
   }
 
   extension Device {

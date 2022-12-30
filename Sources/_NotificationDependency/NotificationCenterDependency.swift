@@ -18,6 +18,8 @@ extension NotificationCenter.Dependency: DependencyKey {
   /// `.unimplemented` by default.
   public static var testValue: NotificationCenter.Dependency { .unimplemented }  // or `.default`?
 
+  public static var previewValue: NotificationCenter.Dependency { .default }
+  
   /// The default `NotificationCenter`
   public static var `default`: Self { .init() }
   /// An unimplemented `NotificationCenter` that fails during testing when its endpoints are

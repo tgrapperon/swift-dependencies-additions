@@ -178,6 +178,7 @@ let package = Package(
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
         "DependenciesAdditions",
+        "DeviceDependency",
         "PathDependency",
       ]
     ),
