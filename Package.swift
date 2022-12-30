@@ -9,7 +9,7 @@ let package = Package(
     .iOS(.v13),
     .macOS(.v10_15),
     .tvOS(.v13),
-    .watchOS(.v6)
+    .watchOS(.v6),
   ],
   products: [
     .library(
@@ -30,7 +30,21 @@ let package = Package(
         "_NotificationDependency",
         "_SwiftUIDependency",
       ]
-    )
+    ),
+    .library(name: "BundleInfoDependency", targets: ["BundleInfoDependency"]),
+    .library(name: "CodableDependency", targets: ["CodableDependency"]),
+    .library(name: "CompressionDependency", targets: ["CompressionDependency"]),
+    .library(name: "DeviceDependency", targets: ["DeviceDependency"]),
+    .library(name: "LoggerDependency", targets: ["LoggerDependency"]),
+    .library(name: "PathDependency", targets: ["PathDependency"]),
+    .library(name: "PersistentContainerDependency", targets: ["PersistentContainerDependency"]),
+    .library(name: "ProcessInfoDependency", targets: ["ProcessInfoDependency"]),
+    .library(name: "UserDefaultsDependency", targets: ["UserDefaultsDependency"]),
+    .library(name: "_AppStorageDependency", targets: ["_AppStorageDependency"]),
+    .library(name: "_CoreDataDependency", targets: ["_CoreDataDependency"]),
+    .library(name: "_NotificationDependency", targets: ["_NotificationDependency"]),
+    .library(name: "_SwiftUIDependency", targets: ["_SwiftUIDependency"]),
+
   ],
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-dependencies", branch: "main"),
@@ -43,14 +57,14 @@ let package = Package(
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
         "DependenciesAdditions",
-        "UserDefaultsDependency"
+        "UserDefaultsDependency",
       ]
     ),
     .testTarget(
       name: "_AppStorageDependencyTests",
       dependencies: [
         "_AppStorageDependency",
-        "DependenciesAdditionsTestSupport"
+        "DependenciesAdditionsTestSupport",
       ]
     ),
 
@@ -59,7 +73,7 @@ let package = Package(
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
         "DependenciesAdditions",
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay")
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
     .testTarget(
@@ -100,7 +114,7 @@ let package = Package(
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
         "DependenciesAdditions",
-        "PersistentContainerDependency"
+        "PersistentContainerDependency",
       ]
     ),
     .testTarget(
@@ -113,7 +127,7 @@ let package = Package(
     .target(
       name: "DependenciesAdditions",
       dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "Dependencies", package: "swift-dependencies")
       ]
     ),
 
@@ -123,11 +137,11 @@ let package = Package(
         "DependenciesAdditions"
       ]
     ),
-    
+
     .target(
       name: "DependenciesAdditionsTestSupport",
       dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "Dependencies", package: "swift-dependencies")
       ]
     ),
 
@@ -135,10 +149,10 @@ let package = Package(
       name: "DeviceDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesAdditions"
+        "DependenciesAdditions",
       ]
     ),
-    
+
     .testTarget(
       name: "DeviceDependencyTests",
       dependencies: [
@@ -153,7 +167,7 @@ let package = Package(
         "BundleInfoDependency",
       ]
     ),
-    
+
     .testTarget(
       name: "LoggerDependencyTests",
       dependencies: [
@@ -166,10 +180,10 @@ let package = Package(
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
         "DependenciesAdditions",
-        "PathDependency"
+        "PathDependency",
       ]
     ),
-    
+
     .testTarget(
       name: "_NotificationDependencyTests",
       dependencies: [
@@ -184,7 +198,7 @@ let package = Package(
         .product(name: "Dependencies", package: "swift-dependencies")
       ]
     ),
-    
+
     .testTarget(
       name: "PathDependencyTests",
       dependencies: [
@@ -198,7 +212,7 @@ let package = Package(
         .product(name: "Dependencies", package: "swift-dependencies")
       ]
     ),
-    
+
     .testTarget(
       name: "PersistentContainerDependencyTests",
       dependencies: [
@@ -212,7 +226,7 @@ let package = Package(
         .product(name: "Dependencies", package: "swift-dependencies")
       ]
     ),
-    
+
     .testTarget(
       name: "ProcessInfoDependencyTests",
       dependencies: [
@@ -226,7 +240,7 @@ let package = Package(
         .product(name: "Dependencies", package: "swift-dependencies")
       ]
     ),
-    
+
     .testTarget(
       name: "_SwiftUIDependencyTests",
       dependencies: [
@@ -241,13 +255,13 @@ let package = Package(
         .product(name: "Dependencies", package: "swift-dependencies")
       ]
     ),
-    
+
     .testTarget(
       name: "UserDefaultsDependencyTests",
       dependencies: [
         "UserDefaultsDependency"
       ]
-    )
+    ),
   ]
 )
 
@@ -301,7 +315,7 @@ for target in package.targets {
   target.swiftSettings?.append(
     .unsafeFlags([
       "-Xfrontend", "-warn-concurrency",
-      "-Xfrontend", "-enable-actor-data-race-checks"
+      "-Xfrontend", "-enable-actor-data-race-checks",
       //      "-enable-library-evolution",
     ])
   )
