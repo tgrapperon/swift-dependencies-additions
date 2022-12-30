@@ -43,7 +43,7 @@ final class AppStorageTests: XCTestCase {
   }
 
   func testStream() async throws {
-    final class Model: Sendable {
+    final class Model: @unchecked Sendable {
       @Dependency.AppStorage("SomeKey") var int = 42
     }
     let model = Model()
@@ -110,7 +110,7 @@ final class AppStorageTests: XCTestCase {
 
 
   func testLiveStream() async throws {
-    final class Model: Sendable {
+    final class Model: @unchecked Sendable {
       @Dependency.AppStorage("SomeKey") var int = 42
     }
     let model = Model()
