@@ -5,7 +5,7 @@ import PathDependency
 extension Dependency {
   @propertyWrapper
   public struct Notification: Sendable {
-    @Dependencies.Dependency(\.notifications) var notificationCenter
+    @Dependencies.Dependency(\.notificationCenter) var notificationCenter
     @Dependencies.Dependency(\.path) var path
     @Dependencies.Dependency(\.self) var dependencies
 
@@ -176,11 +176,11 @@ extension Notifications {
     private let post: @Sendable (Value) -> Void
     private let stream: @Sendable () -> AsyncStream<Value>
     private let notification: NotificationOf<Value>
-    @Dependency(\.notifications) var notificationCenter
+    @Dependency(\.notificationCenter) var notificationCenter
     @Dependency(\.self) var dependencies
     
     init(
-      notification: NotificationOf<Value>,
+      _ notification: NotificationOf<Value>,
       post: @escaping @Sendable (Value) -> Void,
       stream: @escaping @Sendable () -> AsyncStream<Value>
     ) {

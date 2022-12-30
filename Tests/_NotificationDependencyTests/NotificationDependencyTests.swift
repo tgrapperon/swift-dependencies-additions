@@ -47,7 +47,7 @@ extension Notifications {
 final class NotificationDependencyTests: XCTestCase {
   func testLiveNotifications() async throws {
     @Dependency.Notification(\.testNotificationWithBidirectionalTransform) var testNotification
-
+    
     try await withTimeout(1000) { group in
       group.addTask {
         let expectations = [2, 4, 7, -1]
@@ -75,7 +75,7 @@ final class NotificationDependencyTests: XCTestCase {
   
   func testLiveNotificationsFailureToExtract() async throws {
     @Dependency.Notification(\.testNotificationWithBidirectionalTransform) var testNotification
-    @Dependency(\.notifications) var notificationCenter
+    @Dependency(\.notificationCenter) var notificationCenter
     
     try await withTimeout { group in
       group.addTask {
@@ -102,8 +102,18 @@ final class NotificationDependencyTests: XCTestCase {
     }
   }
   
+  func testNotificationCenterUnimplemented() {
+    @Dependency(\.notificationCenter) var notificationCenter;
+
+    DependencyValues.withTestValues {
+      XCTExpectFailure {
+        notificationCenter.post(notification(1))
+      }
+    }
+  }
+  
   func testNotificationWithDependency() async throws {
-    @Dependency(\.notifications) var notifications
+    @Dependency(\.notificationCenter) var notificationCenter
     
     final class Model: @unchecked Sendable {
       @Dependency.Notification(\.testNotificationWithDependency) var notification
@@ -165,13 +175,13 @@ final class NotificationDependencyTests: XCTestCase {
       
       group.addTask {
         try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        notifications.post(.init(name: notificationName))
+        notificationCenter.post(.init(name: notificationName))
         try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        notifications.post(.init(name: notificationName))
+        notificationCenter.post(.init(name: notificationName))
         try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        notifications.post(.init(name: notificationName))
+        notificationCenter.post(.init(name: notificationName))
         try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        notifications.post(.init(name: notificationName))
+        notificationCenter.post(.init(name: notificationName))
       }
     }
   }
