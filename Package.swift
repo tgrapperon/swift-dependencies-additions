@@ -24,21 +24,21 @@ define(
   dependencies: "UserDefaultsDependency",
   testingDependencies: "DependenciesAdditions"
 )
-define("BundleInfoDependency", dependencies: "DependenciesAdditions")
-define("PersistentContainerDependency")
 define("_CoreDataDependency", dependencies: "DependenciesAdditions", "PersistentContainerDependency")
-define("CodableDependency")
-define("LoggerDependency", dependencies: "BundleInfoDependency")
-define("CompressionDependency")
+define("_NotificationDependency", dependencies: "DependenciesAdditions", "PathDependency")
+define("_SwiftUIDependency", testingDependencies: "DependenciesAdditions")
 //define("CryptoDependency")
 //define("KeyChainDependency")
-define("PathDependency")
-define("ProcessInfoDependency")
-define("_NotificationDependency", dependencies: "DependenciesAdditions", "PathDependency")
-define("UserDefaultsDependency")
-//define("UIDevice")
-define("_SwiftUIDependency", testingDependencies: "DependenciesAdditions")
+define("BundleInfoDependency", dependencies: "DependenciesAdditions")
+define("CodableDependency")
+define("CompressionDependency")
 define("DeviceDependency", dependencies: "DependenciesAdditions")
+define("LoggerDependency", dependencies: "BundleInfoDependency")
+define("PathDependency")
+define("PersistentContainerDependency")
+define("ProcessInfoDependency")
+define("UserDefaultsDependency")
+
 
 
 func define(_ target: String, dependencies: String..., testingDependencies: String...) {
