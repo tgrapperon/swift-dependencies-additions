@@ -16,8 +16,8 @@ extension NotificationCenter.Dependency: DependencyKey {
   /// `.default` by default (!).
   public static var liveValue: NotificationCenter.Dependency { .default }
   /// `.unimplemented` by default.
-  public static var testValue: NotificationCenter.Dependency { .unimplemented } // or `.default`?
-  
+  public static var testValue: NotificationCenter.Dependency { .unimplemented }  // or `.default`?
+
   /// The default `NotificationCenter`
   public static var `default`: Self { .init() }
   /// An unimplemented `NotificationCenter` that fails during testing when its endpoints are
@@ -34,7 +34,6 @@ extension NotificationCenter {
     typealias Notifications = _NotificationDependency.Notifications
     let notificationCenter: LockIsolated<NotificationCenter>
 
-    
     /// Creates a new value from a `NotificationCenter` instance.
     ///
     /// You usually don't use this initializer directly, but instead use the `.default` and
@@ -47,7 +46,7 @@ extension NotificationCenter {
 
     // Note: we use a `String` for `#fileID` because the value comes from `ID` where it is
     // already a `String`.
-    
+
     /// Posts a given `Notification` to the notification center.
     public func post(_ notification: Notification, file: String = #fileID, line: UInt = #line) {
       self.notificationCenter.withValue {
@@ -66,7 +65,7 @@ extension NotificationCenter {
         }
       } stream: {
         AsyncStream(Value.self, bufferingPolicy: .bufferingNewest(0)) { continuation in
-          
+
           let observer = NotificationObserver {
             guard let value = notification.extract(from: $0) else { return }
             continuation.yield(value)

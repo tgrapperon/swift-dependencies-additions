@@ -1,4 +1,4 @@
-// WIP
+// WIP - Should we ship a bunch of common notifications?
 
 #if canImport(UIKit.UIApplication)
   import UIKit.UIApplication
