@@ -1,7 +1,7 @@
 import Foundation
 import XCTestDynamicOverlay
 
-@_spi(Internal) public func withTimeout(
+public func withTimeout(
   _ milliseconds: UInt64 = 1000,
   description: String = "",
   operation: @Sendable @escaping () async throws -> Void,
@@ -19,7 +19,7 @@ import XCTestDynamicOverlay
   }
 }
 
-@_spi(Internal) public func withTimeout(
+public func withTimeout(
   _ milliseconds: UInt64 = 1000,
   description: String = "",
   group operations: @escaping @Sendable (inout ThrowingTaskGroup<Void, Error>) async throws -> Void,

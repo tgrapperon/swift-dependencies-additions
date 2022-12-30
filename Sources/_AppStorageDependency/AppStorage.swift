@@ -1,6 +1,6 @@
 import Dependencies
 import Foundation
-@_spi(Internals)@_exported import UserDefaultsDependency
+@_spi(Internals) @_exported import UserDefaultsDependency
 import XCTestDynamicOverlay
 
 extension Dependency {

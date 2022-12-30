@@ -1,5 +1,5 @@
 import Dependencies
-@_spi(Internal) import DependenciesBaseAdditions
+import DependenciesAdditionsTestSupport
 import XCTest
 import _NotificationDependency
 
@@ -47,7 +47,7 @@ extension Notifications {
 final class NotificationDependencyTests: XCTestCase {
   func testLiveNotifications() async throws {
     @Dependency.Notification(\.testNotificationWithBidirectionalTransform) var testNotification
-    
+
     try await withTimeout(1000) { group in
       group.addTask {
         let expectations = [2, 4, 7, -1]

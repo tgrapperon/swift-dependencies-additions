@@ -1,5 +1,5 @@
 import Dependencies
-import DependenciesBaseAdditions
+import DependenciesAdditions
 import Foundation
 import XCTestDynamicOverlay
 

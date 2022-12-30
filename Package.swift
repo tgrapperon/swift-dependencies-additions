@@ -15,7 +15,20 @@ let package = Package(
     .library(
       name: "DependenciesAdditions",
       targets: [
-        "DependenciesAdditions"
+        "BundleInfoDependency",
+        "CodableDependency",
+        "CompressionDependency",
+        "DependenciesAdditions",
+        "DeviceDependency",
+        "LoggerDependency",
+        "PathDependency",
+        "PersistentContainerDependency",
+        "ProcessInfoDependency",
+        "UserDefaultsDependency",
+        "_AppStorageDependency",
+        "_CoreDataDependency",
+        "_NotificationDependency",
+        "_SwiftUIDependency",
       ]
     )
   ],
@@ -29,7 +42,7 @@ let package = Package(
       name: "_AppStorageDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesBaseAdditions",
+        "DependenciesAdditions",
         "UserDefaultsDependency"
       ]
     ),
@@ -37,7 +50,7 @@ let package = Package(
       name: "_AppStorageDependencyTests",
       dependencies: [
         "_AppStorageDependency",
-        "DependenciesBaseAdditions"
+        "DependenciesAdditionsTestSupport"
       ]
     ),
 
@@ -45,7 +58,7 @@ let package = Package(
       name: "BundleInfoDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesBaseAdditions",
+        "DependenciesAdditions",
         .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay")
       ]
     ),
@@ -86,7 +99,7 @@ let package = Package(
       name: "_CoreDataDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesBaseAdditions",
+        "DependenciesAdditions",
         "PersistentContainerDependency"
       ]
     ),
@@ -101,20 +114,6 @@ let package = Package(
       name: "DependenciesAdditions",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "_AppStorageDependency",
-        "_CoreDataDependency",
-        "_NotificationDependency",
-        "_SwiftUIDependency",
-        "BundleInfoDependency",
-        "CodableDependency",
-        "CompressionDependency",
-        "DependenciesBaseAdditions",
-        "DeviceDependency",
-        "LoggerDependency",
-        "PathDependency",
-        "PersistentContainerDependency",
-        "ProcessInfoDependency",
-        "UserDefaultsDependency"
       ]
     ),
 
@@ -124,17 +123,11 @@ let package = Package(
         "DependenciesAdditions"
       ]
     ),
-    .target(
-      name: "DependenciesBaseAdditions",
-      dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies")
-      ]
-    ),
     
-    .testTarget(
-      name: "DependenciesBaseAdditionsTests",
+    .target(
+      name: "DependenciesAdditionsTestSupport",
       dependencies: [
-        "DependenciesBaseAdditions"
+        .product(name: "Dependencies", package: "swift-dependencies"),
       ]
     ),
 
@@ -142,7 +135,7 @@ let package = Package(
       name: "DeviceDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesBaseAdditions"
+        "DependenciesAdditions"
       ]
     ),
     
@@ -158,7 +151,6 @@ let package = Package(
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
         "BundleInfoDependency",
-        "DependenciesBaseAdditions"
       ]
     ),
     
@@ -173,7 +165,7 @@ let package = Package(
       name: "_NotificationDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesBaseAdditions",
+        "DependenciesAdditions",
         "PathDependency"
       ]
     ),
@@ -181,7 +173,8 @@ let package = Package(
     .testTarget(
       name: "_NotificationDependencyTests",
       dependencies: [
-        "_NotificationDependency"
+        "_NotificationDependency",
+        "DependenciesAdditionsTestSupport",
       ]
     ),
 
@@ -238,7 +231,7 @@ let package = Package(
       name: "_SwiftUIDependencyTests",
       dependencies: [
         "_SwiftUIDependency",
-        "DependenciesBaseAdditions",
+        "DependenciesAdditionsTestSupport",
       ]
     ),
 

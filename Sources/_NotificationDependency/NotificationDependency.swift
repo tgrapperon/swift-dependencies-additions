@@ -1,6 +1,5 @@
 import Dependencies
 import Foundation
-@_spi(Internal) import DependenciesBaseAdditions
 import PathDependency
 
 extension Dependency {
@@ -53,7 +52,7 @@ extension Dependency {
     }
 
     public var wrappedValue: Notifications.StreamOf<Value> {
-      self.notificationCenter[
+      self.notificationCenter.stream(
         DependencyValues.withValue(\.path, self.path) {
           self.notification.withContextualDependencies(
             self.dependencies,
@@ -61,25 +60,12 @@ extension Dependency {
             line: line
           )
         }
-      ]
+      )
     }
   }
 }
 
-extension DependencyValues {
-  public var notifications: any NotificationCenterProtocol {
-    get { self[NotificationCenterKey.self] }
-    set { self[NotificationCenterKey.self] = newValue }
-  }
-}
 
-enum NotificationCenterKey: DependencyKey {
-  static var liveValue: any NotificationCenterProtocol { .default }
-  static var testValue: NotificationCenterProtocol {
-    XCTFail(#"Unimplemented: @Dependency(\.notifications)"#)
-    return .default
-  }
-}
 
 public struct Notifications {}
 
@@ -262,7 +248,7 @@ extension Notifications {
           line: line
         )
       }
-      return self.notificationCenter[updatedNotification]
+      return self.notificationCenter.stream(updatedNotification)
     }
   }
 }
