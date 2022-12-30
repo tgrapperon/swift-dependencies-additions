@@ -5,7 +5,7 @@ public func withTimeout(
   _ milliseconds: UInt64 = 1000,
   description: String = "",
   operation: @Sendable @escaping () async throws -> Void,
-  file: StaticString = #filePath,
+  file: StaticString = #fileID,
   line: UInt = #line
 ) async throws {
   try await withThrowingTaskGroup(of: Void.self) { group in
@@ -23,7 +23,7 @@ public func withTimeout(
   _ milliseconds: UInt64 = 1000,
   description: String = "",
   group operations: @escaping @Sendable (inout ThrowingTaskGroup<Void, Error>) async throws -> Void,
-  file: StaticString = #filePath,
+  file: StaticString = #fileID,
   line: UInt = #line
 ) async throws {
   try await withTimeout(

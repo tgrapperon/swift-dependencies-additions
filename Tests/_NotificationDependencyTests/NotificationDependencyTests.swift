@@ -5,9 +5,6 @@ import _NotificationDependency
 
 let notificationName = Notification.Name("SomeNotificationName")
 
-enum NotificationError: Error {
-  case extractionFailed
-}
 func notification(_ int: Int = 0) -> Notification {
   Notification(name: notificationName, object: nil, userInfo: ["": int])
 }
@@ -15,20 +12,9 @@ func notification(_ int: Int = 0) -> Notification {
 extension Notifications {
   var testNotificationWithBidirectionalTransform: NotificationOf<Int> {
     .init(notificationName) {
-      guard let value = $0.userInfo?[""] as? Int else {
-        throw NotificationError.extractionFailed
-      }
-      return value
+      $0.userInfo?[""] as? Int
     } embed: {
       $1.userInfo = ["": $0]
-    }
-  }
-  var testNotificationWithUnidirectionalTransform: NotificationOf<Int> {
-    .init(notificationName) {
-      guard let value = $0.userInfo?[""] as? Int else {
-        throw NotificationError.extractionFailed
-      }
-      return value
     }
   }
 
@@ -72,36 +58,7 @@ final class NotificationDependencyTests: XCTestCase {
       }
     }
   }
-  
-  func testLiveNotificationsFailureToExtract() async throws {
-    @Dependency.Notification(\.testNotificationWithBidirectionalTransform) var testNotification
-    @Dependency(\.notificationCenter) var notificationCenter
     
-    try await withTimeout { group in
-      group.addTask {
-        let expectations = [2, 4, 7, -1]
-        var index: Int = 0
-        for await value in testNotification {
-          XCTAssertEqual(value, expectations[index])
-          index += 1
-          if index == expectations.endIndex {
-            return
-          }
-        }
-        // Should have exited after failing to extract the third value
-        XCTAssertEqual(index, 2)
-      }
-      group.addTask {
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        testNotification.post(2)
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        testNotification.post(4)
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        notificationCenter.post(.init(name: notificationName))
-      }
-    }
-  }
-  
   func testNotificationCenterUnimplemented() {
     @Dependency(\.notificationCenter) var notificationCenter;
 
