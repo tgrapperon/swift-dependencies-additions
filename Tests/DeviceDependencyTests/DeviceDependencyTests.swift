@@ -9,9 +9,9 @@ import XCTest
 
     func testBundleInfo() {
       DependencyValues.withValues {
-        $0.device.isProximityMonitoringEnabled = true
+        $0.device.$batteryLevel = 42
       } operation: {
-        XCTAssertEqual(device.isProximityMonitoringEnabled, true)
+        XCTAssertEqual(device.batteryLevel, 42)
       }
     }
 

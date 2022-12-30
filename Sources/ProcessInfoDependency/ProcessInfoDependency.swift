@@ -20,58 +20,58 @@ extension ProcessInfo {
   /// A collection of information about the current process.
   public struct Value: Sendable {
     /// The variable names (keys) and their values in the environment from which the process was launched.
-    @LazyProxy public var environment: [String: String]
+    @ROLP public var environment: [String: String]
 
     /// Array of strings with the command-line arguments for the process.
-    @LazyProxy public var arguments: [String]
+    @ROLP public var arguments: [String]
 
     /// The name of the host computer on which the process is executing.
-    @LazyProxy public var hostName: String
+    @ROLP public var hostName: String
 
     /// The name of the process.
-    @LazyProxy public var processName: String
+    @ROLP public var processName: String
 
     /// The identifier of the process (often called process ID).
-    @LazyProxy public var processIdentifier: Int32
+    @ROLP public var processIdentifier: Int32
 
     /// Global unique identifier for the process.
-    @LazyProxy public var globallyUniqueString: String
+    @ROLP public var globallyUniqueString: String
 
     /// A string containing the version of the operating system on which the process is executing.
-    @LazyProxy public var operatingSystemVersionString: String
+    @ROLP public var operatingSystemVersionString: String
 
     /// The version of the operating system on which the process is executing.
-    @LazyProxy public var operatingSystemVersion: OperatingSystemVersion
+    @ROLP public var operatingSystemVersion: OperatingSystemVersion
 
     /// The number of processing cores available on the computer.
-    @LazyProxy public var processorCount: Int
+    @ROLP public var processorCount: Int
 
     /// The number of active processing cores available on the computer.
-    @LazyProxy public var activeProcessorCount: Int
+    @ROLP public var activeProcessorCount: Int
 
     /// The amount of physical memory on the computer in bytes.
-    @LazyProxy public var physicalMemory: UInt64
+    @ROLP public var physicalMemory: UInt64
 
     /// The amount of time the system has been awake since the last time it was restarted.
-    @LazyProxy public var systemUptime: TimeInterval
+    @ROLP public var systemUptime: TimeInterval
 
     /// The current thermal state of the system.
-    @LazyProxy public var thermalState: ProcessInfo.ThermalState
+    @ROLP public var thermalState: ProcessInfo.ThermalState
 
     /// A Boolean value that indicates the current state of Low Power Mode.
-    @LazyProxy public var isLowPowerModeEnabled: Bool
+    @ROLP public var isLowPowerModeEnabled: Bool
 
     /// A Boolean value that indicates whether the process originated as an iOS app and runs on
     /// macOS.
-    @LazyProxy public var isMacCatalystApp: Bool
+    @ROLP public var isMacCatalystApp: Bool
 
     /// A Boolean value that indicates whether the process is an iPhone or iPad app running on a
     ///  Mac.
-    @LazyProxy public var isiOSAppOnMac: Bool
+    @ROLP public var isiOSAppOnMac: Bool
 
-    @LazyProxy private var _userName: String
-    @LazyProxy private var _fullUserName: String
-    @LazyProxy private var _automaticTerminationSupportEnabled: Bool
+    @ROLP private var _userName: String
+    @ROLP private var _fullUserName: String
+    @ROLP private var _automaticTerminationSupportEnabled: Bool
 
     private var _beginActivity: @Sendable (ProcessInfo.ActivityOptions, String) -> NSObjectProtocol
     private var _endActivity: @Sendable (NSObjectProtocol) -> Void

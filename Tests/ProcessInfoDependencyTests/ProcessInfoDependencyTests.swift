@@ -15,7 +15,7 @@ final class ProcessInfoDependencyTests: XCTestCase {
   
   func testProcessInfoConfiguration() {
     DependencyValues.withValues {
-      $0.processInfo.processorCount = 128
+      $0.processInfo.$processorCount = 128
     } operation: {
       XCTAssertEqual(processInfo.processorCount, 128)
     }
