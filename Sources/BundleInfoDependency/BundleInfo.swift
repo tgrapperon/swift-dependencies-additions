@@ -82,7 +82,8 @@ extension BundleInfo {
     BundleInfo(
       bundleIdentifier: XCTestDynamicOverlay.unimplemented(
         #"Unimplemented: @Dependency(\.bundleInfo.bundleIdentifier)"#),
-      name: XCTestDynamicOverlay.unimplemented(#"Unimplemented: @Dependency(\.bundleInfo.name)"#),
+      name: XCTestDynamicOverlay.unimplemented(
+        #"Unimplemented: @Dependency(\.bundleInfo.name)"#),
       displayName: XCTestDynamicOverlay.unimplemented(
         #"Unimplemented: @Dependency(\.bundleInfo.displayName)"#),
       spokenName: XCTestDynamicOverlay.unimplemented(
@@ -92,13 +93,5 @@ extension BundleInfo {
       version: XCTestDynamicOverlay.unimplemented(
         #"Unimplemented: @Dependency(\.bundleInfo.version)"#)
     )
-  }
-}
-
-
-struct Func {
-  var run: (String) -> Void
-  func run(_ string: String) -> Void {
-    run(string)
   }
 }
