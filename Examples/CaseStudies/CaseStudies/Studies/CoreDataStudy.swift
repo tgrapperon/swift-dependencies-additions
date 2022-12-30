@@ -191,7 +191,7 @@ final class AddSongModel: ObservableObject {
   @Dependency(\.logger["CoreDataStudy"]) var logger
   
   // In this example, we could use directly:
-  // @Dependency(\.environment.dismiss) var dismiss
+  // @Dependency.Environment(\.dismiss) var dismiss
   // but it is probably safer to namespace this dependency with an
   // `Hashable` identifier. We use here the static `id` property on
   // `ObservableObject` that ties this dependency to this model. We
@@ -203,7 +203,6 @@ final class AddSongModel: ObservableObject {
   @Dependency.Environment(\.dismiss, id: AddSongModel.self) var dismiss
 
   @Published var song: Fetched<Song> 
-  private var isDismissalInteractive: Bool = false
   
   init(song: Fetched<Song>) {
     self.song = song
