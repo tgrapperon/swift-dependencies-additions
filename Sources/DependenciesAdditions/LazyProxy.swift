@@ -52,3 +52,27 @@ public struct MainActorLazyProxy<Value> {
 }
 /// See ``MainActorLazyProxy``.
 public typealias MALP = MainActorLazyProxy
+
+/// A property wrapper that delegates the storage of a property to a `@MainActor` internal closure.
+///
+/// This property wrapper is useful when defining dependencies as abstractions of existing
+/// `@MainActor`-isolated types that are exposing properties, as the live implementation can lazily
+/// delegate calls to some instance of the abstracted type's. In such cases, it also facilitate the
+/// creation of these abtracted dependencies' values in non-isolated context, with is a requirement
+/// of `DependencyKey`.
+///
+/// This is a read-only version of ``MainActorLazyProxy``
+@propertyWrapper
+public struct ReadOnlyMainActorLazyProxy<Value> {
+  private var value: @MainActor () -> Value
+  public init(_ value: @escaping @MainActor () -> Value) {
+    self.value = value
+  }
+  @MainActor
+  public var wrappedValue: Value {
+    get { value() }
+  }
+}
+
+/// See ``MainActorReadOnlyLazyProxy``.
+public typealias ROMALP = ReadOnlyMainActorLazyProxy

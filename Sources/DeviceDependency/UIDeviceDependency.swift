@@ -14,43 +14,44 @@ import XCTestDynamicOverlay
   }
 
   import UIKit.UIDevice
+  /// A representation of the current device.
   public struct Device: Sendable {
     /// The name of the device.
-    @MALP public var name: String
+    @ROMALP public var name: String
     /// The model of the device.
-    @MALP public var model: String
+    @ROMALP public var model: String
     /// The model of the device as a localized string.
-    @MALP public var localizedModel: String
+    @ROMALP public var localizedModel: String
     /// The name of the operating system running on the device.
-    @MALP public var systemName: String
+    @ROMALP public var systemName: String
     /// The current version of the operating system.
-    @MALP public var systemVersion: String
+    @ROMALP public var systemVersion: String
     /// An alphanumeric string that uniquely identifies a device to the app’s vendor.
-    @MALP public var identifierForVendor: UUID?
+    @ROMALP public var identifierForVendor: UUID?
     /// The physical orientation of the device.
-    @MALP public var orientation: UIDeviceOrientation
+    @ROMALP public var orientation: UIDeviceOrientation
     /// A Boolean value that indicates whether battery monitoring is enabled.
-    @MALP public var isGeneratingDeviceOrientationNotifications: Bool
+    @ROMALP public var isGeneratingDeviceOrientationNotifications: Bool
     /// Begins the generation of notifications of device orientation changes.
-    @MALP public var beginGeneratingDeviceOrientationNotifications: () -> Void
+    @ROMALP public var beginGeneratingDeviceOrientationNotifications: () -> Void
     /// Ends the generation of notifications of device orientation changes.
-    @MALP public var endGeneratingDeviceOrientationNotifications: () -> Void
+    @ROMALP public var endGeneratingDeviceOrientationNotifications: () -> Void
     /// A Boolean value that indicates whether battery monitoring is enabled.
     @MALP public var isBatteryMonitoringEnabled: Bool
     /// The battery state for the device.
-    @MALP public var batteryState: UIDevice.BatteryState
+    @ROMALP public var batteryState: UIDevice.BatteryState
     /// The battery charge level for the device.
-    @MALP public var batteryLevel: Float
+    @ROMALP public var batteryLevel: Float
     /// A Boolean value that indicates whether proximity monitoring is enabled.
     @MALP public var isProximityMonitoringEnabled: Bool
     /// A Boolean value that indicates whether the proximity sensor is close to the user.
-    @MALP public var proximityState: Bool
+    @ROMALP public var proximityState: Bool
     /// A Boolean value that indicates whether the current device supports multitasking.
-    @MALP public var isMultitaskingSupported: Bool
+    @ROMALP public var isMultitaskingSupported: Bool
     /// The style of interface to use on the current device.
-    @MALP public var userInterfaceIdiom: UIUserInterfaceIdiom
+    @ROMALP public var userInterfaceIdiom: UIUserInterfaceIdiom
     /// Plays an input click in an enabled input view.
-    @MALP public var playInputClick: () -> Void
+    @ROMALP public var playInputClick: () -> Void
 
     nonisolated  // Don't know why this is needed, as `Device` is not actor-isolated
       init(
@@ -75,7 +76,7 @@ import XCTestDynamicOverlay
         playInputClick: @escaping @MainActor () -> Void
       )
     {
-      self._name = .init (name)
+      self._name = .init(name)
       self._model = .init(model)
       self._localizedModel = .init(localizedModel)
       self._systemName = .init(systemName)
@@ -104,6 +105,15 @@ import XCTestDynamicOverlay
 
   enum DeviceKey: DependencyKey {
     public static var liveValue: Device {
+      .current
+    }
+    public static var testValue: Device {
+      .unimplemented
+    }
+  }
+
+  extension Device {
+    public nonisolated static var current: Device {
       Device(
         name: { UIDevice.current.name },
         model: { UIDevice.current.model },
@@ -128,16 +138,13 @@ import XCTestDynamicOverlay
         endGeneratingDeviceOrientationNotifications: {
           UIDevice.current.endGeneratingDeviceOrientationNotifications()
         },
-        playInputClick: { UIDevice.current.playInputClick() })
-    }
-
-    public static var testValue: Device {
-      .unimplemented
+        playInputClick: { UIDevice.current.playInputClick() }
+      )
     }
   }
 
   extension Device {
-    public nonisolated  // Don't know why this is needed, as `Device` is not actor-isolated
+    public nonisolated
       static var unimplemented: Device
     {
       Device(
