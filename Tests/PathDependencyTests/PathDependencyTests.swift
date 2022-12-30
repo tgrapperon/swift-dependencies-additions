@@ -1,5 +1,5 @@
-import PathDependency
 import Dependencies
+import PathDependency
 import XCTest
 
 final class PathDependencyTests: XCTestCase {
@@ -10,14 +10,15 @@ final class PathDependencyTests: XCTestCase {
       @Dependency(\.path) var path
       var model1: Model?
       var model2: Model?
-      init(model1: (() -> Model)? = nil,
-           model2: (() -> Model)? = nil) {
+      init(
+        model1: (() -> Model)? = nil,
+        model2: (() -> Model)? = nil
+      ) {
         self.model1 = model1?()
         self.model2 = model2?()
       }
     }
-        
-    
+
     let model = Model {
       DependencyValues.withValues {
         $0.path.push("a1")
@@ -26,7 +27,7 @@ final class PathDependencyTests: XCTestCase {
           DependencyValues.withValues {
             $0.path.push("b1")
           } operation: {
-            .init(model1:{
+            .init(model1: {
               DependencyValues.withValues {
                 $0.path.push("c1")
               } operation: {
