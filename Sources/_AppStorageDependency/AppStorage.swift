@@ -6,7 +6,7 @@ import XCTestDynamicOverlay
 extension Dependency {
   @propertyWrapper
   @dynamicMemberLookup
-  public struct AppStorage: Sendable where Value: Sendable {
+  public final class AppStorage: @unchecked Sendable where Value: Sendable {
     @Dependencies.Dependency(\.userDefaults) var currentUserDefaults
 
     let key: String
@@ -22,7 +22,7 @@ extension Dependency {
 
     public var wrappedValue: Value {
       get { self.getValue(self.userDefaults) }
-      nonmutating set { self.setValue(self.userDefaults, newValue) }
+      set { self.setValue(self.userDefaults, newValue) }
     }
 
     public var projectedValue: Values {
@@ -34,7 +34,7 @@ extension Dependency {
       } stream: {
         self.userDefaults
           .values(forKey: self.key)
-          .map { $0 ?? defaultValue }
+          .map { $0 ?? self.defaultValue }
           .eraseToStream()
       }
     }
@@ -54,7 +54,7 @@ extension Dependency {
     }
 
     // Internal initializer with default value
-    init(wrappedValue: Value, key: String, store: UserDefaults.Dependency? = nil) {
+    convenience init(wrappedValue: Value, key: String, store: UserDefaults.Dependency? = nil) {
       self.init(
         key: key,
         defaultValue: wrappedValue,
@@ -67,7 +67,7 @@ extension Dependency {
     }
 
     // Internal initializer without default value
-    init<Wrapped>(key: String, store: UserDefaults.Dependency? = nil)
+    convenience init<Wrapped>(key: String, store: UserDefaults.Dependency? = nil)
     where Value == Wrapped? {
       self.init(
         key: key,

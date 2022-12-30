@@ -15,7 +15,7 @@ extension Dependency.AppStorage {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
   where Value == Bool {
     self.init(wrappedValue: wrappedValue, key: key, store: store)
   }
@@ -29,7 +29,7 @@ extension Dependency.AppStorage {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
   where Value == Int {
     self.init(wrappedValue: wrappedValue, key: key, store: store)
   }
@@ -43,7 +43,7 @@ extension Dependency.AppStorage {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
   where Value == Double {
     self.init(wrappedValue: wrappedValue, key: key, store: store)
   }
@@ -57,7 +57,7 @@ extension Dependency.AppStorage {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
   where Value == String {
     self.init(wrappedValue: wrappedValue, key: key, store: store)
   }
@@ -71,7 +71,7 @@ extension Dependency.AppStorage {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
   where Value == URL {
     self.init(wrappedValue: wrappedValue, key: key, store: store)
   }
@@ -90,7 +90,7 @@ extension Dependency.AppStorage {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
   where Value == Data {
     self.init(wrappedValue: wrappedValue, key: key, store: store)
   }
@@ -117,7 +117,7 @@ extension Dependency.AppStorage {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
   where Value: RawRepresentable, Value.RawValue == Int {
     self.init(
       key: key,
@@ -152,7 +152,7 @@ extension Dependency.AppStorage {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
   where Value: RawRepresentable, Value.RawValue == String {
     self.init(
       key: key,
@@ -177,7 +177,7 @@ extension Dependency.AppStorage where Value: ExpressibleByNilLiteral {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init(_ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init(_ key: String, store: UserDefaults.Dependency? = nil)
   where Value == Bool? {
     self.init(key: key, store: store)
   }
@@ -192,7 +192,7 @@ extension Dependency.AppStorage where Value: ExpressibleByNilLiteral {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init(_ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init(_ key: String, store: UserDefaults.Dependency? = nil)
   where Value == Int? {
     self.init(key: key, store: store)
   }
@@ -207,7 +207,7 @@ extension Dependency.AppStorage where Value: ExpressibleByNilLiteral {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init(_ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init(_ key: String, store: UserDefaults.Dependency? = nil)
   where Value == Double? {
     self.init(key: key, store: store)
   }
@@ -222,7 +222,7 @@ extension Dependency.AppStorage where Value: ExpressibleByNilLiteral {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init(_ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init(_ key: String, store: UserDefaults.Dependency? = nil)
   where Value == String? {
     self.init(key: key, store: store)
   }
@@ -237,7 +237,7 @@ extension Dependency.AppStorage where Value: ExpressibleByNilLiteral {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init(_ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init(_ key: String, store: UserDefaults.Dependency? = nil)
   where Value == URL? {
     self.init(key: key, store: store)
   }
@@ -252,7 +252,7 @@ extension Dependency.AppStorage where Value: ExpressibleByNilLiteral {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init(_ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init(_ key: String, store: UserDefaults.Dependency? = nil)
   where Value == Data? {
     self.init(key: key, store: store)
   }
@@ -279,7 +279,7 @@ extension Dependency.AppStorage where Value: ExpressibleByNilLiteral {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init<R>(_ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init<R>(_ key: String, store: UserDefaults.Dependency? = nil)
   where Value == R?, R: RawRepresentable, R.RawValue == Int {
     self.init(
       key: key,
@@ -314,7 +314,7 @@ extension Dependency.AppStorage where Value: ExpressibleByNilLiteral {
   ///     store.
   ///   - store: The user defaults store to read and write to. A value
   ///     of `nil` will use the user default store from the dependencies.
-  public init<R>(_ key: String, store: UserDefaults.Dependency? = nil)
+  public convenience init<R>(_ key: String, store: UserDefaults.Dependency? = nil)
   where Value == R?, R: RawRepresentable, R.RawValue == String {
     self.init(
       key: key,

@@ -28,7 +28,7 @@
     public var sceneWillEnterForeground: NotificationOf<UIScene> {
       let name = UIScene.willEnterForegroundNotification
       return .init(name) {
-        $0.object as! UIScene
+        $0.object as? UIScene
       } embed: {
         $1.object = $0
       }
