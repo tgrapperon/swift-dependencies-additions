@@ -6,7 +6,7 @@ import XCTestDynamicOverlay
 extension Dependency {
   @propertyWrapper
   @dynamicMemberLookup
-  public struct AppStorage: @unchecked Sendable where Value: Sendable {
+  public struct AppStorage: Sendable where Value: Sendable {
     @Dependencies.Dependency(\.userDefaults) var currentUserDefaults
 
     let key: String
