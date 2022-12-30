@@ -97,13 +97,6 @@ extension Notifications {
   }
 }
 
-extension NotificationCenterProtocol {
-  func stream<Value>(notification: Notifications.NotificationOf<Value>) -> Notifications.StreamOf<Value> {
-    fatalError()
-//    self[notification]
-  }
-}
-
 extension Notifications.NotificationOf {
   
   public init(
@@ -136,17 +129,11 @@ extension Notifications.NotificationOf {
     file: StaticString = #fileID,
     line: UInt = #line
   ) where Value == Void {
-    @Dependency(\.path) var path;
-    
-    self.name = name
-    self.object = object.map(UncheckedSendable.init(wrappedValue:))
-    self.extract = { _ in () }
-    self.embed = { _, _ in () }
-    self.id = .init(
-      Value.self,
-      name: name,
+    self.init(
+      name,
       object: object,
-      path: path,
+      extract: { _ in () },
+      embed: { _, _ in () },
       file: file,
       line: line
     )
@@ -161,7 +148,7 @@ extension Notifications.NotificationOf {
     file: StaticString = #fileID,
     line: UInt = #line
   ) -> Self {
-    .init(
+    return .init(
       self.name,
       object: self.object?.wrappedValue,
       extract: { notification in
@@ -180,144 +167,39 @@ extension Notifications.NotificationOf {
   }
 }
 
-
-extension Notifications {
-//  public struct NotificationOf<Value>: Hashable, Sendable {
-//
-//    let name: Notification.Name
-//    let object: UncheckedSendable<NSObject>?
-//    let transform: @Sendable (Notification) throws -> Value
-//    let notify: (@Sendable (Value) -> Notification?)?
-//
-//    let id: ID
-//
-//    public init(
-//      _ name: Notification.Name,
-//      object: NSObject? = nil,
-//      transform: @escaping @Sendable (Notification) throws -> Value = { $0 },
-//      notify: (@Sendable (Value) -> Notification?)? = nil,
-//      file: String = #fileID,
-//      line: UInt = #line
-//    ) {
-////      @Dependency(\.path) var path;
-//      @Dependency(\.self) var dependencies
-//
-//      self.name = name
-//      self.object = object.map(UncheckedSendable.init(wrappedValue:))
-//      self.transform = transform
-//      self.notify = notify
-//      self.id = .init(
-//        Value.self,
-//        name: name,
-//        object: object,
-//        path: dependencies.path,
-//        file: file,
-//        line: line
-//      )
-//    }
-//
-//
-//
-//
-//
-//    @MainActor
-//    public init(
-//      _ name: Notification.Name,
-//      object: NSObject? = nil,
-//      file: StaticString = #fileID,
-//      line: UInt = #line
-//    ) where Value == Void {
-//      @Dependency(\.path) var path;
-//
-//      let object = object.map(UncheckedSendable.init(wrappedValue:))
-//      self.name = name
-//      self.object = object
-//      self.transform = { _ in () }
-//      self.notify = { _ in Notification(name: name, object: object?.wrappedValue) }
-//      self.id = .init(
-//        Void.self,
-//        name: name,
-//        object: object?.wrappedValue,
-//        path: path,
-//        file: file.description,
-//        line: line
-//      )
-//    }
-//
-//    func updated(
-//      with values: DependencyValues,
-//      path: Path,
-//      file: StaticString,
-//      line: UInt
-//    ) -> Self {
-//      DependencyValues.withValue(\.path, path) {
-//        NotificationOf(
-//          self.name,
-//          object: self.object?.value,
-//          transform: { notification in
-//            try DependencyValues.withValue(\.self, values) {
-//              try transform(notification)
-//            }
-//          },
-//          notify: self.notify.map { notify in
-//            DependencyValues.withValue(\.self, values) {
-//              { @Sendable value in notify(value) }
-//            }
-//          },
-//          file: file.description,
-//          line: line
-//        )
-//      }
-//    }
-//
-//    public static func == (lhs: Self, rhs: Self) -> Bool {
-//      lhs.id == rhs.id
-//    }
-//
-//    public func hash(into hasher: inout Hasher) {
-//      hasher.combine(self.id)
-//    }
-//
-//    var notification: Notification {
-//      Notification(name: self.name, object: self.object?.wrappedValue)
-//    }
-//
-//    public func map<T>(
-//      transform: @escaping @Sendable (Value) throws -> T,
-//      notify: (@Sendable (T) -> Value?)? = nil,
-//      file: StaticString = #fileID,
-//      line: UInt = #line
-//    ) -> NotificationOf<T> {
-//      return .init(
-//        self.name,
-//        object: self.object?.wrappedValue
-//      ) {
-//        try transform(self.transform($0))
-//      } notify: {
-//        guard
-//          let selfNotify = self.notify,
-//          let value = notify?($0)
-//        else { return nil }
-//        return selfNotify(value)
-//      }
-//    }
-//  }
-}
-
 extension Notifications {
   public struct StreamOf<Value>: Sendable {
     private let post: @Sendable (Value) -> Void
     private let stream: @Sendable () -> AsyncStream<Value>
+    private let notification: NotificationOf<Value>
+    @Dependency(\.notifications) var notificationCenter
+    @Dependency(\.self) var dependencies
+    
     init(
+      notification: NotificationOf<Value>,
       post: @escaping @Sendable (Value) -> Void,
       stream: @escaping @Sendable () -> AsyncStream<Value>
     ) {
+      self.notification = notification
       self.post = post
       self.stream = stream
     }
 
     public func post(_ value: Value) {
       self.post(value)
+    }
+    
+    public func withLocalDepencies(file: StaticString = #file, line: UInt = #line) -> Self {
+      let updatedNotification = DependencyValues.withValue(
+        \.path, self.notification.id.path
+      ) {
+        return notification.operatingWithDependencyValues(
+          self.dependencies,
+          file: file,
+          line: line
+        )
+      }
+      return self.notificationCenter[updatedNotification]
     }
   }
 }

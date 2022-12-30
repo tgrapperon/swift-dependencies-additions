@@ -19,7 +19,7 @@ public struct _DefaultNotificationCenter: NotificationCenterProtocol {
       if let existing = streams[notification.id] as! Notifications.StreamOf<Value>? {
         return existing
       }
-      let stream = Notifications.StreamOf<Value> { value in
+      let stream = Notifications.StreamOf<Value>(notification: notification) { value in
         var nsNotification = notification.notification
         notification.embed(value, &nsNotification)
         NotificationCenter.default.post(nsNotification)

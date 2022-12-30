@@ -19,8 +19,8 @@ extension Notifications {
         throw NotificationError.extractionFailed
       }
       return value
-    } notify: {
-      notification($0)
+    } embed: {
+      $1.userInfo = ["": $0]
     }
   }
   var testNotificationWithUnidirectionalTransform: NotificationOf<Int> {
@@ -102,14 +102,6 @@ final class NotificationDependencyTests: XCTestCase {
     }
   }
 
-  func testLiveFailureToSendNotifications() async throws {
-    @Dependency.Notification(\.testNotificationWithUnidirectionalTransform) var testNotification;
-
-    XCTExpectFailure {
-      testNotification.post(2)
-    }
-  }
-
   func testNotificationWithDependency() async throws {
     @Dependency(\.notifications) var notifications
 
@@ -133,27 +125,27 @@ final class NotificationDependencyTests: XCTestCase {
     ]
 
     try await withTimeout(1000) { group in
-      group.addTask {
-        var index: Int = 0
-        for await value in defaultModel.notification {
-          XCTAssertNotEqual(value, incrementingExpectations[index])
-          index += 1
-          if index == incrementingExpectations.endIndex {
-            return
-          }
-        }
-      }
-
-      group.addTask {
-        var index: Int = 0
-        for await value in incrementingModel.notification {
-          XCTAssertEqual(value, incrementingExpectations[index])
-          index += 1
-          if index == incrementingExpectations.endIndex {
-            return
-          }
-        }
-      }
+//      group.addTask {
+//        var index: Int = 0
+//        for await value in defaultModel.notification {
+//          XCTAssertNotEqual(value, incrementingExpectations[index])
+//          index += 1
+//          if index == incrementingExpectations.endIndex {
+//            return
+//          }
+//        }
+//      }
+//
+//      group.addTask {
+//        var index: Int = 0
+//        for await value in incrementingModel.notification {
+//          XCTAssertEqual(value, incrementingExpectations[index])
+//          index += 1
+//          if index == incrementingExpectations.endIndex {
+//            return
+//          }
+//        }
+//      }
 
       group.addTask {
         await DependencyValues.withValue(
@@ -161,7 +153,7 @@ final class NotificationDependencyTests: XCTestCase {
           .init{ UUID(uuidString: "11111111-1111-1111-1111-111111111111")! }
         ) {
           var index: Int = 0
-          for await value in defaultModel.notification {
+          for await value in defaultModel.notification.withLocalDepencies() {
             XCTAssertEqual(value, UUID(uuidString: "11111111-1111-1111-1111-111111111111")!)
             index += 1
             if index == incrementingExpectations.endIndex {

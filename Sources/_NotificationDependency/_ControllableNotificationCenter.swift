@@ -38,7 +38,7 @@ public struct _ControllableNotificationCenter: NotificationCenterProtocol {
         return existing
       }
       let postedValues = _AsyncSharedSubject<Result<Value, Error>>()
-      let notificationStream = Notifications.StreamOf<Value> { postedValue in
+      let notificationStream = Notifications.StreamOf<Value>(notification: notification) { postedValue in
         var nsNotification = notification.notification
         notification.embed(postedValue, &nsNotification)
         self.post(nsNotification)
