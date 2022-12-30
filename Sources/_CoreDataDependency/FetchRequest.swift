@@ -69,7 +69,8 @@ public struct Fetched<ManagedObject: NSManagedObject>: Identifiable, Sendable, H
     self.context = context
     self.viewContext = viewContext
   }
-
+  // This can go wrong very easily. We need a generic to make the distinction between main actor
+  // context managed objects and bg ones.
   @MainActor
   public subscript<Value>(dynamicMember keyPath: KeyPath<ManagedObject, Value>) -> Value {
     (self.viewContext.object(with: self.id) as! ManagedObject)[keyPath: keyPath]

@@ -7,13 +7,18 @@ extension Path: DependencyKey {
 }
 
 extension DependencyValues {
-  /// A generalized `Path` value
+  /// A generalized and barebone `Path` value, onto which you can push and pop arbitrary `Hashable`
+  /// values.
+  ///
+  /// You can use this type as a kind of structural identifier to help you contextualize and reuse
+  /// models for example.
   public var path: Path {
     get { self[Path.self] }
     set { self[Path.self] = newValue }
   }
 }
-
+/// A generalized and barebone `Path` value, onto which you can push and pop arbitrary `Hashable`
+/// values.
 public struct Path: Hashable, @unchecked Sendable {
   let lock = NSRecursiveLock()
   private var _components = [AnyHashable]()
