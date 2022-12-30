@@ -3,13 +3,10 @@ import Foundation
 @_spi(Internals)@_exported import UserDefaultsDependency
 import XCTestDynamicOverlay
 
-// Note: `AppStorage` wrapper is class in order to be able to be captured and mutated in concurrent
-// contexts. All fields are constants and thread safety is deferred to the corresponding
-// `userDefaults`, which are themselve thread safe by construction.
 extension Dependency {
   @propertyWrapper
   @dynamicMemberLookup
-  public final class AppStorage: @unchecked Sendable where Value: Sendable {
+  public struct AppStorage: @unchecked Sendable where Value: Sendable {
     @Dependencies.Dependency(\.userDefaults) var currentUserDefaults
 
     let key: String
@@ -25,7 +22,7 @@ extension Dependency {
 
     public var wrappedValue: Value {
       get { self.getValue(self.userDefaults) }
-      set { self.setValue(self.userDefaults, newValue) }
+      nonmutating set { self.setValue(self.userDefaults, newValue) }
     }
 
     public var projectedValue: Values {
@@ -56,7 +53,7 @@ extension Dependency {
     }
 
     // Internal initializer with default value
-    convenience init(wrappedValue: Value, key: String, store: UserDefaults.Dependency? = nil) {
+    init(wrappedValue: Value, key: String, store: UserDefaults.Dependency? = nil) {
       self.init(
         key: key,
         defaultValue: wrappedValue,
@@ -69,7 +66,7 @@ extension Dependency {
     }
 
     // Internal initializer without default value
-    convenience init<Wrapped>(key: String, store: UserDefaults.Dependency? = nil)
+    init<Wrapped>(key: String, store: UserDefaults.Dependency? = nil)
     where Value == Wrapped? {
       self.init(
         key: key,
