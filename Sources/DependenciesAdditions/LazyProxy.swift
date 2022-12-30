@@ -24,7 +24,6 @@ extension LazyProxy: @unchecked Sendable where Value: Sendable {}
 
 @propertyWrapper
 public struct MainActorLazyProxy<Value> {
-  private let lock = NSRecursiveLock()
   private var value: @MainActor () -> Value
   public init(_ value: @escaping @MainActor () -> Value) {
     self.value = value
@@ -32,13 +31,9 @@ public struct MainActorLazyProxy<Value> {
   @MainActor
   public var wrappedValue: Value {
     get {
-      lock.lock()
-      defer { lock.unlock() }
-      return value()
+      value()
     }
     set {
-      lock.lock()
-      defer { lock.unlock() }
       self.value = { newValue }
     }
   }
