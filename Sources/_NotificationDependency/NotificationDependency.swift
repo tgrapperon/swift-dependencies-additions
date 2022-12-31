@@ -1,5 +1,8 @@
+import Combine
 import Dependencies
+@_spi(Internals) import DependenciesAdditions
 import Foundation
+import NotificationCenterDependency
 import PathDependency
 
 extension Dependency {
@@ -14,7 +17,7 @@ extension Dependency {
     let notification: Notifications.NotificationOf<Value>
     let file: StaticString
     let line: UInt
-    
+
     /// Creates a `Dependency.Notification` property wrapper using a
     /// ``Notifications/NotificationOf`` value.
     /// - Parameters:
@@ -75,7 +78,7 @@ extension Dependency {
     /// A ``Notifications/StreamOf`` value that can be iterated asynchronously to produce a stream
     /// of typed values.
     public var wrappedValue: Notifications.StreamOf<Value> {
-      self.notificationCenter.stream(
+      self.notificationCenter.streamOf(
         withDependencyValues {
           $0.path = self.path
         } operation: {
@@ -84,7 +87,9 @@ extension Dependency {
             file: file,
             line: line
           )
-        }
+        },
+        file: file,
+        line: line
       )
     }
   }
@@ -206,7 +211,7 @@ extension Notifications.NotificationOf {
       line: line
     )
   }
-  
+
   /// Creates a ``Notifications/NotificationOf`` value that describes a bidirectional
   /// `Notification` of `Void` values.
   ///
@@ -279,7 +284,7 @@ extension Notifications {
   /// This `AsyncSequence` can be enumerated by multiple clients, as each notification will be
   /// delivered to all of them.
   public struct StreamOf<Value>: Sendable {
-    private let post: @Sendable (Value, String, UInt) -> Void
+    private let post: @Sendable (Value, StaticString, UInt) -> Void
     private let stream: @Sendable () -> AsyncStream<Value>
     private let notification: NotificationOf<Value>
     @Dependency(\.notificationCenter) var notificationCenter
@@ -287,7 +292,7 @@ extension Notifications {
 
     init(
       _ notification: NotificationOf<Value>,
-      post: @escaping @Sendable (Value, String, UInt) -> Void,
+      post: @escaping @Sendable (Value, StaticString, UInt) -> Void,
       stream: @escaping @Sendable () -> AsyncStream<Value>
     ) {
       self.notification = notification
@@ -297,7 +302,7 @@ extension Notifications {
 
     /// Embeds a `Value` in a `Notification` that is then posted to the `NotificationCenter`.
     public func post(_ value: Value, file: StaticString = #fileID, line: UInt = #line) {
-      self.post(value, "\(file)", line)
+      self.post(value, file, line)
     }
 
     /// Returns a new ``Notifications/StreamOf`` where the `DependenciesValues` used to extract or
@@ -344,7 +349,8 @@ extension Notifications {
     /// }
     /// ```
     ///
-    public func withCurrentDependencyValues(file: StaticString = #fileID, line: UInt = #line) -> Self
+    public func withCurrentDependencyValues(file: StaticString = #fileID, line: UInt = #line)
+      -> Self
     {
       let updatedNotification = withDependencyValues {
         $0.path = self.notification.id.path
@@ -355,7 +361,7 @@ extension Notifications {
           line: line
         )
       }
-      return self.notificationCenter.stream(updatedNotification)
+      return self.notificationCenter.streamOf(updatedNotification, file: file, line: line)
     }
   }
 }
@@ -369,13 +375,29 @@ extension Notifications.StreamOf: AsyncSequence {
   }
 }
 
+extension Notifications.StreamOf where Value: Sendable {
+  @MainActor
+  public func assign<Root>(to keyPath: ReferenceWritableKeyPath<Root, Value>, on object: Root)
+    -> AnyCancellable
+  {
+    self.mainActorPublisher().assign(to: keyPath, on: object)
+  }
+
+  @MainActor
+  @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+  public func assign(to published: inout Published<Value>.Publisher) {
+    self.mainActorPublisher().assign(to: &published)
+  }
+}
+
 extension Notifications {
   struct ID: Hashable, Sendable {
+
     let name: Notification.Name
     let object: ObjectIdentifier?
     let valueType: ObjectIdentifier
     let path: Path
-    let file: String
+    let file: StaticString
     let line: UInt
 
     init<V>(
@@ -390,8 +412,29 @@ extension Notifications {
       self.object = object.map(ObjectIdentifier.init)
       self.valueType = ObjectIdentifier(V.self)
       self.path = path
-      self.file = file.description
+      self.file = file
       self.line = line
     }
+
+    static func == (lhs: Notifications.ID, rhs: Notifications.ID) -> Bool {
+      guard
+        lhs.name == rhs.name,
+        lhs.object == rhs.object,
+        lhs.valueType == rhs.valueType,
+        lhs.path == rhs.path,
+        lhs.file.description == rhs.file.description,
+        lhs.line == rhs.line
+      else { return false }
+      return true
+    }
+    func hash(into hasher: inout Hasher) {
+      hasher.combine(name)
+      hasher.combine(object)
+      hasher.combine(valueType)
+      hasher.combine(path)
+      hasher.combine(file.description)
+      hasher.combine(line)
+    }
+
   }
 }

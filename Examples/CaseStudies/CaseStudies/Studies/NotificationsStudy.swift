@@ -22,7 +22,7 @@ final class NotificationStudy: ObservableObject {
   
   @Published var batteryLevel: Float = 0
   
-  @Dependency.Notification(\.countNotification) var countsNotification
+  @Dependency.Notification(\.countNotification) var counts
   @Dependency.Notification(\.batteryLevelDidChange) var batteryLevelNotification
   @Dependency(\.device.batteryLevel) var batteryLevelDependency
   
@@ -32,6 +32,11 @@ final class NotificationStudy: ObservableObject {
   
   init(count: Int = 0) {
     self.count = count
+    self.batteryLevelNotification.assign(to: &$batteryLevel)
+    
+    self.counts.assign(to: &$count)
+    
+//    self.countNotification
 //    self.onAppear()
     // Calling onAppear() here instead of the view make it works (poorly), but
     // mostly because the model is constantly recreated, and the update
@@ -40,32 +45,32 @@ final class NotificationStudy: ObservableObject {
   }
   
   func onAppear() {
-    // Loop over the notification values to update `countFromNotification`
-    self.notificationsObservation = Task { [weak self] in
-      guard let self else { return }
-      await withTaskGroup(of: Void.self) { group in
-        group.addTask { @MainActor in
-          for await count in self.countsNotification {
-            self.countFromNotification = count
-          }
-        }
-        group.addTask { @MainActor in
-          self.batteryLevel = self.batteryLevelDependency
-          for await batteryLevel in self.batteryLevelNotification.withCurrentDependencyValues() {
-            self.batteryLevel = batteryLevel
-          }
-        }
-        await group.next()
-        group.cancelAll()
-      }
-    }
-    // We also send the current value at `onAppear`, so
-    // the view starts with an up-to-date value.
-    Task {
-      // Let the observation above start being effective…
-      try await clock.sleep(for: .microseconds(1))
-      self.countsNotification.post(self.count)
-    }
+//    // Loop over the notification values to update `countFromNotification`
+//    self.notificationsObservation = Task { [weak self] in
+//      guard let self else { return }
+//      await withTaskGroup(of: Void.self) { group in
+//        group.addTask { @MainActor in
+//          for await count in self.countsNotification {
+//            self.countFromNotification = count
+//          }
+//        }
+//        group.addTask { @MainActor in
+//          self.batteryLevel = self.batteryLevelDependency
+//          for await batteryLevel in self.batteryLevelNotification.withCurrentDependencyValues() {
+//            self.batteryLevel = batteryLevel
+//          }
+//        }
+//        await group.next()
+//        group.cancelAll()
+//      }
+//    }
+//    // We also send the current value at `onAppear`, so
+//    // the view starts with an up-to-date value.
+//    Task {
+//      // Let the observation above start being effective…
+//      try await clock.sleep(for: .microseconds(1))
+//      self.countsNotification.post(self.count)
+//    }
   }
   
   func onDisappear() {
@@ -174,7 +179,7 @@ struct NotificationsStudyView_Previews: PreviewProvider {
         }
         .onChange(of: value) { _ in
           @Dependency(\.notificationCenter) var notificationCenter;
-          notificationCenter.post(.init(name: UIDevice.batteryLevelDidChangeNotification))
+          notificationCenter.post(name: UIDevice.batteryLevelDidChangeNotification)
         }
         .safeAreaInset(edge: .bottom) {
           Slider(value: $value, in: 0 ... 1)

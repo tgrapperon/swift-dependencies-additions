@@ -67,7 +67,7 @@ final class NotificationDependencyTests: XCTestCase {
     @Dependency(\.notificationCenter) var notificationCenter;
 
     XCTExpectFailure {
-      notificationCenter.post(notification(1))
+      notificationCenter.post(name: notificationName)
     }
   }
   
@@ -143,13 +143,13 @@ final class NotificationDependencyTests: XCTestCase {
           $0.notificationCenter = .default
         } operation: {
           try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-          notificationCenter.post(.init(name: notificationName))
+          notificationCenter.post(name: notificationName)
           try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-          notificationCenter.post(.init(name: notificationName))
+          notificationCenter.post(name: notificationName)
           try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-          notificationCenter.post(.init(name: notificationName))
+          notificationCenter.post(name: notificationName)
           try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-          notificationCenter.post(.init(name: notificationName))
+          notificationCenter.post(name: notificationName)
         }
       }
     }

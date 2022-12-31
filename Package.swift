@@ -21,6 +21,7 @@ let package = Package(
         "DependenciesAdditions",
         "DeviceDependency",
         "LoggerDependency",
+        "NotificationCenterDependency",
         "PathDependency",
         "PersistentContainerDependency",
         "ProcessInfoDependency",
@@ -36,6 +37,7 @@ let package = Package(
     .library(name: "CompressionDependency", targets: ["CompressionDependency"]),
     .library(name: "DeviceDependency", targets: ["DeviceDependency"]),
     .library(name: "LoggerDependency", targets: ["LoggerDependency"]),
+    .library(name: "NotificationCenterDependency", targets: ["NotificationCenterDependency"]),
     .library(name: "PathDependency", targets: ["PathDependency"]),
     .library(name: "PersistentContainerDependency", targets: ["PersistentContainerDependency"]),
     .library(name: "ProcessInfoDependency", targets: ["ProcessInfoDependency"]),
@@ -179,6 +181,7 @@ let package = Package(
         .product(name: "Dependencies", package: "swift-dependencies"),
         "DependenciesAdditions",
         "DeviceDependency",
+        "NotificationCenterDependency",
         "PathDependency",
       ]
     ),
@@ -188,6 +191,20 @@ let package = Package(
       dependencies: [
         "_NotificationDependency",
         "DependenciesAdditionsTestSupport",
+      ]
+    ),
+
+    .target(
+      name: "NotificationCenterDependency",
+      dependencies: [
+        .product(name: "Dependencies", package: "swift-dependencies")
+      ]
+    ),
+
+    .testTarget(
+      name: "NotificationCenterDependencyTests",
+      dependencies: [
+        "NotificationCenterDependency"
       ]
     ),
 

@@ -253,7 +253,13 @@ extension ProcessInfo.Value {
       physicalMemory: ProcessInfo.processInfo.physicalMemory,
       systemUptime: ProcessInfo.processInfo.systemUptime,
       thermalState: ProcessInfo.processInfo.thermalState,
-      isLowPowerModeEnabled: ProcessInfo.processInfo.isLowPowerModeEnabled,
+      isLowPowerModeEnabled: {
+        if #available(macOS 12.0, iOS 9.0, tvOS 9.0, watchOS 2.0, *) {
+          return ProcessInfo.processInfo.isLowPowerModeEnabled
+        } else {
+          return false
+        }
+      }(),
       isMacCatalystApp: ProcessInfo.processInfo.isMacCatalystApp,
       isiOSAppOnMac: {
         if #available(macOS 11.0, iOS 14.0, tvOS 14.0, watchOS 7.0, *) {

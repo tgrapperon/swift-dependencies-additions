@@ -24,7 +24,7 @@
       "location" : "https://github.com/pointfreeco/swift-dependencies",
       "state" : {
         "branch" : "main",
-        "revision" : "08b4dd7b22ca646d2f2cb0200060b79a008255ad"
+        "revision" : "f7e50b6d2a1cdba3d0ad443e5d1aa947f4b84eee"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "branch" : "autoclosures",
-        "revision" : "8aa49370e0d2ca4c65dee076946a89dc3b883108"
+        "revision" : "a9daebf0bf65981fd159c885d504481a65a75f02",
+        "version" : "0.8.0"
       }
     }
   ],
