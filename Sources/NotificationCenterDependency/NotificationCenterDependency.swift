@@ -117,8 +117,7 @@ extension NotificationCenter.Dependency {
     file: StaticString = #fileID,
     line: UInt = #line
   ) -> AsyncStream<Notification> {
-    let uncheckedObject = UncheckedSendable(object)
-    return AsyncStream(Notification.self, bufferingPolicy: .bufferingNewest(0)) { continuation in
+    AsyncStream(Notification.self, bufferingPolicy: .bufferingNewest(0)) { continuation in
       final class Observer: NSObject, Sendable {
         let continuation: AsyncStream<Notification>.Continuation
         init(with continuation: AsyncStream<Notification>.Continuation) {
@@ -130,18 +129,18 @@ extension NotificationCenter.Dependency {
           self.continuation.yield(notification)
         }
       }
-      
+
       let observer = Observer(with: continuation)
 
       self.addObserver(
         observer,
         selector: #selector(Observer.onNotification(notification:)),
         name: name,
-        object: uncheckedObject.wrappedValue,
+        object: object,
         file: file,
         line: line
       )
-
+      let uncheckedObject = UncheckedSendable(object)
       continuation.onTermination = { _ in
         self.removeObserver(
           observer,
