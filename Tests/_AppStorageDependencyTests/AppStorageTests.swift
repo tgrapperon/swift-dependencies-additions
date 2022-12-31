@@ -14,15 +14,26 @@ final class AppStorageTests: XCTestCase {
     @Dependency.AppStorage("SomeKey") var sameInt: Int?
     @Dependency.AppStorage("RawRep") var rawRep: RawRep = .first
 
-    DependencyValues.withValue(\.userDefaults, .ephemeral()) {
-      XCTAssertEqual(int, 42)
-      int = 1969
-      XCTAssertEqual(int, 1969)
-      XCTAssertEqual(int, sameInt)
-      XCTAssertEqual(rawRep, .first)
-      rawRep = .second
-      XCTAssertEqual(rawRep, .second)
+    // This passes
+    DependencyValues.withValues {
+      $0.userDefaults = .ephemeral()
+    } operation: {
+      
     }
+    // this fails
+    DependencyValues.withValue(\.userDefaults, .ephemeral()) {
+      
+    }
+    
+//    DependencyValues.withValue(\.userDefaults, .ephemeral()) {
+//      XCTAssertEqual(int, 42)
+//      int = 1969
+//      XCTAssertEqual(int, 1969)
+//      XCTAssertEqual(int, sameInt)
+//      XCTAssertEqual(rawRep, .first)
+//      rawRep = .second
+//      XCTAssertEqual(rawRep, .second)
+//    }
   }
 
   func testDynamicAppStorageResolution() {
