@@ -353,8 +353,8 @@ extension Notifications.StreamOf where Value: Sendable {
     self.mainActorPublisher().assign(to: keyPath, on: object)
   }
 
-  @MainActor
   @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+  @MainActor
   public func assign(to published: inout Published<Value>.Publisher) {
     self.mainActorPublisher().assign(to: &published)
   }
