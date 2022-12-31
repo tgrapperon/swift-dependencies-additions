@@ -25,6 +25,7 @@
       XCTFail(#"Unimplemented: @Dependency(\.logger)"#)
       return Logger()
     }
+    public static var previewValue: Logger { Logger() }
   }
 
   @available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *)
