@@ -129,7 +129,7 @@ extension Notifications {
   /// TODO: Expand with a better example of a notification that stores info in its userinfo.
   /// ```
   public struct NotificationOf<Value>: Sendable {
-    private(set) var id: ID
+//    private(set) var id: ID
     let name: Notification.Name
     let object: UncheckedSendable<NSObject>?
     let _extract: @Sendable (Notification) -> Value?
@@ -202,14 +202,14 @@ extension Notifications.NotificationOf {
     self.object = object.map(UncheckedSendable.init(wrappedValue:))
     self._extract = extract
     self._embed = embed
-    self.id = .init(
-      Value.self,
-      name: name,
-      object: object,
-      path: path,
-      file: file,
-      line: line
-    )
+//    self.id = .init(
+//      Value.self,
+//      name: name,
+//      object: object,
+//      path: path,
+//      file: file,
+//      line: line
+//    )
   }
 
   /// Creates a ``Notifications/NotificationOf`` value that describes a bidirectional
@@ -261,18 +261,8 @@ extension Notifications.NotificationOf {
     file: StaticString = #fileID,
     line: UInt = #line
   ) -> Self {
-    @Dependency(\.path) var path
-
     var contextualized = self
     contextualized.contextualDependencies = dependencyValues
-    contextualized.id = Notifications.ID(
-      Value.self,
-      name: self.name,
-      object: self.object?.wrappedValue,
-      path: path,
-      file: file,
-      line: line
-    )
     return contextualized
   }
 }
@@ -352,15 +342,12 @@ extension Notifications {
     public func withCurrentDependencyValues(file: StaticString = #fileID, line: UInt = #line)
       -> Self
     {
-      let updatedNotification = withDependencyValues {
-        $0.path = self.notification.id.path
-      } operation: {
-        self.notification.withContextualDependencies(
-          self.dependencies,
-          file: file,
-          line: line
-        )
-      }
+      @Dependency(\.self) var dependencies;
+      let updatedNotification = self.notification.withContextualDependencies(
+        dependencies,
+        file: file,
+        line: line
+      )
       return self.notificationCenter.streamOf(updatedNotification, file: file, line: line)
     }
   }
@@ -390,51 +377,3 @@ extension Notifications.StreamOf where Value: Sendable {
   }
 }
 
-extension Notifications {
-  struct ID: Hashable, Sendable {
-
-    let name: Notification.Name
-    let object: ObjectIdentifier?
-    let valueType: ObjectIdentifier
-    let path: Path
-    let file: StaticString
-    let line: UInt
-
-    init<V>(
-      _ value: V.Type,
-      name: Notification.Name,
-      object: NSObject?,
-      path: Path,
-      file: StaticString,
-      line: UInt
-    ) {
-      self.name = name
-      self.object = object.map(ObjectIdentifier.init)
-      self.valueType = ObjectIdentifier(V.self)
-      self.path = path
-      self.file = file
-      self.line = line
-    }
-
-    static func == (lhs: Notifications.ID, rhs: Notifications.ID) -> Bool {
-      guard
-        lhs.name == rhs.name,
-        lhs.object == rhs.object,
-        lhs.valueType == rhs.valueType,
-        lhs.path == rhs.path,
-        lhs.file.description == rhs.file.description,
-        lhs.line == rhs.line
-      else { return false }
-      return true
-    }
-    func hash(into hasher: inout Hasher) {
-      hasher.combine(name)
-      hasher.combine(object)
-      hasher.combine(valueType)
-      hasher.combine(path)
-      hasher.combine(file.description)
-      hasher.combine(line)
-    }
-
-  }
-}

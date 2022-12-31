@@ -30,13 +30,17 @@ extension NotificationCenter.Dependency {
   public static var unimplemented: Self {
     .init(
       post: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.notificationCenter.post)"#),
+        #"Unimplemented: @Dependency(\.notificationCenter.post)"#,
+        placeholder: { @Sendable _, _, _, _, _ in () }),
       addObserver: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.notificationCenter.addObserver)"#),
+        #"Unimplemented: @Dependency(\.notificationCenter.addObserver)"#,
+        placeholder: { @Sendable _, _, _, _, _, _ in () }),
       removeObserver: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.notificationCenter.removeObserver)"#),
+        #"Unimplemented: @Dependency(\.notificationCenter.removeObserver)"#,
+        placeholder: { @Sendable _, _, _, _, _ in () }),
       publisher: XCTestDynamicOverlay.unimplemented(
-        #"Unimplemented: @Dependency(\.notificationCenter.publisher)"#)
+        #"Unimplemented: @Dependency(\.notificationCenter.publisher)"#,
+        placeholder: { @Sendable _, _, _, _ in Empty().eraseToAnyPublisher() })
     )
   }
 }
