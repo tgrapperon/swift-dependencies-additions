@@ -203,7 +203,8 @@ let package = Package(
     .testTarget(
       name: "NotificationCenterDependencyTests",
       dependencies: [
-        "NotificationCenterDependency"
+        "NotificationCenterDependency",
+        "DependenciesAdditionsTestSupport",
       ]
     ),
 
