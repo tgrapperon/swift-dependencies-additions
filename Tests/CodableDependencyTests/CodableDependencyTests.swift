@@ -9,9 +9,14 @@ final class CodableDependencyTests: XCTestCase {
   func testCompressionDecompression() async throws {
     let dictionary = ["xyz": "ABC"]
 
-    let coded = try encode(dictionary)
+    try withDependencyValues {
+      $0.encode = .json
+      $0.decode = .json
+    } operation: {
+      let coded = try encode(dictionary)
+      let decoded = try decode([String: String].self, from: coded)
+      XCTAssertEqual(dictionary, decoded)
+    }
 
-    let decoded = try decode([String: String].self, from: coded)
-    XCTAssertEqual(dictionary, decoded)
   }
 }

@@ -92,7 +92,7 @@ final class CoreDataStudy: ObservableObject {
 
   func userDidTapAddNewSongButton() {
     do {
-      destination = try DependencyValues.withValues(from: self) {
+      destination = try withDependencyValues(from: self) {
         // We create a temporary `ViewContext` so:
         // - We can drive the API with it
         // - We can simply throw it away if the user doesn't effectively
@@ -260,9 +260,9 @@ struct CoreDataStudyView_Previews: PreviewProvider {
     NavigationStack {
       CoreDataStudyView(
         model:
-        DependencyValues.withValue(
-          \.persistentContainer, .canonical(inMemory: true).withInitialData()
-        ) {
+          withDependencyValues {
+            $0.persistentContainer = .canonical(inMemory: true).withInitialData()
+          } operation: {
           CoreDataStudy()
         }
       )
@@ -271,7 +271,7 @@ struct CoreDataStudyView_Previews: PreviewProvider {
 //    NavigationStack {
 //      AddSongView(
 //        model:
-//        DependencyValues.withValues {
+//        withDependencyValues {
 //          $0.persistentContainer = .canonical(inMemory: true).withInitialData()
 //          $0.uuid = .incrementing
 //        } operation: {

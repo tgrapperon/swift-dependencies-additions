@@ -6,7 +6,7 @@ final class BundleInfoTests: XCTestCase {
   @Dependency(\.bundleInfo) var bundleInfo
 
   func testBundleInfo() {
-    DependencyValues.withValues {
+    withDependencyValues {
       $0.bundleInfo = .init(
         bundleIdentifier: "com.company.app",
         name: "Name",
@@ -27,9 +27,7 @@ final class BundleInfoTests: XCTestCase {
 
   func testFailingTestBundleInfo() {
     XCTExpectFailure {
-      DependencyValues.withTestValues {
-        XCTAssertEqual(bundleInfo.bundleIdentifier, "")
-      }
+      XCTAssertEqual(bundleInfo.bundleIdentifier, "")
     }
   }
 }

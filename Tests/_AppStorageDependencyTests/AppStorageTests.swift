@@ -15,17 +15,14 @@ final class AppStorageTests: XCTestCase {
     @Dependency.AppStorage("RawRep") var rawRep: RawRep = .first
 
     // This passes
-    DependencyValues.withValues {
+    withDependencyValues {
       $0.userDefaults = .ephemeral()
     } operation: {
       
     }
-    // this fails
-    DependencyValues.withValue(\.userDefaults, .ephemeral()) {
-      
-    }
+
     
-//    DependencyValues.withValue(\.userDefaults, .ephemeral()) {
+//    withDependencyValue(\.userDefaults, .ephemeral()) {
 //      XCTAssertEqual(int, 42)
 //      int = 1969
 //      XCTAssertEqual(int, 1969)
@@ -43,7 +40,9 @@ final class AppStorageTests: XCTestCase {
     @Dependency.AppStorage("SomeKey") var int1 = 42
     @Dependency.AppStorage("SomeKey", store: userDefaults2) var int2 = 44
 
-    DependencyValues.withValue(\.userDefaults, userDefaults1) {
+    withDependencyValues{
+      $0.userDefaults = userDefaults1
+    } operation: {
       XCTAssertEqual(int1, 42)
       XCTAssertEqual(int2, 44)
       int1 = 1969
@@ -58,7 +57,9 @@ final class AppStorageTests: XCTestCase {
       @Dependency.AppStorage("SomeKey") var int = 42
     }
     let model = Model()
-    try await DependencyValues.withValue(\.userDefaults, .ephemeral()) {
+    try await withDependencyValues{
+      $0.userDefaults = .ephemeral()
+    } operation: {
       try await withTimeout { group in
         group.addTask {
           let expectations: [Int] = [42, 55, 42, 20, 446, 42]
@@ -107,25 +108,35 @@ final class AppStorageTests: XCTestCase {
     @Dependency.AppStorage("URL") var sameURL: URL?
     @Dependency.AppStorage("FileURL") var sameFileURL: URL?
 
-    XCTAssertEqual(url, url1)
-    XCTAssertEqual(fileURL, fileURL1)
+    withDependencyValues {
+      $0.context = .live
+    } operation: {
+      XCTAssertEqual(url, url1)
+      XCTAssertEqual(fileURL, fileURL1)
 
-    url = url2
-    XCTAssertEqual(url, url2)
-    XCTAssertEqual(url, sameURL)
+      url = url2
+      XCTAssertEqual(url, url2)
+      XCTAssertEqual(url, sameURL)
 
-    fileURL = fileURL2
-    XCTAssertEqual(fileURL, fileURL2)
-    XCTAssertEqual(fileURL, sameFileURL)
+      fileURL = fileURL2
+      XCTAssertEqual(fileURL, fileURL2)
+      XCTAssertEqual(fileURL, sameFileURL)
+    }
   }
 
 
   func testLiveStream() async throws {
+    
     final class Model: @unchecked Sendable {
       @Dependency.AppStorage("SomeKey") var int = 42
     }
-    let model = Model()
     
+    let model = withDependencyValues {
+      $0.userDefaults = .standard
+    } operation: {
+      Model()
+    }
+
     UserDefaults.standard.removeObject(forKey: "SomeKey")
     defer {
       UserDefaults.standard.removeObject(forKey: "SomeKey")

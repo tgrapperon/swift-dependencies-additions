@@ -1,7 +1,6 @@
 import Dependencies
 import Security
 
-// Allows DependencyValues.withValue(\.withRandomNumberGenerator, .init(.secure)) { … }
 extension RandomNumberGenerator where Self == SecureRandomNumberGenerator {
   /// A cryptographically secure random number generator
   public static var secure: SecureRandomNumberGenerator { .init() }

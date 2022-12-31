@@ -20,15 +20,15 @@ final class PathDependencyTests: XCTestCase {
     }
 
     let model = Model {
-      DependencyValues.withValues {
+      withDependencyValues {
         $0.path.push("a1")
       } operation: {
         .init {
-          DependencyValues.withValues {
+          withDependencyValues {
             $0.path.push("b1")
           } operation: {
             .init {
-              DependencyValues.withValues {
+              withDependencyValues {
                 $0.path.push("c1")
               } operation: {
                 .init()
@@ -38,17 +38,17 @@ final class PathDependencyTests: XCTestCase {
             }
           }
         } model2: {
-          DependencyValues.withValues {
+          withDependencyValues {
             $0.path.push("b2")
           } operation: {
             .init {
-              DependencyValues.withValues {
+              withDependencyValues {
                 $0.path.push("c1")
               } operation: {
                 .init()
               }
             } model2: {
-              DependencyValues.withValues {
+              withDependencyValues {
                 $0.path.push("c2")
               } operation: {
                 .init()
@@ -58,7 +58,7 @@ final class PathDependencyTests: XCTestCase {
         }
       }
     } model2: {
-      DependencyValues.withValues {
+      withDependencyValues {
         $0.path.push("a2")
       } operation: {
         .init()

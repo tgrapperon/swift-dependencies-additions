@@ -34,27 +34,31 @@ final class NotificationDependencyTests: XCTestCase {
   func testLiveNotifications() async throws {
     @Dependency.Notification(\.testNotificationWithBidirectionalTransform) var testNotification
     
-    try await withTimeout(1000) { group in
-      group.addTask {
-        let expectations = [2, 4, 7, -1]
-        var index: Int = 0
-        for await value in testNotification {
-          XCTAssertEqual(value, expectations[index])
-          index += 1
-          if index == expectations.endIndex {
-            return
+    try await withDependencyValues{
+      $0.context = .live
+    } operation: {
+      try await withTimeout(1000) { group in
+        group.addTask {
+          let expectations = [2, 4, 7, -1]
+          var index: Int = 0
+          for await value in testNotification {
+            XCTAssertEqual(value, expectations[index])
+            index += 1
+            if index == expectations.endIndex {
+              return
+            }
           }
         }
-      }
-      group.addTask {
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        testNotification.post(2)
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        testNotification.post(4)
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        testNotification.post(7)
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        testNotification.post(-1)
+        group.addTask {
+          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+          testNotification.post(2)
+          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+          testNotification.post(4)
+          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+          testNotification.post(7)
+          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+          testNotification.post(-1)
+        }
       }
     }
   }
@@ -62,10 +66,8 @@ final class NotificationDependencyTests: XCTestCase {
   func testNotificationCenterUnimplemented() {
     @Dependency(\.notificationCenter) var notificationCenter;
 
-    DependencyValues.withTestValues {
-      XCTExpectFailure {
-        notificationCenter.post(notification(1))
-      }
+    XCTExpectFailure {
+      notificationCenter.post(notification(1))
     }
   }
   
@@ -76,8 +78,14 @@ final class NotificationDependencyTests: XCTestCase {
       @Dependency.Notification(\.testNotificationWithDependency) var notification
     }
     
-    let defaultModel = Model()
-    let incrementingModel = DependencyValues.withValues {
+    let defaultModel = withDependencyValues {
+      $0.context = .live
+    } operation: {
+      Model()
+    }
+
+    let incrementingModel = withDependencyValues {
+      $0.context = .live
       $0.uuid = .incrementing
       $0.path.push(1)
     } operation: {
@@ -115,10 +123,10 @@ final class NotificationDependencyTests: XCTestCase {
       }
       
       group.addTask {
-        await DependencyValues.withValue(
-          \.uuid,
-           .init{ UUID(uuidString: "11111111-1111-1111-1111-111111111111")! }
-        ) {
+        await withDependencyValues {
+          $0.notificationCenter = .default
+          $0.uuid = .init{ UUID(uuidString: "11111111-1111-1111-1111-111111111111")! }
+        } operation: {
           var index: Int = 0
           for await value in defaultModel.notification.withCurrentDependencyValues() {
             XCTAssertEqual(value, UUID(uuidString: "11111111-1111-1111-1111-111111111111")!)
@@ -131,14 +139,18 @@ final class NotificationDependencyTests: XCTestCase {
       }
       
       group.addTask {
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        notificationCenter.post(.init(name: notificationName))
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        notificationCenter.post(.init(name: notificationName))
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        notificationCenter.post(.init(name: notificationName))
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-        notificationCenter.post(.init(name: notificationName))
+        try await withDependencyValues {
+          $0.notificationCenter = .default
+        } operation: {
+          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+          notificationCenter.post(.init(name: notificationName))
+          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+          notificationCenter.post(.init(name: notificationName))
+          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+          notificationCenter.post(.init(name: notificationName))
+          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+          notificationCenter.post(.init(name: notificationName))
+        }
       }
     }
   }

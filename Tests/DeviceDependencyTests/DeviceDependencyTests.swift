@@ -8,7 +8,7 @@ import XCTest
     @Dependency(\.device) var device
 
     func testBundleInfo() {
-      DependencyValues.withValues {
+      withDependencyValues {
         $0.device.$batteryLevel = 42
       } operation: {
         XCTAssertEqual(device.batteryLevel, 42)
@@ -17,9 +17,7 @@ import XCTest
 
     func testFailingTestBundleInfo() {
       XCTExpectFailure {
-        DependencyValues.withTestValues {
-          XCTAssertEqual(device.systemName, "")
-        }
+        XCTAssertEqual(device.systemName, "")
       }
     }
   }

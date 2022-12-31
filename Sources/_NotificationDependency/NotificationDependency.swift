@@ -76,7 +76,9 @@ extension Dependency {
     /// of typed values.
     public var wrappedValue: Notifications.StreamOf<Value> {
       self.notificationCenter.stream(
-        DependencyValues.withValue(\.path, self.path) {
+        withDependencyValues {
+          $0.path = self.path
+        } operation: {
           self.notification.withContextualDependencies(
             self.dependencies,
             file: file,
@@ -132,14 +134,18 @@ extension Notifications {
 
     func extract(from notification: Notification) -> Value? {
       @Dependency(\.self) var current
-      return DependencyValues.withValue(\.self, contextualDependencies ?? current) {
+      return withDependencyValues {
+        $0 = self.contextualDependencies ?? current
+      } operation: {
         _extract(notification)
       }
     }
 
     func embed(_ value: Value, into notification: inout Notification) {
       @Dependency(\.self) var current
-      return DependencyValues.withValue(\.self, contextualDependencies ?? current) {
+      return withDependencyValues {
+        $0 = self.contextualDependencies ?? current
+      } operation: {
         _embed(value, &notification)
       }
     }
@@ -340,9 +346,9 @@ extension Notifications {
     ///
     public func withCurrentDependencyValues(file: StaticString = #fileID, line: UInt = #line) -> Self
     {
-      let updatedNotification = DependencyValues.withValue(
-        \.path, self.notification.id.path
-      ) {
+      let updatedNotification = withDependencyValues {
+        $0.path = self.notification.id.path
+      } operation: {
         self.notification.withContextualDependencies(
           self.dependencies,
           file: file,

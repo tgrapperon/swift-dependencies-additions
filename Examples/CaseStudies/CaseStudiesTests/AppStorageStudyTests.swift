@@ -6,7 +6,9 @@ import _AppStorageDependency
 @MainActor
 final class AppStorageStudyTests: XCTestCase {
   func testAppStorageStudy() async throws {
-    try await DependencyValues.withValue(\.userDefaults, .ephemeral()) {
+    try await withDependencyValues{
+      $0.userDefaults = .ephemeral()
+    } operation: {
       @Dependency.AppStorage("number") var number: Int?
       @Dependency.AppStorage("string") var string: String?
       

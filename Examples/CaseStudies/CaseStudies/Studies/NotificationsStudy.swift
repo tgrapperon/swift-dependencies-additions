@@ -167,7 +167,9 @@ struct NotificationsStudyView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationStack {
       WithState(initialValue: Float(0.2)) { $value in
-        DependencyValues.withValue(\.device.$batteryLevel, value) {
+        withDependencyValues {
+          $0.device.$batteryLevel = value
+        } operation: {
           NotificationsStudyView(model: .init())
         }
         .onChange(of: value) { _ in

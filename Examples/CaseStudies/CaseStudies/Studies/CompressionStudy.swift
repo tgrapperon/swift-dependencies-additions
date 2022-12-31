@@ -121,7 +121,7 @@ struct CompressionStudyView_Previews: PreviewProvider {
     NavigationStack {
       CompressionStudyView(
         model:
-          DependencyValues.withValues {
+          withDependencyValues {
             let encoder = JSONEncoder()
             encoder.outputFormatting.insert(.prettyPrinted)
             encoder.outputFormatting.insert(.sortedKeys)

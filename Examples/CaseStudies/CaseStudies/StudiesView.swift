@@ -22,31 +22,31 @@ class StudiesModel: ObservableObject {
   }
   
   func userDidTapNavigateToUserDefaultsStudyButton() {
-    self.destination = DependencyValues.withValues(from: self) {
+    self.destination = withDependencyValues(from: self) {
       .userDefaultsStudy(.init())
     }
   }
 
   func userDidTapNavigateToCompressionStudyButton() {
-    self.destination = DependencyValues.withValues(from: self) {
+    self.destination = withDependencyValues(from: self) {
       .compression(.init())
     }
   }
 
   func userDidTapNavigateToCoreDataStudyButton() {
-    self.destination = DependencyValues.withValues(from: self) {
+    self.destination = withDependencyValues(from: self) {
       .coreDataStudy(.init())
     }
   }
 
   func userDidTapNavigateToNotificationStudyButton() {
-    self.destination = DependencyValues.withValues(from: self) {
+    self.destination = withDependencyValues(from: self) {
       .notificationStudy(.init(count: 42))
     }
   }
 
   func userDidTapNavigateToLoggerStudyButton() {
-    self.destination = DependencyValues.withValues(from: self) {
+    self.destination = withDependencyValues(from: self) {
       .loggerStudy(
         .init(customerName: "Blob")
       )
@@ -54,7 +54,7 @@ class StudiesModel: ObservableObject {
   }
 
   func userDidTapNavigateToSwiftUIEnvironmentStudyButton() {
-    self.destination = DependencyValues.withValues(from: self) {
+    self.destination = withDependencyValues(from: self) {
       .swiftUIEnvironmentStudy(.init())
     }
   }
@@ -150,7 +150,7 @@ struct StudiesView_Previews: PreviewProvider {
   static var previews: some View {
     StudiesView(
       model:
-        DependencyValues.withValues {
+        withDependencyValues {
           $0.userDefaults = .standard
           $0.persistentContainer = .canonical(inMemory: true)
             .withInitialData()

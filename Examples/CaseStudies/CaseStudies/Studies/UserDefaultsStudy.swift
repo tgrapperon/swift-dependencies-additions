@@ -172,8 +172,10 @@ struct UserDefaultsStudyView_Previews: PreviewProvider {
       UserDefaultsStudyView(
         // By default, `\.userDefaults` is `.ephemeral()` for SwiftUI Previews
         // but we force the `.standard` one, so they reflect the same values
-        // as SwiftUI's `AppStorage`, which is not configurable.
-        model: DependencyValues.withValue(\.userDefaults, .standard) {
+        // as SwiftUI's `AppStorage`, which doesn't support in memory storage
+        model: withDependencyValues {
+          $0.userDefaults = .standard
+        } operation: {
           .init()
         }
       )
