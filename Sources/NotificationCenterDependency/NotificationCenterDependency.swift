@@ -154,7 +154,7 @@ extension NotificationCenter.Dependency {
 
 extension NotificationCenter.Dependency {
   public init(_ notificationCenter: @autoclosure @Sendable () -> NotificationCenter = .default) {
-    // Per the documentation, NotificationCenter is not Sendable
+    // NotificationCenter is not Sendable
     let notificationCenter = LockIsolated(notificationCenter())
     self.init { name, object, userInfo, _, _ in
       notificationCenter.withValue {
