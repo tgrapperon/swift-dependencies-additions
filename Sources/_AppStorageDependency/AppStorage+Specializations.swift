@@ -2,6 +2,8 @@ import Dependencies
 import Foundation
 @_spi(Internals) import UserDefaultsDependency
 
+// TODO: Update doc that refers to SwiftUI
+
 // Specializations, mirroring SwiftUI's `AppStorage` APIs
 extension Dependency.AppStorage {
   /// Creates a property that can read and write to a boolean user default.
