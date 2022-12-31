@@ -3,7 +3,6 @@ import Dependencies
 @_spi(Internals) import DependenciesAdditions
 import Foundation
 import NotificationCenterDependency
-import PathDependency
 
 extension Dependency {
   /// A property wrapper that exposes typed and bidirectional `Notification`s, backed by the
@@ -11,7 +10,6 @@ extension Dependency {
   @propertyWrapper
   public struct Notification: Sendable {
     @Dependencies.Dependency(\.notificationCenter) var notificationCenter
-    @Dependencies.Dependency(\.path) var path
     @Dependencies.Dependency(\.self) var dependencies
 
     let notification: Notifications.NotificationOf<Value>
@@ -79,15 +77,11 @@ extension Dependency {
     /// of typed values.
     public var wrappedValue: Notifications.StreamOf<Value> {
       self.notificationCenter.streamOf(
-        withDependencyValues {
-          $0.path = self.path
-        } operation: {
-          self.notification.withContextualDependencies(
-            self.dependencies,
-            file: file,
-            line: line
-          )
-        },
+        self.notification.withContextualDependencies(
+          self.dependencies,
+          file: file,
+          line: line
+        ),
         file: file,
         line: line
       )
@@ -129,7 +123,6 @@ extension Notifications {
   /// TODO: Expand with a better example of a notification that stores info in its userinfo.
   /// ```
   public struct NotificationOf<Value>: Sendable {
-//    private(set) var id: ID
     let name: Notification.Name
     let object: UncheckedSendable<NSObject>?
     let _extract: @Sendable (Notification) -> Value?
@@ -196,20 +189,10 @@ extension Notifications.NotificationOf {
     file: StaticString = #fileID,
     line: UInt = #line
   ) {
-    @Dependency(\.path) var path
-
     self.name = name
     self.object = object.map(UncheckedSendable.init(wrappedValue:))
     self._extract = extract
     self._embed = embed
-//    self.id = .init(
-//      Value.self,
-//      name: name,
-//      object: object,
-//      path: path,
-//      file: file,
-//      line: line
-//    )
   }
 
   /// Creates a ``Notifications/NotificationOf`` value that describes a bidirectional
@@ -377,3 +360,33 @@ extension Notifications.StreamOf where Value: Sendable {
   }
 }
 
+extension NotificationCenter.Dependency {
+  func streamOf<Value>(
+    _ notification: Notifications.NotificationOf<Value>, file: StaticString, line: UInt
+  )
+    -> Notifications.StreamOf<Value>
+  {
+    Notifications.StreamOf<Value>(notification) { value, file, line in
+      var nsNotification = notification.notification
+      notification.embed(value, into: &nsNotification)
+      self.post(
+        name: nsNotification.name,
+        object: nsNotification.object as AnyObject,
+        userInfo: nsNotification.userInfo,
+        file: file,
+        line: line
+      )
+    } stream: {
+      self.notifications(
+        named: notification.name,
+        object: notification.object?.wrappedValue,
+        file: file,
+        line: line
+      )
+      .compactMap {
+        notification.extract(from: $0)
+      }
+      .eraseToStream()
+    }
+  }
+}

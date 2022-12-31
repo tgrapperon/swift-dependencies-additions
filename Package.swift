@@ -182,7 +182,6 @@ let package = Package(
         "DependenciesAdditions",
         "DeviceDependency",
         "NotificationCenterDependency",
-        "PathDependency",
       ]
     ),
 

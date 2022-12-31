@@ -1,6 +1,6 @@
 # WIP
 
-TODO: Underscore _CoreData, _AppStorage, _Notification and _SwiftUI
+TODO: Remove Path? (we don't need it anymore for `_Notification`)
 
 # Dependencies Additions
 
@@ -18,6 +18,7 @@ The library proposes a few low-level additional dependencies to interface with:
 - `Codable`
 - `Compression`
 - `Logger`
+- `NotificationCenter`
 - `PersistentContainer`
 - `UserDefaults`
 - `Path`
