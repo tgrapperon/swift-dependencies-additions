@@ -3,8 +3,6 @@ import Dependencies
 import Foundation
 import XCTestDynamicOverlay
 
-// TODO: Convert to protocol witness?
-
 extension DependencyValues {
   /// An abstraction of a `NotificationCenter`.
   public var notificationCenter: NotificationCenter.Dependency {
