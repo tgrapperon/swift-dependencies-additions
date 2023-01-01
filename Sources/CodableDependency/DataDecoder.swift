@@ -62,3 +62,16 @@ extension DataDecoder {
     DataDecoder(PropertyListDecoder())
   }
 }
+
+#if canImport(Combine)
+import Combine
+extension DataDecoder {
+  /// Creates a ``DataDecoder`` value from a `TopLevelDecoder` instance.
+  @_disfavoredOverload
+  public init<D: TopLevelDecoder & Sendable>(_ decoder: D) where D.Input == Data {
+    self.init {
+      try decoder.decode($0, from: $1)
+    }
+  }
+}
+#endif

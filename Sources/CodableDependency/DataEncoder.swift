@@ -70,3 +70,16 @@ extension DataEncoder {
     return DataEncoder(encoder)
   }
 }
+
+#if canImport(Combine)
+import Combine
+extension DataEncoder {
+  /// Creates a ``DataEncoder`` value from a `TopLevelEncoder` instance.
+  @_disfavoredOverload
+  public init<E: TopLevelEncoder & Sendable>(_ encoder: E) where E.Output == Data {
+    self.init {
+      try encoder.encode($0)
+    }
+  }
+}
+#endif
