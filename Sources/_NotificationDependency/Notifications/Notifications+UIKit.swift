@@ -48,8 +48,10 @@ extension Notifications {
   public var batteryLevelDidChange: NotificationOf<Float> {
     let name = UIDevice.batteryLevelDidChangeNotification
     return .init(name) { _ in
-      @Dependency(\.device.batteryLevel) var batteryLevel;
-      return batteryLevel
+      await MainActor.run {
+        @Dependency(\.device.batteryLevel) var batteryLevel;
+        return batteryLevel
+      }
     }
   }
   

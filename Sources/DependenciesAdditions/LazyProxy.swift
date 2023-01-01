@@ -5,27 +5,36 @@ import Foundation
 /// exposing properties, as the live implementation can lazily delegate calls to some abstracted
 /// type's instance.
 @propertyWrapper
-public struct LazyProxy<Value> {
+public struct LazyProxy<Value: Sendable>: Sendable {
   private let lock = NSRecursiveLock()
-  private var value: () -> Value
-  public init(_ value: @escaping () -> Value) {
-    self.value = value
+  private var getValue: @Sendable () -> Value
+  private let setValue: @Sendable (Value) -> Void
+  public init(_ getSet: (@Sendable () -> Value, @Sendable (Value) -> ())) {
+    self.getValue = getSet.0
+    self.setValue = getSet.1
   }
   public var wrappedValue: Value {
     get {
       lock.lock()
       defer { lock.unlock() }
-      return value()
+      return self.getValue()
     }
+    nonmutating set {
+      self.setValue(newValue)
+    }
+  }
+  
+  public var projectedValue: Value {
+    get { wrappedValue }
     set {
       lock.lock()
       defer { lock.unlock() }
-      self.value = { newValue }
+      // Should we display messages in the econsole?
+//      self.setValue(newValue) // Should we?
+      self.getValue = { @Sendable in newValue }
     }
   }
 }
-
-extension LazyProxy: @unchecked Sendable where Value: Sendable {}
 
 /// See ``LazyProxy``.
 public typealias LP = LazyProxy
@@ -77,17 +86,31 @@ public typealias ROLP = ReadOnlyLazyProxy
 /// of `DependencyKey`.
 @propertyWrapper
 public struct MainActorLazyProxy<Value> {
-  private var value: @MainActor () -> Value
-  public init(_ value: @escaping @MainActor () -> Value) {
-    self.value = value
+  private var getValue: @MainActor () -> Value
+  private let setValue: @MainActor (Value) -> Void
+  public init(_ getSet: (@MainActor () -> Value, @MainActor (Value) -> Void)) {
+    self.getValue = getSet.0
+    self.setValue = getSet.1
   }
   @MainActor
   public var wrappedValue: Value {
     get {
-      value()
+      self.getValue()
+    }
+    nonmutating set {
+      self.setValue(newValue)
+    }
+  }
+  
+  @MainActor
+  public var projectedValue: Value {
+    get {
+      getValue()
     }
     set {
-      self.value = { newValue }
+      // TODO: Should we display messages in the console?
+      // TODO: This is only for testing and preview. We should check. Same for LP
+      self.getValue = { newValue }
     }
   }
 }

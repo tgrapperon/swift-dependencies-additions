@@ -22,9 +22,9 @@ final class NotificationStudy: ObservableObject {
   
   @Published var batteryLevel: Float = 0
   
-  @Dependency.Notification(\.countNotification) var counts
+  @Dependency.Notification(\.countNotification) var countNotification
   @Dependency.Notification(\.batteryLevelDidChange) var batteryLevelNotification
-  @Dependency(\.device.batteryLevel) var batteryLevelDependency
+  @Dependency(\.device) var device
   
   @Dependency(\.continuousClock) var clock
   @Dependency(\.withRandomNumberGenerator) var withRandomNumberGenerator
@@ -32,66 +32,41 @@ final class NotificationStudy: ObservableObject {
   
   init(count: Int = 0) {
     self.count = count
+    // Inject the notifications into the `@Published` properties:
     self.batteryLevelNotification.assign(to: &$batteryLevel)
-    
-    self.counts.assign(to: &$count)
-    
-//    self.countNotification
-//    self.onAppear()
-    // Calling onAppear() here instead of the view make it works (poorly), but
-    // mostly because the model is constantly recreated, and the update
-    // is performed by the initial assignation before the loop.
-    // But it shows the kind of effect we'd like to achieve.
+    self.countNotification.assign(to: &$countFromNotification)
   }
   
   func onAppear() {
-//    // Loop over the notification values to update `countFromNotification`
-//    self.notificationsObservation = Task { [weak self] in
-//      guard let self else { return }
-//      await withTaskGroup(of: Void.self) { group in
-//        group.addTask { @MainActor in
-//          for await count in self.countsNotification {
-//            self.countFromNotification = count
-//          }
-//        }
-//        group.addTask { @MainActor in
-//          self.batteryLevel = self.batteryLevelDependency
-//          for await batteryLevel in self.batteryLevelNotification.withCurrentDependencyValues() {
-//            self.batteryLevel = batteryLevel
-//          }
-//        }
-//        await group.next()
-//        group.cancelAll()
-//      }
-//    }
-//    // We also send the current value at `onAppear`, so
-//    // the view starts with an up-to-date value.
-//    Task {
-//      // Let the observation above start being effective…
-//      try await clock.sleep(for: .microseconds(1))
-//      self.countsNotification.post(self.count)
-//    }
+    self.device.isBatteryMonitoringEnabled = true
   }
   
   func onDisappear() {
-    self.notificationsObservation?.cancel()
+    self.device.isBatteryMonitoringEnabled = false
   }
   
   func userDidTapIncrementButton() {
     self.count += 1
     // Post the updated value
-    self.countsNotification.post(self.count)
+    Task {
+      await self.countNotification.post(self.count)
+    }
   }
   
   func userDidTapDecrementButton() {
     self.count -= 1
     // Post the updated value
-    self.countsNotification.post(self.count)
+    Task {
+      await self.countNotification.post(self.count)
+    }
   }
   
   func userDidTapSendRandomNotificationButton() {
-    self.withRandomNumberGenerator {
-      self.countsNotification.post(Int.random(in: 0 ... 1_000, using: &$0))
+    Task {
+      let number = self.withRandomNumberGenerator {
+        Int.random(in: 0 ... 1_000, using: &$0)
+      }
+      await self.countNotification.post(number)
     }
   }
 }
@@ -103,6 +78,7 @@ struct NotificationsStudyView: View {
       Section {
         LabeledContent("Battery Level") {
           HStack {
+            Text(String(describing: model.device.isBatteryMonitoringEnabled))
             Text(model.batteryLevel.formatted(
               .percent.precision(.fractionLength(0)))
             )
@@ -123,6 +99,10 @@ struct NotificationsStudyView: View {
             .imageScale(.large)
           }
         }
+      } header: {
+        Text("./batteryLevelDidChange")
+          .textCase(.none)
+          .monospaced()
       }
 
       Section {
@@ -146,13 +126,24 @@ struct NotificationsStudyView: View {
       }
     }
     .safeAreaInset(edge: .bottom) {
-      Button {
-        self.model.userDidTapSendRandomNotificationButton()
-      } label: {
-        Label("Send a random notification", systemImage: "dice")
-          .frame(minHeight: 33)
-          .fontWeight(.medium)
-          .padding(.horizontal)
+      VStack {
+        Button {
+          NotificationCenter.default.post(name: UIDevice.batteryLevelDidChangeNotification, object: UIDevice.current)
+          
+        } label: {
+          Label("Send a battery notification", systemImage: "dice")
+            .frame(minHeight: 33)
+            .fontWeight(.medium)
+            .padding(.horizontal)
+        }
+        Button {
+          self.model.userDidTapSendRandomNotificationButton()
+        } label: {
+          Label("Send a random notification", systemImage: "dice")
+            .frame(minHeight: 33)
+            .fontWeight(.medium)
+            .padding(.horizontal)
+        }
       }
       .listRowInsets(.init())
       .buttonStyle(.borderedProminent)

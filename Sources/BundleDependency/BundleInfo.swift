@@ -15,17 +15,17 @@ extension DependencyValues {
 /// A type that exposes a few fields from some `Bundle`'s `info.plist`.
 public struct BundleInfo: Sendable {
   /// A unique identifier for a bundle.
-  @LazyProxy public var bundleIdentifier: String
+  @ROLP public var bundleIdentifier: String
   /// A user-visible short name for the bundle.
-  @LazyProxy public var name: String
+  @ROLP public var name: String
   /// The user-visible name for the bundle, used by Siri and visible on the iOS Home screen.
-  @LazyProxy public var displayName: String
+  @ROLP public var displayName: String
   /// A replacement for the app name in text-to-speech operations.
-  @LazyProxy public var spokenName: String
+  @ROLP public var spokenName: String
   /// The release or version number of the bundle.
-  @LazyProxy public var shortVersion: String
+  @ROLP public var shortVersion: String
   /// The version of the build that identifies an iteration of the bundle.
-  @LazyProxy public var version: String
+  @ROLP public var version: String
 
   /// Creates a ``BundleInfo`` value.
   /// - Parameters:

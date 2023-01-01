@@ -1,4 +1,4 @@
-import BundleInfoDependency
+import BundleDependency
 import Dependencies
 import LoggerDependency
 import XCTest

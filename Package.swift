@@ -15,7 +15,7 @@ let package = Package(
     .library(
       name: "DependenciesAdditions",
       targets: [
-        "BundleInfoDependency",
+        "BundleDependency",
         "CodableDependency",
         "CompressionDependency",
         "DependenciesAdditions",
@@ -32,7 +32,7 @@ let package = Package(
         "_SwiftUIDependency",
       ]
     ),
-    .library(name: "BundleInfoDependency", targets: ["BundleInfoDependency"]),
+    .library(name: "BundleDependency", targets: ["BundleDependency"]),
     .library(name: "CodableDependency", targets: ["CodableDependency"]),
     .library(name: "CompressionDependency", targets: ["CompressionDependency"]),
     .library(name: "DeviceDependency", targets: ["DeviceDependency"]),
@@ -70,16 +70,16 @@ let package = Package(
     ),
 
     .target(
-      name: "BundleInfoDependency",
+      name: "BundleDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
         "DependenciesAdditions",
       ]
     ),
     .testTarget(
-      name: "BundleInfoDependencyTests",
+      name: "BundleDependencyTests",
       dependencies: [
-        "BundleInfoDependency"
+        "BundleDependency"
       ]
     ),
 
@@ -164,7 +164,7 @@ let package = Package(
       name: "LoggerDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "BundleInfoDependency",
+        "BundleDependency",
       ]
     ),
 
@@ -288,10 +288,10 @@ let package = Package(
 //  "_CoreDataDependency", dependencies: "DependenciesBaseAdditions", "PersistentContainerDependency"
 // )
 // define("_NotificationDependency", dependencies: "DependenciesBaseAdditions", "PathDependency")
-// define("BundleInfoDependency", dependencies: "DependenciesBaseAdditions")
+// define("BundleDependency", dependencies: "DependenciesBaseAdditions")
 
 // define("DeviceDependency", dependencies: "DependenciesBaseAdditions")
-// define("LoggerDependency", dependencies: "BundleInfoDependency")
+// define("LoggerDependency", dependencies: "BundleDependency")
 
 // define("CompressionDependency")
 // define("PathDependency")

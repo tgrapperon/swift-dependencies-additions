@@ -4,6 +4,8 @@ import Dependencies
 import Foundation
 import NotificationCenterDependency
 
+// TODO: Add MainActorNotificationOf
+
 extension Dependency {
   /// A property wrapper that exposes typed and bidirectional `Notification`s, backed by the
   /// `\.notificationCenter` dependency.
@@ -125,26 +127,38 @@ extension Notifications {
   public struct NotificationOf<Value>: Sendable {
     let name: Notification.Name
     let object: UncheckedSendable<NSObject>?
-    let _extract: @Sendable (Notification) -> Value?
-    let _embed: @Sendable (Value, inout Notification) -> Void
+    let _extract: @Sendable (Notification) async -> Value?
+    let _embed: @Sendable (Value, inout Notification) async -> Void
 
+//    init(
+//      name: Notification.Name,
+//      object: UncheckedSendable<NSObject>?,
+//      @_inheritActorContext _extract: @escaping @Sendable (Notification) -> Value?,
+//      @_inheritActorContext _embed: @escaping @Sendable (Value, inout Notification) -> Void
+//    ) {
+//      self.name = name
+//      self.object = object
+//      self._extract = _extract
+//      self._embed = _embed
+//    }
+    
     private var contextualDependencies: DependencyValues?
 
-    func extract(from notification: Notification) -> Value? {
+    func extract(from notification: Notification) async -> Value? {
       @Dependency(\.self) var current
-      return withDependencyValues {
+      return await withDependencyValues {
         $0 = self.contextualDependencies ?? current
       } operation: {
-        _extract(notification)
+        await _extract(notification)
       }
     }
 
-    func embed(_ value: Value, into notification: inout Notification) {
+    func embed(_ value: Value, into notification: inout Notification) async {
       @Dependency(\.self) var current
-      return withDependencyValues {
+      return await withDependencyValues {
         $0 = self.contextualDependencies ?? current
       } operation: {
-        _embed(value, &notification)
+        await _embed(value, &notification)
       }
     }
 
@@ -182,8 +196,8 @@ extension Notifications.NotificationOf {
   public init(
     _ name: Notification.Name,
     object: NSObject? = nil,
-    extract: @escaping @Sendable (Notification) -> Value? = { $0 },
-    embed: @escaping @Sendable (Value, inout Notification) -> Void = {
+    @_inheritActorContext extract: @escaping @Sendable (Notification) async -> Value? = { $0 },
+    @_inheritActorContext embed: @escaping @Sendable (Value, inout Notification) async -> Void = {
       if let value = $0 as? Notification, value.name == $1.name { $1 = value }
     },
     file: StaticString = #fileID,
@@ -257,7 +271,7 @@ extension Notifications {
   /// This `AsyncSequence` can be enumerated by multiple clients, as each notification will be
   /// delivered to all of them.
   public struct StreamOf<Value>: Sendable {
-    private let post: @Sendable (Value, StaticString, UInt) -> Void
+    private let post: @Sendable (Value, StaticString, UInt) async -> Void
     private let stream: @Sendable () -> AsyncStream<Value>
     private let notification: NotificationOf<Value>
     @Dependency(\.notificationCenter) var notificationCenter
@@ -265,7 +279,7 @@ extension Notifications {
 
     init(
       _ notification: NotificationOf<Value>,
-      post: @escaping @Sendable (Value, StaticString, UInt) -> Void,
+      post: @escaping @Sendable (Value, StaticString, UInt) async -> Void,
       stream: @escaping @Sendable () -> AsyncStream<Value>
     ) {
       self.notification = notification
@@ -274,8 +288,8 @@ extension Notifications {
     }
 
     /// Embeds a `Value` in a `Notification` that is then posted to the `NotificationCenter`.
-    public func post(_ value: Value, file: StaticString = #fileID, line: UInt = #line) {
-      self.post(value, file, line)
+    public func post(_ value: Value, file: StaticString = #fileID, line: UInt = #line) async {
+      await self.post(value, file, line)
     }
 
     /// Returns a new ``Notifications/StreamOf`` where the `DependenciesValues` used to extract or
@@ -358,6 +372,19 @@ extension Notifications.StreamOf where Value: Sendable {
   public func assign(to published: inout Published<Value>.Publisher) {
     self.mainActorPublisher().assign(to: &published)
   }
+  
+  @MainActor
+  public func assign<Root>(to keyPath: ReferenceWritableKeyPath<Root, Value?>, on object: Root)
+    -> AnyCancellable
+  {
+    self.mainActorPublisher().map(Optional.some).assign(to: keyPath, on: object)
+  }
+
+  @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+  @MainActor
+  public func assign(to published: inout Published<Value?>.Publisher) {
+    self.mainActorPublisher().map(Optional.some).assign(to: &published)
+  }
 }
 
 extension NotificationCenter.Dependency {
@@ -368,7 +395,7 @@ extension NotificationCenter.Dependency {
   {
     Notifications.StreamOf<Value>(notification) { value, file, line in
       var nsNotification = notification.notification
-      notification.embed(value, into: &nsNotification)
+      await notification.embed(value, into: &nsNotification)
       self.post(
         name: nsNotification.name,
         object: nsNotification.object as AnyObject,
@@ -384,7 +411,7 @@ extension NotificationCenter.Dependency {
         line: line
       )
       .compactMap {
-        notification.extract(from: $0)
+        await notification.extract(from: $0)
       }
       .eraseToStream()
     }

@@ -63,10 +63,10 @@ import XCTestDynamicOverlay
         identifierForVendor: @escaping @MainActor () -> UUID?,
         orientation: @escaping @MainActor () -> UIDeviceOrientation,
         isGeneratingDeviceOrientationNotifications: @escaping @MainActor () -> Bool,
-        isBatteryMonitoringEnabled: @escaping @MainActor () -> Bool,
+        isBatteryMonitoringEnabled: (@MainActor () -> Bool, @MainActor (Bool) -> Void),
         batteryState: @escaping @MainActor () -> UIDevice.BatteryState,
         batteryLevel: @escaping @MainActor () -> Float,
-        isProximityMonitoringEnabled: @escaping @MainActor () -> Bool,
+        isProximityMonitoringEnabled: (@MainActor () -> Bool, @MainActor (Bool) -> Void),
         proximityState: @escaping @MainActor () -> Bool,
         isMultitaskingSupported: @escaping @MainActor () -> Bool,
         userInterfaceIdiom: @escaping @MainActor () -> UIUserInterfaceIdiom,
@@ -128,10 +128,16 @@ import XCTestDynamicOverlay
         isGeneratingDeviceOrientationNotifications: {
           UIDevice.current.isGeneratingDeviceOrientationNotifications
         },
-        isBatteryMonitoringEnabled: { UIDevice.current.isBatteryMonitoringEnabled },
+        isBatteryMonitoringEnabled: (
+          { UIDevice.current.isBatteryMonitoringEnabled },
+          { UIDevice.current.isBatteryMonitoringEnabled = $0 }
+        ),
         batteryState: { UIDevice.current.batteryState },
         batteryLevel: { UIDevice.current.batteryLevel },
-        isProximityMonitoringEnabled: { UIDevice.current.isProximityMonitoringEnabled },
+        isProximityMonitoringEnabled: (
+          { UIDevice.current.isProximityMonitoringEnabled },
+          { UIDevice.current.isProximityMonitoringEnabled = $0 }
+        ),
         proximityState: { UIDevice.current.proximityState },
         isMultitaskingSupported: { UIDevice.current.isMultitaskingSupported },
         userInterfaceIdiom: { UIDevice.current.userInterfaceIdiom },
