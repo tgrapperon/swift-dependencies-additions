@@ -4,10 +4,11 @@ import SwiftUI
 import SwiftUINavigation
 
 extension Notifications {
-  var countNotification: NotificationOf<Int> {
+  @MainActor
+  var countNotification: MainActorNotificationOf<Int> {
     let notificationName = Notification.Name("CounterNotification")
     let countValue = "countValue"
-    return NotificationOf(notificationName) { notification in
+    return MainActorNotificationOf(notificationName) { notification in
       (notification.userInfo?[countValue] as? Int) ?? 0
     } embed: { value, notification in
       notification.userInfo = [countValue: value]
@@ -21,7 +22,6 @@ final class NotificationStudy: ObservableObject {
   @Published var countFromNotification: Int?
   
   @Published var batteryLevel: Float = 0
-  
   @Dependency.Notification(\.countNotification) var countNotification
   @Dependency.Notification(\.batteryLevelDidChange) var batteryLevelNotification
   @Dependency(\.device) var device
@@ -48,25 +48,20 @@ final class NotificationStudy: ObservableObject {
   func userDidTapIncrementButton() {
     self.count += 1
     // Post the updated value
-    Task {
-      await self.countNotification.post(self.count)
-    }
+    self.countNotification.post(self.count)
   }
   
   func userDidTapDecrementButton() {
     self.count -= 1
     // Post the updated value
-    Task {
-      await self.countNotification.post(self.count)
-    }
+    self.countNotification.post(self.count)
   }
   
   func userDidTapSendRandomNotificationButton() {
-    Task {
-      let number = self.withRandomNumberGenerator {
+    self.withRandomNumberGenerator {
+      self.countNotification.post(
         Int.random(in: 0 ... 1_000, using: &$0)
-      }
-      await self.countNotification.post(number)
+      )
     }
   }
 }

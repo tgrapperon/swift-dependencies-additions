@@ -45,21 +45,17 @@ import DeviceDependency
 extension Notifications {
   /// A notification that posts when the battery level changes.
   @MainActor
-  public var batteryLevelDidChange: NotificationOf<Float> {
-    let name = UIDevice.batteryLevelDidChangeNotification
-    return .init(name) { _ in
-      await MainActor.run {
-        @Dependency(\.device.batteryLevel) var batteryLevel;
-        return batteryLevel
-      }
+  public var batteryLevelDidChange: MainActorNotificationOf<Float> {
+    .init(UIDevice.batteryLevelDidChangeNotification) { _ in
+      @Dependency(\.device.batteryLevel) var batteryLevel;
+      return batteryLevel
     }
   }
   
   /// A notification that posts when the battery level changes.
   @MainActor
-  public var batteryStateDidChange: NotificationOf<UIDevice.BatteryState> {
-    let name = UIDevice.batteryStateDidChangeNotification
-    return .init(name) { _ in
+  public var batteryStateDidChange: MainActorNotificationOf<UIDevice.BatteryState> {
+    return .init(UIDevice.batteryStateDidChangeNotification) { _ in
       @Dependency(\.device.batteryState) var batteryState;
       return batteryState
     }
