@@ -51,13 +51,13 @@ final class NotificationDependencyTests: XCTestCase {
         }
         group.addTask {
           try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-          testNotification.post(2)
+          await testNotification.post(2)
           try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-          testNotification.post(4)
+          await testNotification.post(4)
           try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-          testNotification.post(7)
+          await testNotification.post(7)
           try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
-          testNotification.post(-1)
+          await testNotification.post(-1)
         }
       }
     }

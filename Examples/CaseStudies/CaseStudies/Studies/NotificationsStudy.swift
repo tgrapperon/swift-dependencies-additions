@@ -1,7 +1,7 @@
-import _NotificationDependency
 import Dependencies
 import SwiftUI
 import SwiftUINavigation
+import _NotificationDependency
 
 extension Notifications {
   @MainActor
@@ -20,47 +20,49 @@ extension Notifications {
 final class NotificationStudy: ObservableObject {
   @Published var count: Int
   @Published var countFromNotification: Int?
-  
+
   @Published var batteryLevel: Float = 0
+  @Published var batteryState: UIDevice.BatteryState = .unknown
+
   @Dependency.Notification(\.countNotification) var countNotification
   @Dependency.Notification(\.batteryLevelDidChange) var batteryLevelNotification
+  @Dependency.Notification(\.batteryStateDidChange) var batteryStateNotification
+  
   @Dependency(\.device) var device
-  
-  @Dependency(\.continuousClock) var clock
   @Dependency(\.withRandomNumberGenerator) var withRandomNumberGenerator
-  private var notificationsObservation: Task<Void, Never>?
-  
+
   init(count: Int = 0) {
     self.count = count
     // Inject the notifications into the `@Published` properties:
     self.batteryLevelNotification.assign(to: &$batteryLevel)
+    self.batteryStateNotification.assign(to: &$batteryState)
     self.countNotification.assign(to: &$countFromNotification)
   }
-  
+
   func onAppear() {
     self.device.isBatteryMonitoringEnabled = true
   }
-  
+
   func onDisappear() {
     self.device.isBatteryMonitoringEnabled = false
   }
-  
+
   func userDidTapIncrementButton() {
     self.count += 1
     // Post the updated value
     self.countNotification.post(self.count)
   }
-  
+
   func userDidTapDecrementButton() {
     self.count -= 1
     // Post the updated value
     self.countNotification.post(self.count)
   }
-  
+
   func userDidTapSendRandomNotificationButton() {
     self.withRandomNumberGenerator {
       self.countNotification.post(
-        Int.random(in: 0 ... 1_000, using: &$0)
+        Int.random(in: 0...1_000, using: &$0)
       )
     }
   }
@@ -68,14 +70,16 @@ final class NotificationStudy: ObservableObject {
 
 struct NotificationsStudyView: View {
   @ObservedObject var model: NotificationStudy
+
   var body: some View {
     List {
       Section {
         LabeledContent("Battery Level") {
           HStack {
-            Text(String(describing: model.device.isBatteryMonitoringEnabled))
-            Text(model.batteryLevel.formatted(
-              .percent.precision(.fractionLength(0)))
+            Text(batteryStateLocalizedText)
+            Text(
+              model.batteryLevel.formatted(
+                .percent.precision(.fractionLength(0)))
             )
             Group {
               if model.batteryLevel > 0.875 {
@@ -111,34 +115,27 @@ struct NotificationsStudyView: View {
       } header: {
         Text("Model")
       }
-      
+
       Section {
-        LabeledContent("Count from notifications", value: self.model.countFromNotification.map {
-          $0.formatted()
-        } ?? "None")
+        LabeledContent(
+          "Count from notifications",
+          value: self.model.countFromNotification.map {
+            $0.formatted()
+          } ?? "None")
       } header: {
-        Text("Nofications")
+        Text("./countNotification")
+          .textCase(.none)
+          .monospaced()
       }
     }
     .safeAreaInset(edge: .bottom) {
-      VStack {
-        Button {
-          NotificationCenter.default.post(name: UIDevice.batteryLevelDidChangeNotification, object: UIDevice.current)
-          
-        } label: {
-          Label("Send a battery notification", systemImage: "dice")
-            .frame(minHeight: 33)
-            .fontWeight(.medium)
-            .padding(.horizontal)
-        }
-        Button {
-          self.model.userDidTapSendRandomNotificationButton()
-        } label: {
-          Label("Send a random notification", systemImage: "dice")
-            .frame(minHeight: 33)
-            .fontWeight(.medium)
-            .padding(.horizontal)
-        }
+      Button {
+        self.model.userDidTapSendRandomNotificationButton()
+      } label: {
+        Label("Send a random notification", systemImage: "dice")
+          .frame(minHeight: 33)
+          .fontWeight(.medium)
+          .padding(.horizontal)
       }
       .listRowInsets(.init())
       .buttonStyle(.borderedProminent)
@@ -152,23 +149,38 @@ struct NotificationsStudyView: View {
     }
     .navigationTitle("Notifications")
   }
+
+  var batteryStateLocalizedText: String {
+    switch model.batteryState {
+    case .unknown:
+      return "Unknown"
+    case .unplugged:
+      return "Unplugged"
+    case .charging:
+      return "Charging"
+    case .full:
+      return "Full"
+    @unknown default:
+      return "Unknown"
+    }
+  }
 }
 
 struct NotificationsStudyView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationStack {
-      WithState(initialValue: Float(0.2)) { $value in
-        withDependencyValues {
-          $0.device.$batteryLevel = value
-        } operation: {
-          NotificationsStudyView(model: .init())
-        }
-        .onChange(of: value) { _ in
-          @Dependency(\.notificationCenter) var notificationCenter;
-          notificationCenter.post(name: UIDevice.batteryLevelDidChangeNotification)
-        }
-        .safeAreaInset(edge: .bottom) {
-          Slider(value: $value, in: 0 ... 1)
+      withDependencyValues {
+        $0.device.$isBatteryMonitoringEnabled = true
+        $0.device.$batteryState = .unplugged
+        $0.device.$batteryLevel = 0.67
+      } operation: {
+        Group {
+          let model = NotificationStudy()
+          NotificationsStudyView(model: model)
+            .task {
+              model.batteryStateNotification.post(.unknown)
+              model.batteryLevelNotification.post(0)
+            }
         }
       }
     }

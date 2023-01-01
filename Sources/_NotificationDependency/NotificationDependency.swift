@@ -4,8 +4,6 @@ import Dependencies
 import Foundation
 import NotificationCenterDependency
 
-// TODO: Add MainActorNotificationOf
-
 extension Dependency {
   /// A property wrapper that exposes typed and bidirectional `Notification`s, backed by the
   /// `\.notificationCenter` dependency.
@@ -18,12 +16,15 @@ extension Dependency {
     let notification: Value
     let file: StaticString
     let line: UInt
-    let stream: @Sendable (Value, NotificationCenter.Dependency, DependencyValues, StaticString, UInt) -> Stream
+    let stream:
+      @Sendable (Value, NotificationCenter.Dependency, DependencyValues, StaticString, UInt) ->
+        Stream
 
     /// A ``Notifications/StreamOf`` value that can be iterated asynchronously to produce a stream
     /// of typed values.
     public var wrappedValue: Stream {
-      self.stream(self.notification, self.notificationCenter, self.dependencies, self.file, self.line)
+      self.stream(
+        self.notification, self.notificationCenter, self.dependencies, self.file, self.line)
     }
   }
 }
@@ -59,7 +60,10 @@ extension Dependency.Notification {
     _ notification: Notifications.MainActorNotificationOf<T>,
     file: StaticString = #fileID,
     line: UInt = #line
-  ) where Value == Notifications.MainActorNotificationOf<T>, Stream == Notifications.MainActorStreamOf<T> {
+  )
+  where
+    Value == Notifications.MainActorNotificationOf<T>, Stream == Notifications.MainActorStreamOf<T>
+  {
     self.notification = notification
     self.file = file
     self.line = line
@@ -113,7 +117,10 @@ extension Dependency.Notification {
     _ notification: KeyPath<Notifications, Notifications.MainActorNotificationOf<T>>,
     file: StaticString = #fileID,
     line: UInt = #line
-  ) where Value == Notifications.MainActorNotificationOf<T>, Stream == Notifications.MainActorStreamOf<T> {
+  )
+  where
+    Value == Notifications.MainActorNotificationOf<T>, Stream == Notifications.MainActorStreamOf<T>
+  {
     self.notification = Notifications()[keyPath: notification]
     self.file = file
     self.line = line
@@ -138,7 +145,11 @@ extension Dependency.Notification {
     object: NSObject? = nil,
     file: StaticString = #fileID,
     line: UInt = #line
-  ) where Value == Notifications.NotificationOf<Foundation.Notification>, Stream == Notifications.StreamOf<Foundation.Notification> {
+  )
+  where
+    Value == Notifications.NotificationOf<Foundation.Notification>,
+    Stream == Notifications.StreamOf<Foundation.Notification>
+  {
     self.init(
       Notifications.NotificationOf<Foundation.Notification>(
         name,
@@ -151,7 +162,6 @@ extension Dependency.Notification {
     )
   }
 }
-
 
 /// A global namespace where you can declare ``NotificationOf`` values as read-only properties.
 ///
@@ -215,6 +225,16 @@ extension Notifications {
     var notification: Foundation.Notification {
       .init(name: name, object: object?.wrappedValue)
     }
+
+    func withContextualDependencies(
+      _ dependencyValues: DependencyValues,
+      file: StaticString = #fileID,
+      line: UInt = #line
+    ) -> Self {
+      var contextualized = self
+      contextualized.contextualDependencies = dependencyValues
+      return contextualized
+    }
   }
 }
 
@@ -222,12 +242,11 @@ extension Notifications {
   public struct MainActorNotificationOf<Value: Sendable>: Sendable {
     let name: Notification.Name
     let object: UncheckedSendable<NSObject>?
-    let _extract: @MainActor @Sendable (Notification) -> Value?
-    let _embed: @MainActor @Sendable (Value, inout Notification) -> Void
+    let _extract: @Sendable (Notification) -> Value?
+    let _embed: @Sendable (Value, inout Notification) -> Void
 
     private var contextualDependencies: DependencyValues?
 
-    @MainActor
     func extract(from notification: Notification) -> Value? {
       @Dependency(\.self) var current
       return withDependencyValues {
@@ -237,7 +256,6 @@ extension Notifications {
       }
     }
 
-    @MainActor
     func embed(_ value: Value, into notification: inout Notification) {
       @Dependency(\.self) var current
       return withDependencyValues {
@@ -247,9 +265,18 @@ extension Notifications {
       }
     }
 
-    @MainActor
     var notification: Foundation.Notification {
       .init(name: name, object: object?.wrappedValue)
+    }
+
+    func withContextualDependencies(
+      _ dependencyValues: DependencyValues,
+      file: StaticString = #fileID,
+      line: UInt = #line
+    ) -> Self {
+      var contextualized = self
+      contextualized.contextualDependencies = dependencyValues
+      return contextualized
     }
   }
 }
@@ -422,30 +449,6 @@ extension Notifications.MainActorNotificationOf {
   }
 
   // TODO: Add map operation?
-}
-
-extension Notifications.NotificationOf {
-  func withContextualDependencies(
-    _ dependencyValues: DependencyValues,
-    file: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    var contextualized = self
-    contextualized.contextualDependencies = dependencyValues
-    return contextualized
-  }
-}
-
-extension Notifications.MainActorNotificationOf {
-  func withContextualDependencies(
-    _ dependencyValues: DependencyValues,
-    file: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    var contextualized = self
-    contextualized.contextualDependencies = dependencyValues
-    return contextualized
-  }
 }
 
 extension Notifications {
@@ -621,10 +624,10 @@ extension Notifications {
   }
 }
 
-public protocol NotificationStream: AsyncSequence & Sendable {}
+public protocol NotificationStream: AsyncSequence & Sendable
+where AsyncIterator == AsyncStream<Element>.Iterator {}
 
 extension Notifications.StreamOf: NotificationStream {
-  public typealias AsyncIterator = AsyncStream<Value>.Iterator
   public typealias Element = Value
 
   public func makeAsyncIterator() -> AsyncStream<Value>.Iterator {
@@ -633,7 +636,6 @@ extension Notifications.StreamOf: NotificationStream {
 }
 
 extension Notifications.MainActorStreamOf: NotificationStream {
-  public typealias AsyncIterator = AsyncStream<Value>.Iterator
   public typealias Element = Value
 
   public func makeAsyncIterator() -> AsyncStream<Value>.Iterator {
