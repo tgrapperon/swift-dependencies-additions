@@ -26,6 +26,7 @@ final class BundleInfoTests: XCTestCase {
     }
   }
 
+  #if DEBUG
     func testFailingTestBundleInfo_bundleIdentifier() {
       XCTExpectFailure {
         _ = bundleInfo.bundleIdentifier
@@ -56,4 +57,5 @@ final class BundleInfoTests: XCTestCase {
         _ = bundleInfo.version
       }
     }
+  #endif
 }

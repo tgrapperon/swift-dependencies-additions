@@ -9,12 +9,14 @@ import XCTest
 final class LoggerDependencyTests: XCTestCase {
   @Dependency(\.logger) var logger
   
+  #if DEBUG
   func testFailingTestLogger() {
     XCTExpectFailure {
       logger.log("TestValue")
     }
   }
-
+  #endif
+  
   func testLoggerCategory() {
     @Dependency(\.logger["Logger.Dependency.Testing"]) var logger
     let _ = __dummySeparator__

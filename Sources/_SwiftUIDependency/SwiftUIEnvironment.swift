@@ -52,7 +52,7 @@ extension EnvironmentValues {
 }
 
 @MainActor
-final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
+@_spi(Internals) public final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
   struct Key: Hashable, @unchecked Sendable {
     let id: AnyHashable?
     let keypath: PartialKeyPath<EnvironmentValues>
@@ -66,13 +66,13 @@ final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
   public nonisolated static var liveValue: SwiftUIEnvironment { .shared }
   public nonisolated static var testValue: SwiftUIEnvironment { .shared }
 
-  internal static let shared = SwiftUIEnvironment()
+  @_spi(Internals) public static let shared = SwiftUIEnvironment()
 
   @Published private var dependencies = [Key: Any]()
 
   init() {}
 
-  func update<ID: Hashable, Value>(
+  @_spi(Internals) public func update<ID: Hashable, Value>(
     _ value: Value?,
     keyPath: KeyPath<EnvironmentValues, Value>,
     id: ID? = String?.none

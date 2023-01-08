@@ -47,6 +47,7 @@ final class NotificationCenterDependencyTests: XCTestCase {
     }
   }
 
+  #if DEBUG
   func testNotificationCenterFailure1() {
     @Dependency(\.notificationCenter) var notificationCenter
     let _ = __dummySeparator__
@@ -93,4 +94,6 @@ final class NotificationCenterDependencyTests: XCTestCase {
       _ = notificationCenter.publisher(for: notificationName1())
     }
   }
+  
+  #endif
 }
