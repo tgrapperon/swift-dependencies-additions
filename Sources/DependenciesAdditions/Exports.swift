@@ -1,10 +1,9 @@
-@_exported import Dependencies
-
 @_exported import ApplicationDependency
 @_exported import BundleDependency
 @_exported import CodableDependency
 @_exported import CompressionDependency
 @_exported import DataDependency
+@_exported import Dependencies
 @_exported import DependenciesAdditionsBasics
 @_exported import DeviceDependency
 @_exported import LoggerDependency

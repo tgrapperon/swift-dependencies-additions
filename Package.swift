@@ -298,7 +298,7 @@ let package = Package(
     .testTarget(
       name: "_SwiftUIDependencyTests",
       dependencies: [
-        "_SwiftUIDependency",
+        "_SwiftUIDependency"
       ]
     ),
 
