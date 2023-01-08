@@ -8,11 +8,12 @@ import XCTest
 @MainActor
 final class LoggerDependencyTests: XCTestCase {
   @Dependency(\.logger) var logger
-  //  func testFailingTestLogger() {
-  //    XCTExpectFailure {
-  //      logger.log("TestValue")
-  //    }
-  //  }
+  
+  func testFailingTestLogger() {
+    XCTExpectFailure {
+      logger.log("TestValue")
+    }
+  }
 
   func testLoggerCategory() {
     @Dependency(\.logger["Logger.Dependency.Testing"]) var logger

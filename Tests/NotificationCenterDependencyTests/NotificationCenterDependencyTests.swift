@@ -47,50 +47,50 @@ final class NotificationCenterDependencyTests: XCTestCase {
     }
   }
 
-  //  func testNotificationCenterFailure1() {
-  //    @Dependency(\.notificationCenter) var notificationCenter
-  //    let _ = __dummySeparator__
-  //    XCTExpectFailure {
-  //      notificationCenter.post(name: notificationName1())
-  //    }
-  //  }
-  //
-  //  func testNotificationCenterFailure2() {
-  //    @Dependency(\.notificationCenter) var notificationCenter
-  //    class O: NSObject {
-  //      @objc func f(_ n: Any) {}
-  //    }
-  //    XCTExpectFailure {
-  //      notificationCenter.addObserver(
-  //        O(),
-  //        selector: #selector(O.f(_:)),
-  //        name: notificationName1(),
-  //        object: nil
-  //      )
-  //    }
-  //  }
+  func testNotificationCenterFailure1() {
+    @Dependency(\.notificationCenter) var notificationCenter
+    let _ = __dummySeparator__
+    XCTExpectFailure {
+      notificationCenter.post(name: notificationName1())
+    }
+  }
 
-  //  func testNotificationCenterFailure3() {
-  //    @Dependency(\.notificationCenter) var notificationCenter
-  //    let _ = __dummySeparator__
-  //    XCTExpectFailure {
-  //      notificationCenter.removeObserver(self)
-  //    }
-  //  }
-  //
-  //  func testNotificationCenterFailure4() {
-  //    @Dependency(\.notificationCenter) var notificationCenter
-  //    let _ = __dummySeparator__
-  //    XCTExpectFailure {
-  //      _ = notificationCenter.notifications(named: notificationName1())
-  //    }
-  //  }
-  //
-  //  func testNotificationCenterFailure5() {
-  //    @Dependency(\.notificationCenter) var notificationCenter
-  //    let _ = __dummySeparator__
-  //    XCTExpectFailure {
-  //      _ = notificationCenter.publisher(for: notificationName1())
-  //    }
-  //  }
+  func testNotificationCenterFailure2() {
+    @Dependency(\.notificationCenter) var notificationCenter
+    class O: NSObject {
+      @objc func f(_ n: Any) {}
+    }
+    XCTExpectFailure {
+      notificationCenter.addObserver(
+        O(),
+        selector: #selector(O.f(_:)),
+        name: notificationName1(),
+        object: nil
+      )
+    }
+  }
+
+  func testNotificationCenterFailure3() {
+    @Dependency(\.notificationCenter) var notificationCenter
+    let _ = __dummySeparator__
+    XCTExpectFailure {
+      notificationCenter.removeObserver(self)
+    }
+  }
+
+  func testNotificationCenterFailure4() {
+    @Dependency(\.notificationCenter) var notificationCenter
+    let _ = __dummySeparator__
+    XCTExpectFailure {
+      _ = notificationCenter.notifications(named: notificationName1())
+    }
+  }
+
+  func testNotificationCenterFailure5() {
+    @Dependency(\.notificationCenter) var notificationCenter
+    let _ = __dummySeparator__
+    XCTExpectFailure {
+      _ = notificationCenter.publisher(for: notificationName1())
+    }
+  }
 }

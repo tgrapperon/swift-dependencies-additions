@@ -26,34 +26,34 @@ final class BundleInfoTests: XCTestCase {
     }
   }
 
-  //  func testFailingTestBundleInfo_bundleIdentifier() {
-  //    XCTExpectFailure {
-  //      _ = bundleInfo.bundleIdentifier
-  //    }
-  //  }
-  //  func testFailingTestBundleInfo_name() {
-  //    XCTExpectFailure {
-  //      _ = bundleInfo.name
-  //    }
-  //  }
-  //  func testFailingTestBundleInfo_displayName() {
-  //    XCTExpectFailure {
-  //      _ = bundleInfo.displayName
-  //    }
-  //  }
-  //  func testFailingTestBundleInfo_spokenName() {
-  //    XCTExpectFailure {
-  //      _ = bundleInfo.spokenName
-  //    }
-  //  }
-  //  func testFailingTestBundleInfo_shortVersion() {
-  //    XCTExpectFailure {
-  //      _ = bundleInfo.shortVersion
-  //    }
-  //  }
-  //  func testFailingTestBundleInfo_version() {
-  //    XCTExpectFailure {
-  //      _ = bundleInfo.version
-  //    }
-  //  }
+    func testFailingTestBundleInfo_bundleIdentifier() {
+      XCTExpectFailure {
+        _ = bundleInfo.bundleIdentifier
+      }
+    }
+    func testFailingTestBundleInfo_name() {
+      XCTExpectFailure {
+        _ = bundleInfo.name
+      }
+    }
+    func testFailingTestBundleInfo_displayName() {
+      XCTExpectFailure {
+        _ = bundleInfo.displayName
+      }
+    }
+    func testFailingTestBundleInfo_spokenName() {
+      XCTExpectFailure {
+        _ = bundleInfo.spokenName
+      }
+    }
+    func testFailingTestBundleInfo_shortVersion() {
+      XCTExpectFailure {
+        _ = bundleInfo.shortVersion
+      }
+    }
+    func testFailingTestBundleInfo_version() {
+      XCTExpectFailure {
+        _ = bundleInfo.version
+      }
+    }
 }
