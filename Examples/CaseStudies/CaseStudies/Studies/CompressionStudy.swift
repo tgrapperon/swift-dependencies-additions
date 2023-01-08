@@ -1,9 +1,5 @@
-import CodableDependency
-import CompressionDependency
-import Dependencies
-import LoggerDependency
+import DependenciesAdditions
 import SwiftUI
-import DependenciesAdditionsBasics
 
 struct ProcessedText: Hashable, Codable {
   let text: String
@@ -27,13 +23,12 @@ final class CompressionStudy: ObservableObject {
   @Dependency(\.logger) var logger
 
   var cancellables = Set<AnyCancellableTask>()
-  
+
   init(source: String = "Lorem ipsum dolor sit amet") {
     self.source = source
     Task {
       do {
         for await text in self.$source.values {
-
           let data = text.data(using: .utf8)!
           let compressed = try await compress(data)
 
@@ -51,7 +46,6 @@ final class CompressionStudy: ObservableObject {
           let decoded = try decode(ProcessedText.self, from: jsonData)
           let decompressedData = try await decompress(decoded.data)
           self.decompressed = String(decoding: decompressedData, as: UTF8.self)
-
         }
       } catch {
         if !(error is CancellationError) {
@@ -72,7 +66,7 @@ struct CompressionStudyView: View {
       } header: {
         Text("Text")
       } footer: {
-        Gauge(value: max(1 - model.compressionRatio, 0), in: 0...1) {
+        Gauge(value: max(1 - model.compressionRatio, 0), in: 0 ... 1) {
           Text("Compression Ratio")
         } currentValueLabel: {
           Text(model.compressionRatio.formatted(.percent.precision(.fractionLength(0))))
@@ -109,24 +103,23 @@ struct CompressionStudyView: View {
     #if os(iOS)
       .listStyle(.grouped)
     #endif
-    .navigationTitle("Codable & Compression")
+      .navigationTitle("Codable & Compression")
   }
 }
 
 struct CompressionStudyView_Previews: PreviewProvider {
-
   static var previews: some View {
     NavigationStack {
       CompressionStudyView(
         model:
-          withDependencies {
-            let encoder = JSONEncoder()
-            encoder.outputFormatting.insert(.prettyPrinted)
-            encoder.outputFormatting.insert(.sortedKeys)
-            $0.encode = DataEncoder(encoder)
-          } operation: {
-            .init()
-          }
+        withDependencies {
+          let encoder = JSONEncoder()
+          encoder.outputFormatting.insert(.prettyPrinted)
+          encoder.outputFormatting.insert(.sortedKeys)
+          $0.encode = DataEncoder(encoder)
+        } operation: {
+          .init()
+        }
       )
     }
   }

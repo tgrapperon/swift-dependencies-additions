@@ -4,7 +4,6 @@ import SwiftUINavigation
 
 @MainActor
 class StudiesModel: ObservableObject {
-
   enum Destination {
     case userDefaultsStudy(UserDefaultsStudy)
     case compression(CompressionStudy)
@@ -56,7 +55,7 @@ class StudiesModel: ObservableObject {
     }
   }
   #endif
-  
+
   func loggerStudyButtonTapped() {
     self.destination = withDependencies(from: self) {
       .loggerStudy(
@@ -84,7 +83,6 @@ struct StudiesView: View {
   var body: some View {
     NavigationStack {
       List {
-
         Button {
           self.model.userDefaultsStudyButtonTapped()
         } label: {
@@ -134,7 +132,6 @@ struct StudiesView: View {
         } label: {
           Label("SwiftUI Environment", systemImage: "swift")
         }
-
       }
       .buttonStyle(.navigation)
       .navigationTitle("Case Studies")
@@ -196,18 +193,18 @@ struct StudiesView_Previews: PreviewProvider {
   static var previews: some View {
     StudiesView(
       model:
-        withDependencies {
-          $0.userDefaults = .standard
-          $0.persistentContainer = .default(inMemory: true)
-            .withInitialData()
-          #if os(iOS)
-          $0.device.$batteryState = .charging
-          $0.device.$batteryLevel = 0.72
-          $0.device.$isBatteryMonitoringEnabled = .constant(true)
-          #endif
-        } operation: {
-          .init()
-        }
+      withDependencies {
+        $0.userDefaults = .standard
+        $0.persistentContainer = .default(inMemory: true)
+          .withInitialData()
+        #if os(iOS)
+        $0.device.$batteryState = .charging
+        $0.device.$batteryLevel = 0.72
+        $0.device.$isBatteryMonitoringEnabled = .constant(true)
+        #endif
+      } operation: {
+        .init()
+      }
     )
   }
 }

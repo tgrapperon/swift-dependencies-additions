@@ -290,7 +290,8 @@ let package = Package(
     .target(
       name: "_SwiftUIDependency",
       dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies")
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        "DependenciesAdditionsBasics",
       ]
     ),
 
@@ -298,7 +299,6 @@ let package = Package(
       name: "_SwiftUIDependencyTests",
       dependencies: [
         "_SwiftUIDependency",
-        "DependenciesAdditionsBasics",
       ]
     ),
 

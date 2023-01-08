@@ -1,5 +1,6 @@
 import Combine
-import Dependencies
+@_exported import Dependencies
+@_spi(Internals)@_exported import DependenciesAdditionsBasics
 import Foundation
 import SwiftUI
 

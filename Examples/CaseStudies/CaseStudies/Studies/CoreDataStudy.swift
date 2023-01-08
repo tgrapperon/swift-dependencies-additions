@@ -1,8 +1,8 @@
 import _CoreDataDependency
+import _SwiftUIDependency
 import Dependencies
 import SwiftUI
 import SwiftUINavigation
-import _SwiftUIDependency
 @MainActor
 final class CoreDataStudy: ObservableObject {
   enum Destination {
@@ -12,7 +12,7 @@ final class CoreDataStudy: ObservableObject {
   @Dependency(\.persistentContainer) var persistentContainer
   @Dependency(\.logger["CoreDataStudy"]) var logger
   @Dependency(\.uuid) var uuid
-  
+
   @Published var composers: Composer.FetchedResults = .empty
   @Published var songsByYear: Song.SectionedFetchedResults<Int64> = .empty
 
@@ -189,7 +189,7 @@ struct CoreDataStudyView: View {
 final class AddSongModel: ObservableObject {
   // A logger dependency that we use if saving fails
   @Dependency(\.logger["CoreDataStudy"]) var logger
-  
+
   // In this example, we could use directly:
   // @Dependency.Environment(\.dismiss) var dismiss
   // but it is probably safer to namespace this dependency with an
@@ -202,8 +202,8 @@ final class AddSongModel: ObservableObject {
   // .observeEnvironmentAsDependency(\.dismiss, id: AddSongModel)
   @Dependency.Environment(\.dismiss, id: AddSongModel.self) var dismiss
 
-  @Published var song: Fetched<Song> 
-  
+  @Published var song: Fetched<Song>
+
   init(song: Fetched<Song>) {
     self.song = song
   }
@@ -216,14 +216,14 @@ final class AddSongModel: ObservableObject {
   func cancelButtonTapped() {
     dismiss?()
   }
-  
+
   func saveSong() {
     do {
       try song.withManagedObjectContext {
         try $0.save()
       }
     } catch {
-      self.logger.error("Failed to save")
+      logger.error("Failed to save")
     }
   }
 }
@@ -260,9 +260,9 @@ struct CoreDataStudyView_Previews: PreviewProvider {
     NavigationStack {
       CoreDataStudyView(
         model:
-          withDependencies {
-            $0.persistentContainer = .default(inMemory: true).withInitialData()
-          } operation: {
+        withDependencies {
+          $0.persistentContainer = .default(inMemory: true).withInitialData()
+        } operation: {
           CoreDataStudy()
         }
       )
@@ -372,4 +372,3 @@ extension Song {
       .formatted(.list(type: .and))
   }
 }
-
