@@ -1,5 +1,3 @@
-# WIP
-
 # Dependencies Additions
 
 A companion library to Point-Free's [`swift-dependencies`](https://github.com/pointfreeco/swift-dependencies) that provides higher-level dependencies.
@@ -35,7 +33,7 @@ They could eventually evolve out of `Dependencies Additions` into dedicated repo
 
 The list above is preliminary, and many new dependencies will be added to this library in the upcoming weeks.
 If you need one dependency in particular, feel free to open a discussion, so we can find the better way it can
-integrates with the other dependencies.
+integrate with the other dependencies.
 
 ## How to use `Dependencies Additions`?
 
@@ -45,9 +43,9 @@ This library proposes many heterogeneous dependencies. Having all of them bundle
 - Some dependencies depend on other dependencies, and it would be much more complex to manage if each project is in a dedicated repository.
 
 You can simply import `DependenciesAdditions` umbrella product to get access to all the dependencies at once 
-If you prefer more control, and because each dependency of them is self-contained in its own module, you can import only the ones that you need "à la carte", on a file by file basis.
+If you prefer more control, and because each dependency of them is self-contained in its own module, you can import only the ones that you need "à la carte", on a file-by-file basis.
 
-### Using Xcode packages depedencies:
+### Using Xcode packages dependencies:
 
 Add the `swift-dependencies-additions` package, and only select "DependenciesAdditions" product
 
@@ -67,7 +65,7 @@ In each module you need access to these dependencies, add:
 ),
 ```
 
-## A quick tour of theses dependencies
+## A quick tour of the dependencies
 
 We present here a few of the dependencies currently shipping with the library.
 If you're more interested in experimental abstractions like `AppStorage` or typed `Notification`, you can directly jump to the [Higher-level dependencies](#higher-level-dependencies) section.
@@ -158,18 +156,18 @@ You can simply use it as
 ```swift
 logger.log(level: .info, "User with id: \(userID, privacy: .private) did purchase a smoothie")
 ```
-You can simply create subsystem using the provided subscript:
+You can simply create a subsystem using the provided subscript:
 ```swift
 @Dependency(\.logger["Transactions"]) var transactionsLogger
 ```
 
 ### PersistentContainer
 A `NSPersistentContainer` that exposes Core Data `NSManagedObjectContext`s. You can use it as a 
-basis to more elaborate abstractions.
+basis for more elaborate abstractions.
 ```swift
 @Dependency(\.persistentContainer) var persistentContainer
 ```
-By default, the preview version is an `in-memory` variant, and you can easilly setup mocks for your SwiftUI previews:
+By default, the preview version is an `in-memory` variant, and you can easily setup mocks for your SwiftUI previews:
 ```swift
 var previews: some View {
   let model = withDependencies {
@@ -207,7 +205,7 @@ You can also give a spin to the more powerful [`_AppStorage`](#appstorage) depen
 ### Other dependencies
 Many other dependencies are available, like `UserNotifications` to display notifications, `Device` to interact with `UIDevice` or `WKInterfaceDevice`, `Path` to contextualize your model's tree, a clicking `DateGenerator` that is controlled by a `Clock` (that you can control itself), etc.
 
-Of course, this is only the beginning and many other depedencies will be added in the upcoming weeks.
+Of course, this is only the beginning and many other dependencies will be added in the upcoming weeks.
 We strongly feel that the larger the dependencies spectrum is, the more you will use them, and the more your code will be testable and structured.
 
 ## Higher-level dependencies
@@ -218,7 +216,7 @@ The library proposes a few experimental higher-level dependencies. They are curr
 @Dependency.AppStorage("username") var username: String = "Anonymous"
 ```
 The API follows SwiftUI's `AppStorage`, but is backed by `@Dependency(\.userDefaults)`.
-It can operate within your model and be accessed from async contexts. If the same `key` are used, it can inter-operate with `SwiftUI`'s own `AppStorage`.
+It can operate within your model and be accessed from async contexts. If the same `key`s are used, it can inter-operate with `SwiftUI`'s own `AppStorage`.
 The projected value is an `AsyncStream<Value>` of this user preference's values. They can be observed from any async context:
 ```swift
 @Dependency.AppStorage("isSoundEnabled") var isSoundEnabled: Bool = false
