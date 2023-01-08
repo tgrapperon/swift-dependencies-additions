@@ -1,6 +1,6 @@
 #if os(iOS) || os(watchOS) || os(macOS)
   import Dependencies
-  @_spi(Internals) import DependenciesAdditions
+  @_spi(Internals) import DependenciesAdditionsBasics
   @preconcurrency import UserNotifications
   import XCTestDynamicOverlay
 

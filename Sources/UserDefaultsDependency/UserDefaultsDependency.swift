@@ -1,6 +1,6 @@
 import Dependencies
 import Foundation
-@_spi(Internals) import DependenciesAdditions
+@_spi(Internals) import DependenciesAdditionsBasics
 
 extension DependencyValues {
   /// A dependency that exposes an ``UserDefaults.Dependency`` value that you can use to read and

@@ -1,5 +1,5 @@
 import Dependencies
-@_spi(Internals) import DependenciesAdditions
+@_spi(Internals) import DependenciesAdditionsBasics
 import NotificationCenterDependency
 import XCTest
 

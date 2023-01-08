@@ -1,5 +1,5 @@
 import Dependencies
-import DependenciesAdditions
+import DependenciesAdditionsBasics
 import SwiftUI
 import UserNotificationsDependency
 import UserNotifications
@@ -65,7 +65,7 @@ final class UserNotificationsStudy: NSObject, ObservableObject {
     let content = UNMutableNotificationContent()
     content.title = "Hello!"
     content.body = "This is a notification!"
-    let identifier = uuid().uuidString
+    let identifier = self.uuid().uuidString
 
     try await self.userNotificationCenter.add(
       .init(
@@ -74,7 +74,7 @@ final class UserNotificationsStudy: NSObject, ObservableObject {
         trigger: .none
       )
     )
-    logger.info("Did send notification with id: \(identifier)")
+    self.logger.info("Did send notification with id: \(identifier)")
   }
 }
 

@@ -1,12 +1,12 @@
-import Dependencies
+import _NotificationDependency
 import DependenciesAdditions
 import SwiftUI
 import SwiftUINavigation
-import _NotificationDependency
 
 extension Notification.Name {
   static var timerNotification = Notification.Name("TimerNotification")
 }
+
 extension Notifications {
   /// A main actor notification of `Int` that is extracted from the
   /// notification's `userInfo` dictionary.
@@ -23,10 +23,11 @@ extension Notifications {
       notification.userInfo = [countValue: value]
     }
   }
+
   /// A notification of `Date`, each time `.timerNotification` is
   /// posted. `Date` is exctracted from the current `\.date` dependency.
   var timerNotification: NotificationOf<Date> {
-    return NotificationOf(.timerNotification) { notification in
+    return NotificationOf(.timerNotification) { _ in
       @Dependency(\.date) var date
       return date()
     }
@@ -54,8 +55,8 @@ final class CustomNotificationStudy: ObservableObject {
   init(count: Int = 0) {
     self.count = count
     // Inject the notifications into the `@Published` properties:
-    self.countNotification.assign(to: &$countFromNotification)
-    self.dates.assign(to: &$currentDate)
+    self.countNotification.assign(to: &self.$countFromNotification)
+    self.dates.assign(to: &self.$currentDate)
 
     /// Spawn a task that send a `timerNotification` each second, and
     /// that cancels automatically when the model is deinitialized.
@@ -64,7 +65,7 @@ final class CustomNotificationStudy: ObservableObject {
         notificationCenter.post(name: .timerNotification)
       }
     }
-    .store(in: &cancellableTasks)
+    .store(in: &self.cancellableTasks)
   }
 
   func incrementButtonTapped() {
@@ -82,7 +83,7 @@ final class CustomNotificationStudy: ObservableObject {
   func sendRandomNotificationButtonTapped() {
     self.withRandomNumberGenerator {
       self.countNotification.post(
-        Int.random(in: 0...1_000, using: &$0)
+        Int.random(in: 0 ... 1_000, using: &$0)
       )
     }
   }
@@ -92,14 +93,12 @@ extension CustomNotificationStudy {
   @MainActor
   final class ModelA: ObservableObject {
     @Dependency.Notification(\.countNotification) var countNotification
-    
+
     @Published var count: Int = 0
     init() {
-      self.countNotification.assign(to: &$count)
-      
+      self.countNotification.assign(to: &self.$count)
     }
   }
-  
 }
 
 struct CustomNotificationStudyView: View {

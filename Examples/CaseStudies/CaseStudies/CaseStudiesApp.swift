@@ -1,4 +1,4 @@
-import Dependencies
+import DependenciesAdditions
 import SwiftUI
 #if canImport(UIKit)
 import UIKit
