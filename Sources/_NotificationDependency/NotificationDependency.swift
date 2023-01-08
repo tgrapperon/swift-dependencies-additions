@@ -486,7 +486,7 @@ extension Notifications {
     ///
     /// Task {
     ///   DependencyValue.withValue(\.timeZone, TimeZone(secondsFromGMT: 0)) { // (context "B")
-    ///     for await timeZone in timeZoneNotification.withCurrentDependencyValues() {
+    ///     for await timeZone in timeZoneNotification.withCurrentDependencies() {
     ///       // `timeZone` was generated using the `\.timeZone` dependency resolved in
     ///       // the context "B", that is, using `TimeZone(secondsFromGMT: 0)`.
     ///     }
@@ -587,7 +587,7 @@ extension Notifications {
     ///
     /// Task {
     ///   DependencyValue.withValue(\.timeZone, TimeZone(secondsFromGMT: 0)) { // (context "B")
-    ///     for await timeZone in timeZoneNotification.withCurrentDependencyValues() {
+    ///     for await timeZone in timeZoneNotification.withCurrentDependencies() {
     ///       // `timeZone` was generated using the `\.timeZone` dependency resolved in
     ///       // the context "B", that is, using `TimeZone(secondsFromGMT: 0)`.
     ///     }

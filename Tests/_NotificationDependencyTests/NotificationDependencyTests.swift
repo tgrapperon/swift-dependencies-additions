@@ -128,7 +128,7 @@ final class NotificationDependencyTests: XCTestCase {
           $0.uuid = .init { UUID(uuidString: "11111111-1111-1111-1111-111111111111")! }
         } operation: {
           var index: Int = 0
-          for await value in defaultModel.notification.withCurrentDependencyValues() {
+          for await value in defaultModel.notification.withCurrentDependencies() {
             XCTAssertEqual(value, UUID(uuidString: "11111111-1111-1111-1111-111111111111")!)
             index += 1
             if index == incrementingExpectations.endIndex {
