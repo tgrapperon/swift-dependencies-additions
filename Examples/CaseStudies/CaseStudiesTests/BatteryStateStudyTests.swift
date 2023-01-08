@@ -44,7 +44,7 @@ final class BatteryStatusStudyTests: XCTestCase {
       XCTAssertEqual(model.batteryState, .charging)
 
       values.batteryLevel = 0.2
-      model.batteryLevelNotification.post(0)
+      model.batteryLevelNotification.testing.post(0)
       try await Task.sleep(for: .milliseconds(10))
 
       XCTAssertEqual(model.batteryLevel, 0.2)
