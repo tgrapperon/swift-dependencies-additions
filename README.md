@@ -2,6 +2,10 @@
 
 A companion library to Point-Free's [`swift-dependencies`](https://github.com/pointfreeco/swift-dependencies) that provides higher-level dependencies.
 
+[![CI](https://github.com/tgrapperon/swift-dependencies-additions/actions/workflows/ci.yml/badge.svg)](https://github.com/tgrapperon/swift-dependencies-additions/actions/workflows/ci.yml)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Ftgrapperon%2Fswift-dependencies-additions%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/tgrapperon/swift-dependencies-additions)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Ftgrapperon%2Fswift-dependencies-additions%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/tgrapperon/swift-dependencies-additions)
+
 ## On the menu
 [`Dependencies`](https://github.com/pointfreeco/swift-dependencies) is a fantastic library that helps you to manage your dependencies in a similar fashion SwiftUI handles its `Environment`. `Dependencies` already ships with many built-in fundamental dependencies, like `clock`, `uuid`, `date`, etc.
 
