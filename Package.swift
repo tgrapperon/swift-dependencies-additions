@@ -275,7 +275,8 @@ let package = Package(
     .target(
       name: "ProcessInfoDependency",
       dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies")
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        "DependenciesAdditionsBasics",
       ]
     ),
 
