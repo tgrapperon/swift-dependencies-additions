@@ -40,10 +40,13 @@ extension ProcessInfo {
       @ReadOnlyProxy public var userName: String
       @ReadOnlyProxy public var fullUserName: String
       @ReadOnlyProxy public var automaticTerminationSupportEnabled: Bool
-      @FunctionProxy public var beginActivity: @Sendable (ProcessInfo.ActivityOptions, String) -> NSObjectProtocol
+      @FunctionProxy public var beginActivity:
+        @Sendable (ProcessInfo.ActivityOptions, String) -> NSObjectProtocol
       @FunctionProxy public var endActivity: @Sendable (NSObjectProtocol) -> Void
-      @FunctionProxy public var performActivity: @Sendable (ProcessInfo.ActivityOptions, String, @escaping @Sendable () -> Void) -> Void
-      @FunctionProxy public var performExpiringActivity: @Sendable (String, @escaping @Sendable (Bool) -> Void) -> Void
+      @FunctionProxy public var performActivity:
+        @Sendable (ProcessInfo.ActivityOptions, String, @escaping @Sendable () -> Void) -> Void
+      @FunctionProxy public var performExpiringActivity:
+        @Sendable (String, @escaping @Sendable (Bool) -> Void) -> Void
       @FunctionProxy public var disableSuddenTermination: @Sendable () -> Void
       @FunctionProxy public var enableSuddenTermination: @Sendable () -> Void
       @FunctionProxy public var disableAutomaticTermination: @Sendable (String) -> Void

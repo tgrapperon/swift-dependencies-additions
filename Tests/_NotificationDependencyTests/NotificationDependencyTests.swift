@@ -64,13 +64,13 @@ final class NotificationDependencyTests: XCTestCase {
     }
   }
 
-//  func testNotificationCenterUnimplemented() {
-//    @Dependency(\.notificationCenter) var notificationCenter
-//    let _ = __dummySeparator__
-//    XCTExpectFailure {
-//      notificationCenter.post(name: notificationName)
-//    }
-//  }
+  //  func testNotificationCenterUnimplemented() {
+  //    @Dependency(\.notificationCenter) var notificationCenter
+  //    let _ = __dummySeparator__
+  //    XCTExpectFailure {
+  //      notificationCenter.post(name: notificationName)
+  //    }
+  //  }
 
   func testNotificationWithDependency() async throws {
     @Dependency(\.notificationCenter) var notificationCenter

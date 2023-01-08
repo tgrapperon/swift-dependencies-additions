@@ -131,7 +131,7 @@ public struct ReadWriteBinding<Value>: Sendable {
       }
     )
   }
-  
+
   /// Initializes a ``ReadWriteProxy`` from a ``ProxyBindable`` value, like `LockIsolated`.
   public static func bind<Bindable: ProxyBindable>(bindable: Bindable) -> Self
   where Bindable.Value == Value {

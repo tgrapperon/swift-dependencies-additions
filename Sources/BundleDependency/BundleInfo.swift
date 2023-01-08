@@ -22,7 +22,7 @@ public struct BundleInfo: Sendable, ConfigurableProxy {
     @ReadOnlyProxy public var shortVersion: String
     @ReadOnlyProxy public var version: String
   }
-  
+
   @_spi(Internals) public var _implementation: Implementation
 
   /// A unique identifier for a bundle.
