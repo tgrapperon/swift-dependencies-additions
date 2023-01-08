@@ -1,9 +1,9 @@
 import Dependencies
-import DependenciesAdditions
+import DependenciesAdditionsBasics
 import XCTest
 
 @MainActor
-final class DependenciesAdditionsTests: XCTestCase {
+final class DependenciesAdditionsBasicsTests: XCTestCase {
   //  struct Value {
   //    @PP var lp: Int
   //    @ROLP var rolp: Int

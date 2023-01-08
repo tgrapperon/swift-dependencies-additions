@@ -2,7 +2,7 @@ import Dependencies
 import SwiftUI
 import _SwiftUIDependency
 import LoggerDependency
-import DependenciesAdditions
+import DependenciesAdditionsBasics
 
 @MainActor
 final class SwiftUIEnvironmentStudy: ObservableObject {

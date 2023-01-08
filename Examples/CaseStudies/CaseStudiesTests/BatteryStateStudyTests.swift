@@ -1,5 +1,5 @@
 import Dependencies
-import DependenciesAdditions
+import DependenciesAdditionsBasics
 import XCTest
 
 @testable import CaseStudies

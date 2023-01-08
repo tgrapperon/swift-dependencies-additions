@@ -1,5 +1,5 @@
 import Dependencies
-import DependenciesAdditions
+import DependenciesAdditionsBasics
 import SwiftUI
 import UserNotificationsDependency
 import UserNotifications

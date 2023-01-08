@@ -1,6 +1,6 @@
 import Combine
 import Dependencies
-@_spi(Internals) import DependenciesAdditions
+@_spi(Internals) import DependenciesAdditionsBasics
 import Foundation
 import NotificationCenterDependency
 

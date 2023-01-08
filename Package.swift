@@ -35,25 +35,7 @@ let package = Package(
     .watchOS(.v6),
   ],
   products: [
-    .library(
-      name: "DependenciesAdditions",
-      targets: [
-        "ApplicationDependency",
-        "BundleDependency",
-        "CodableDependency",
-        "CompressionDependency",
-        "DataDependency",
-        "DependenciesAdditions",
-        "DeviceDependency",
-        "LoggerDependency",
-        "NotificationCenterDependency",
-        "PathDependency",
-        "PersistentContainerDependency",
-        "ProcessInfoDependency",
-        "UserDefaultsDependency",
-        "UserNotificationsDependency",
-      ]
-    ),
+    .library(name: "DependenciesAdditions", targets: ["DependenciesAdditions"]),
     .library(name: "_AppStorageDependency", targets: ["_AppStorageDependency"]),
     .library(name: "_CoreDataDependency", targets: ["_CoreDataDependency"]),
     .library(name: "_NotificationDependency", targets: ["_NotificationDependency"]),
@@ -69,7 +51,7 @@ let package = Package(
       name: "ApplicationDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesAdditions",
+        "DependenciesAdditionsBasics",
       ]
     ),
     .testTarget(
@@ -83,7 +65,7 @@ let package = Package(
       name: "_AppStorageDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesAdditions",
+        "DependenciesAdditionsBasics",
         "UserDefaultsDependency",
       ]
     ),
@@ -98,7 +80,7 @@ let package = Package(
       name: "BundleDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesAdditions",
+        "DependenciesAdditionsBasics",
       ]
     ),
     .testTarget(
@@ -138,10 +120,11 @@ let package = Package(
       name: "_CoreDataDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesAdditions",
+        "DependenciesAdditionsBasics",
         "PersistentContainerDependency",
       ]
     ),
+
     .testTarget(
       name: "_CoreDataDependencyTests",
       dependencies: [
@@ -152,14 +135,35 @@ let package = Package(
     .target(
       name: "DependenciesAdditions",
       dependencies: [
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        "ApplicationDependency",
+        "BundleDependency",
+        "CodableDependency",
+        "CompressionDependency",
+        "DataDependency",
+        "DependenciesAdditionsBasics",
+        "DeviceDependency",
+        "LoggerDependency",
+        "NotificationCenterDependency",
+        "PathDependency",
+        "PersistentContainerDependency",
+        "ProcessInfoDependency",
+        "UserDefaultsDependency",
+        "UserNotificationsDependency",
+      ]
+    ),
+
+    .target(
+      name: "DependenciesAdditionsBasics",
+      dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies")
       ]
     ),
 
     .testTarget(
-      name: "DependenciesAdditionsTests",
+      name: "DependenciesAdditionsBasicsTests",
       dependencies: [
-        "DependenciesAdditions"
+        "DependenciesAdditionsBasics"
       ]
     ),
 
@@ -174,7 +178,7 @@ let package = Package(
       name: "DataDependencyTests",
       dependencies: [
         "DataDependency",
-        "DependenciesAdditions",
+        "DependenciesAdditionsBasics",
       ]
     ),
 
@@ -182,7 +186,7 @@ let package = Package(
       name: "DeviceDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesAdditions",
+        "DependenciesAdditionsBasics",
       ]
     ),
 
@@ -212,7 +216,7 @@ let package = Package(
       name: "_NotificationDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesAdditions",
+        "DependenciesAdditionsBasics",
         "DeviceDependency",
         "NotificationCenterDependency",
       ]
@@ -235,8 +239,8 @@ let package = Package(
     .testTarget(
       name: "NotificationCenterDependencyTests",
       dependencies: [
+        "DependenciesAdditionsBasics",
         "NotificationCenterDependency",
-        "DependenciesAdditions",
       ]
     ),
 
@@ -271,8 +275,7 @@ let package = Package(
     .target(
       name: "ProcessInfoDependency",
       dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesAdditions",
+        .product(name: "Dependencies", package: "swift-dependencies")
       ]
     ),
 
@@ -294,7 +297,7 @@ let package = Package(
       name: "_SwiftUIDependencyTests",
       dependencies: [
         "_SwiftUIDependency",
-        "DependenciesAdditions",
+        "DependenciesAdditionsBasics",
       ]
     ),
 
@@ -302,7 +305,7 @@ let package = Package(
       name: "UserDefaultsDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesAdditions",
+        "DependenciesAdditionsBasics",
       ]
     ),
 
@@ -317,7 +320,7 @@ let package = Package(
       name: "UserNotificationsDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        "DependenciesAdditions",
+        "DependenciesAdditionsBasics",
       ]
     ),
 
@@ -362,7 +365,7 @@ func define(_ target: String, dependencies: String..., testingDependencies: Stri
 
 func addIndividualProducts() {
   package.products.append(contentsOf: [
-    .library(name: "DependenciesAdditionsBasics", targets: ["DependenciesAdditions"]),
+    .library(name: "DependenciesAdditionsBasics", targets: ["DependenciesAdditionsBasics"]),
     .library(name: "ApplicationDependency", targets: ["ApplicationDependency"]),
     .library(name: "BundleDependency", targets: ["BundleDependency"]),
     .library(name: "CodableDependency", targets: ["CodableDependency"]),

@@ -3,7 +3,7 @@ import CompressionDependency
 import Dependencies
 import LoggerDependency
 import SwiftUI
-import DependenciesAdditions
+import DependenciesAdditionsBasics
 
 struct ProcessedText: Hashable, Codable {
   let text: String
