@@ -1,3 +1,4 @@
+#if os(iOS) || os(watchOS) || os(macOS)
 import Dependencies
 @_spi(Internals) import DependenciesAdditions
 @preconcurrency import UserNotifications
@@ -59,7 +60,7 @@ public struct UserNotificationCenter: Sendable, ConfigurableProxy {
   }
 
   /// Updates the badge count for your app’s icon.
-  @available(iOS 16.0, tvOS 16, macOS 13, *)
+  @available(iOS 16.0, macOS 13, *)
   @available(watchOS, unavailable)
   public func setBadgeCount(_ newBadgeCount: Int) async throws {
     try await self._implementation.setBadgeCount(newBadgeCount)
@@ -236,3 +237,5 @@ extension UserNotificationCenter {
         #"@Dependency(\,.userNotificationCenter.notificationCategories)"#))
   }
 }
+
+#endif

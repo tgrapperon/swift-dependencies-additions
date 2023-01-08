@@ -2,7 +2,7 @@ import Dependencies
 import DeviceDependency
 import XCTest
 
-#if os(iOS) || os(tvOS)
+#if os(iOS) 
   @MainActor
   final class DeviceDependencyTests: XCTestCase {
     @Dependency(\.device) var device

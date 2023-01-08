@@ -3,7 +3,7 @@ import Dependencies
 import Foundation
 import XCTestDynamicOverlay
 
-#if os(iOS) || os(tvOS)
+#if os(iOS)
 @preconcurrency import UIKit
 
 extension Application: DependencyKey {

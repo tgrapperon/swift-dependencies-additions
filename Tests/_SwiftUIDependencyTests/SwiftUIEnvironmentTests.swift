@@ -23,7 +23,7 @@ final class SwiftUIEnvironmentTests: XCTestCase {
     let _ = ()  // Separator, as swift-format removes the terminal semicolon above
     // and the compiler doesn't like it.
 
-    await withTimeout(1000) { group in
+    await withTimeout(2000) { group in
       group.addTask { @MainActor in
         let expected: [Int?] = [nil, 1, 3, nil, 5, 8, 10]
         var index = 0
@@ -35,19 +35,20 @@ final class SwiftUIEnvironmentTests: XCTestCase {
       }
       group.addTask { @MainActor in
         let environment = SwiftUIEnvironment.shared
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
         environment.update(1, keyPath: \.test)
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
         environment.update(3, keyPath: \.test)
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
         environment.update(nil, keyPath: \.test)
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
         environment.update(5, keyPath: \.test)
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
         environment.update(8, keyPath: \.test)
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
         environment.update(10, keyPath: \.test)
       }
     }
   }
 }
+

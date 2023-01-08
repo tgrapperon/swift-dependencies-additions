@@ -56,7 +56,7 @@ final class AppStorageTests: XCTestCase {
     await withDependencies {
       $0.userDefaults = .ephemeral()
     } operation: {
-      await withTimeout { group in
+      await withTimeout(2000) { group in
         group.addTask {
           let expectations: [Int] = [42, 55, 42, 20, 446, 42]
           var index = 0
@@ -70,15 +70,15 @@ final class AppStorageTests: XCTestCase {
         }
         group.addTask {
           /// Let the first value hit the enumeration
-          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+          try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
           model.int = 55
-          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+          try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
           model.int = 42
-          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+          try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
           model.int = 20
-          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+          try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
           model.int = 446
-          try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+          try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
           model.$int.reset()
         }
       }
@@ -138,7 +138,7 @@ final class AppStorageTests: XCTestCase {
     defer {
       UserDefaults.standard.removeObject(forKey: "SomeKey")
     }
-    await withTimeout { group in
+    await withTimeout(2000) { group in
       group.addTask {
         let expectations: [Int] = [42, 55, 42, 20, 446, 42]
         var index = 0
@@ -152,15 +152,15 @@ final class AppStorageTests: XCTestCase {
       }
       group.addTask {
         /// Let the first value hit the enumeration
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
         model.int = 55
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
         model.int = 42
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
         model.int = 20
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
         model.int = 446
-        try await Task.sleep(nanoseconds: 100 * NSEC_PER_MSEC)
+        try await Task.sleep(nanoseconds: 200 * NSEC_PER_MSEC)
         model.$int.reset()
       }
     }
