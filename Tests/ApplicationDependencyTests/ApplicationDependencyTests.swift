@@ -36,12 +36,12 @@ import XCTest
       }
     }
 
-    //    func testFailingTestApplicationIOS_delegate() {
-    //      XCTExpectFailure {
-    //        let _ = application.delegate
-    //      }
-    //    }
-    //
+        func testFailingTestApplicationIOS_delegate() {
+          XCTExpectFailure {
+            let _ = application.delegate
+          }
+        }
+    
     //    func testFailingTestApplicationIOS_isIdleTimerDisabled() {
     //      XCTExpectFailure {
     //        let _ = application.isIdleTimerDisabled
