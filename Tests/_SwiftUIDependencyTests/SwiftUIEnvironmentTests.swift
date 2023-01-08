@@ -2,7 +2,6 @@ import Dependencies
 @_spi(Internals) import DependenciesAdditions
 import SwiftUI
 import XCTest
-
 @_spi(Internals) import _SwiftUIDependency
 
 enum TestEnvironmentKey: EnvironmentKey {
