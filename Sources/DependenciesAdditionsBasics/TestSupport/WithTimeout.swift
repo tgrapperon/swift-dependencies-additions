@@ -1,7 +1,7 @@
 import Foundation
 import XCTestDynamicOverlay
 #if os(Linux)
-let NSEC_PER_MSEC: UInt64 = 1_000_000
+public let NSEC_PER_MSEC: UInt64 = 1_000_000
 #endif
 
 /// Performs an async operation that fails if it hasn't finished before a timeout expires.
