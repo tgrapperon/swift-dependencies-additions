@@ -183,7 +183,7 @@ private extension UserDefaults {
     }
   }
 }
-#if canImport(Foundation.NSUbiquitousKeyValueStore)
+#if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
 @available(iOS 5.0, tvOS 9.0, macOS 10.7, watchOS 9.0, *)
 private extension NSUbiquitousKeyValueStore {
   func contains(key: String) -> Bool {
@@ -280,7 +280,8 @@ extension UserDefaults.Dependency: TestDependencyKey {
     }
   }
 }
-#if canImport(Foundation.NSUbiquitousKeyValueStore)
+
+#if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
 extension UserDefaults.Dependency {
   /// An iCloud-based container of key-value pairs you use to share data among
   /// instances of your app running on a user's connected devices.
