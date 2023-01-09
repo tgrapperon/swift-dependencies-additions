@@ -131,7 +131,7 @@ extension Dependency.Notification {
     line: UInt = #line
   )
   where
-  Value == Notifications.StreamOf<Notifications.System, Foundation.Notification>
+    Value == Notifications.StreamOf<Notifications.System, Foundation.Notification>
   {
     self.init(
       Notifications._TaggedNotificationOf<Notifications.System, Foundation.Notification>(
@@ -514,7 +514,7 @@ extension Notifications.StreamOf where Tag == Notifications.User {
   }
 }
 
-extension Notifications.StreamOf{
+extension Notifications.StreamOf {
   /// Access testing functions
   public var testing: Testing {
     .init(stream: self)
