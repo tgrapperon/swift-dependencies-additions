@@ -28,11 +28,11 @@ extension Dependency.Notification {
   /// ``Notifications/NotificationOf`` value.
   /// - Parameters:
   ///   - notification: A fully formed ``Notifications/NotificationOf`` value.
-  public init<T>(
-    _ notification: Notifications.NotificationOf<T>,
+  public init<Tag, T>(
+    _ notification: Notifications._TaggedNotificationOf<Tag, T>,
     file: StaticString = #filePath,
     line: UInt = #line
-  ) where Value == Notifications.StreamOf<T> {
+  ) where Value == Notifications.StreamOf<Tag, T> {
     self.stream = {
       notification.stream(
         notificationCenter: $0,
@@ -47,13 +47,13 @@ extension Dependency.Notification {
   /// ``Notifications/MainActorNotificationOf`` value.
   /// - Parameters:
   ///   - notification: A fully formed ``Notifications/MainActorNotificationOf`` value.
-  public init<T>(
-    _ notification: Notifications.MainActorNotificationOf<T>,
+  public init<Tag, T>(
+    _ notification: Notifications._TaggedMainActorNotificationOf<Tag, T>,
     file: StaticString = #filePath,
     line: UInt = #line
   )
   where
-    Value == Notifications.MainActorStreamOf<T>
+    Value == Notifications.MainActorStreamOf<Tag, T>
   {
     self.stream = {
       notification.stream(
@@ -74,11 +74,11 @@ extension Dependency.Notification {
   /// ```
   /// - Parameters:
   ///   - notification: A fully formed ``Notifications/NotificationOf`` value.
-  public init<T>(
-    _ notification: KeyPath<Notifications, Notifications.NotificationOf<T>>,
+  public init<Tag, T>(
+    _ notification: KeyPath<Notifications, Notifications._TaggedNotificationOf<Tag, T>>,
     file: StaticString = #filePath,
     line: UInt = #line
-  ) where Value == Notifications.StreamOf<T> {
+  ) where Value == Notifications.StreamOf<Tag, T> {
     let notification = Notifications()[keyPath: notification]
     self.stream = {
       notification.stream(
@@ -99,13 +99,13 @@ extension Dependency.Notification {
   /// ```
   /// - Parameters:
   ///   - notification: A fully formed ``Notifications/MainActorNotificationOf`` value.
-  public init<T>(
-    _ notification: KeyPath<Notifications, Notifications.MainActorNotificationOf<T>>,
+  public init<Tag, T>(
+    _ notification: KeyPath<Notifications, Notifications._TaggedMainActorNotificationOf<Tag, T>>,
     file: StaticString = #filePath,
     line: UInt = #line
   )
   where
-    Value == Notifications.MainActorStreamOf<T>
+    Value == Notifications.MainActorStreamOf<Tag, T>
   {
     let notification = Notifications()[keyPath: notification]
     self.stream = {
@@ -131,10 +131,10 @@ extension Dependency.Notification {
     line: UInt = #line
   )
   where
-    Value == Notifications.StreamOf<Foundation.Notification>
+  Value == Notifications.StreamOf<Notifications.System, Foundation.Notification>
   {
     self.init(
-      Notifications.NotificationOf<Foundation.Notification>(
+      Notifications._TaggedNotificationOf<Notifications.System, Foundation.Notification>(
         name,
         object: object,
         placeholder: nil,
@@ -161,24 +161,7 @@ extension Dependency.Notification {
 public struct Notifications {}
 
 extension Notifications {
-  /// Creates a ``Notifications/NotificationOf`` value that describes a bidirectional and typed
-  /// `Notification`.
-  ///
-  /// If you define these values globally as read-only properties of the ``Notifications`` value,
-  /// you can directly refer to it by `KeyPath` when using the `@Dependency.Notification`
-  /// property wrapper:
-  ///
-  /// ```swift
-  /// extension Notification {
-  ///   public var userDidTakeScreenshot: NotificationOf<Void> {
-  ///     .init(UIApplication.userDidTakeScreenshotNotification)
-  ///   }
-  /// }
-  ///
-  /// // And then:
-  /// @Dependency.Notification(\.userDidTakeScreenshot) var screenshots
-  /// ```
-  public struct NotificationOf<Value>: Sendable {
+  public struct _TaggedNotificationOf<Tag, Value>: Sendable {
     let name: Notification.Name
     let object: UncheckedSendable<NSObject>?
     let _extract: @Sendable (Notification) async -> Value?
@@ -221,7 +204,7 @@ extension Notifications {
 }
 
 extension Notifications {
-  public struct MainActorNotificationOf<Value: Sendable>: Sendable {
+  public struct _TaggedMainActorNotificationOf<Tag, Value: Sendable>: Sendable {
     let name: Notification.Name
     let object: UncheckedSendable<NSObject>?
     let _extract: @Sendable (Notification) -> Value?
@@ -450,26 +433,21 @@ extension Notifications {
   ///
   /// This `AsyncSequence` can be enumerated by multiple clients, as each notification will be
   /// delivered to all of them.
-  public struct StreamOf<Value>: Sendable {
+  public struct StreamOf<Tag, Value>: Sendable {
     private let post: @Sendable (Value, StaticString, UInt) async -> Void
     private let stream: @Sendable () -> AsyncStream<Value>
-    private let notification: NotificationOf<Value>
+    private let notification: _TaggedNotificationOf<Tag, Value>
     @Dependency(\.notificationCenter) var notificationCenter
     @Dependency(\.self) var dependencies
 
     init(
-      _ notification: NotificationOf<Value>,
+      _ notification: _TaggedNotificationOf<Tag, Value>,
       post: @escaping @Sendable (Value, StaticString, UInt) async -> Void,
       stream: @escaping @Sendable () -> AsyncStream<Value>
     ) {
       self.notification = notification
       self.post = post
       self.stream = stream
-    }
-
-    /// Embeds a `Value` in a `Notification` that is then posted to the `NotificationCenter`.
-    public func post(_ value: Value, file: StaticString = #filePath, line: UInt = #line) async {
-      await self.post(value, file, line)
     }
 
     /// Returns a new ``Notifications/StreamOf`` where the `DependenciesValues` used to extract or
@@ -508,14 +486,14 @@ extension Notifications {
     ///
     /// Task {
     ///   DependencyValue.withValue(\.timeZone, TimeZone(secondsFromGMT: 0)) { // (context "B")
-    ///     for await timeZone in timeZoneNotification.withCurrentDependencyValues() {
+    ///     for await timeZone in timeZoneNotification.withCurrentDependencies() {
     ///       // `timeZone` was generated using the `\.timeZone` dependency resolved in
     ///       // the context "B", that is, using `TimeZone(secondsFromGMT: 0)`.
     ///     }
     ///   }
     /// }
     /// ```
-    public func withCurrentDependencyValues(file: StaticString = #filePath, line: UInt = #line)
+    public func withCurrentDependencies(file: StaticString = #filePath, line: UInt = #line)
       -> Self
     {
       @Dependency(\.self) var dependencies
@@ -529,33 +507,48 @@ extension Notifications {
   }
 }
 
+extension Notifications.StreamOf where Tag == Notifications.User {
+  /// Embeds a `Value` in a `Notification` that is then posted to the `NotificationCenter`.
+  public func post(_ value: Value, file: StaticString = #filePath, line: UInt = #line) async {
+    await self.post(value, file, line)
+  }
+}
+
+extension Notifications.StreamOf{
+  /// Access testing functions
+  public var testing: Testing {
+    .init(stream: self)
+  }
+  public struct Testing: Sendable {
+    let stream: Notifications.StreamOf<Tag, Value>
+    /// Embeds a `Value` in a `Notification` that is then posted to the `NotificationCenter`.
+    public func post(_ value: Value, file: StaticString = #filePath, line: UInt = #line) async {
+      await stream.post(value, file, line)
+    }
+  }
+}
+
 extension Notifications {
   /// An `AsyncSequence` of a ``MainActorStreamOf``'s `Value` that can be enumerated, and to which
   /// you can also post `Value`s
   ///
   /// This `AsyncSequence` can be enumerated by multiple clients, as each notification will be
   /// delivered to all of them.
-  public struct MainActorStreamOf<Value: Sendable>: Sendable {
+  public struct MainActorStreamOf<Tag, Value: Sendable>: Sendable {
     private let post: @MainActor @Sendable (Value, StaticString, UInt) -> Void
     private let stream: @MainActor @Sendable () -> AsyncStream<Value>
-    private let notification: MainActorNotificationOf<Value>
+    private let notification: _TaggedMainActorNotificationOf<Tag, Value>
     @Dependency(\.notificationCenter) var notificationCenter
     @Dependency(\.self) var dependencies
 
     init(
-      _ notification: MainActorNotificationOf<Value>,
+      _ notification: _TaggedMainActorNotificationOf<Tag, Value>,
       post: @escaping @MainActor @Sendable (Value, StaticString, UInt) -> Void,
       stream: @escaping @MainActor @Sendable () -> AsyncStream<Value>
     ) {
       self.notification = notification
       self.post = post
       self.stream = stream
-    }
-
-    /// Embeds a `Value` in a `Notification` that is then posted to the `NotificationCenter`.
-    @MainActor
-    public func post(_ value: Value, file: StaticString = #filePath, line: UInt = #line) {
-      self.post(value, file, line)
     }
 
     /// Returns a new ``Notifications/MainActorStreamOf`` where the `DependenciesValues` used to extract or
@@ -594,14 +587,14 @@ extension Notifications {
     ///
     /// Task {
     ///   DependencyValue.withValue(\.timeZone, TimeZone(secondsFromGMT: 0)) { // (context "B")
-    ///     for await timeZone in timeZoneNotification.withCurrentDependencyValues() {
+    ///     for await timeZone in timeZoneNotification.withCurrentDependencies() {
     ///       // `timeZone` was generated using the `\.timeZone` dependency resolved in
     ///       // the context "B", that is, using `TimeZone(secondsFromGMT: 0)`.
     ///     }
     ///   }
     /// }
     /// ```
-    public func withCurrentDependencyValues(file: StaticString = #filePath, line: UInt = #line)
+    public func withCurrentDependencies(file: StaticString = #filePath, line: UInt = #line)
       -> Self
     {
       @Dependency(\.self) var dependencies
@@ -611,6 +604,29 @@ extension Notifications {
         file: file,
         line: line
       )
+    }
+  }
+}
+
+extension Notifications.MainActorStreamOf where Tag == Notifications.User {
+  /// Embeds a `Value` in a `Notification` that is then posted to the `NotificationCenter`.
+  @MainActor
+  public func post(_ value: Value, file: StaticString = #filePath, line: UInt = #line) {
+    self.post(value, file, line)
+  }
+}
+
+extension Notifications.MainActorStreamOf {
+  /// Access testing functions
+  public var testing: Testing {
+    .init(stream: self)
+  }
+  public struct Testing: Sendable {
+    let stream: Notifications.MainActorStreamOf<Tag, Value>
+    /// Embeds a `Value` in a `Notification` that is then posted to the `NotificationCenter`.
+    @MainActor
+    public func post(_ value: Value, file: StaticString = #filePath, line: UInt = #line) {
+      stream.post(value, file, line)
     }
   }
 }
@@ -641,10 +657,10 @@ extension Notifications.NotificationOf {
   func stream(
     notificationCenter: NotificationCenter.Dependency, contextualDependencies: DependencyValues,
     file: StaticString, line: UInt
-  ) -> Notifications.StreamOf<Value> {
+  ) -> Notifications.StreamOf<Tag, Value> {
     var notification = self
     notification.contextualDependencies = contextualDependencies
-    return Notifications.StreamOf<Value>(notification) { [notification] value, file, line in
+    return Notifications.StreamOf(notification) { [notification] value, file, line in
       var nsNotification = notification.notification
       await notification.embed(value, into: &nsNotification)
       notificationCenter.post(
@@ -675,7 +691,7 @@ extension Notifications.MainActorNotificationOf {
   func stream(
     notificationCenter: NotificationCenter.Dependency, contextualDependencies: DependencyValues,
     file: StaticString, line: UInt
-  ) -> Notifications.MainActorStreamOf<Value> {
+  ) -> Notifications.MainActorStreamOf<Tag, Value> {
     var notification = self
     notification.contextualDependencies = contextualDependencies
     return Notifications.MainActorStreamOf(notification) { [notification] value, file, line in
