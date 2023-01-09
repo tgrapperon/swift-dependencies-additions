@@ -46,15 +46,15 @@ public struct Compressor: Sendable {
   /// Compresses the provided data synchronously, using the provided algorithm.
   public func callAsFunction(
     _ data: Data,
-    using algorithm: Algorithm = .zlib
+    using algorithm:  @Sendable @autoclosure () -> Algorithm = .zlib
   ) throws -> Data {
-    try self.compress(data, algorithm)
+    try self.compress(data, algorithm())
   }
   /// Compresses the provided data asynchronously, using the provided algorithm.
   public func callAsFunction(
     _ data: Data,
-    using algorithm: Algorithm = .zlib
+    using algorithm: @Sendable @autoclosure () -> Algorithm = .zlib
   ) async throws -> Data {
-    try await self.compressAsync(data, algorithm)
+    try await self.compressAsync(data, algorithm())
   }
 }
