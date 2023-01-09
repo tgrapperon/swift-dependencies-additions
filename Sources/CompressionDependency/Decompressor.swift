@@ -49,16 +49,16 @@ public struct Decompressor: Sendable {
   /// Decompresses the provided data synchronously, using the provided algorithm.
   public func callAsFunction(
     _ data: Data,
-    using algorithm: Algorithm = .zlib
+    using algorithm: @Sendable @autoclosure () -> Algorithm = .zlib
   ) throws -> Data {
-    try self.decompress(data, algorithm)
+    try self.decompress(data, algorithm())
   }
 
   /// Decompresses the provided data asynchronously, using the provided algorithm.
   public func callAsFunction(
     _ data: Data,
-    using algorithm: Algorithm = .zlib
+    using algorithm: @Sendable @autoclosure () -> Algorithm = .zlib
   ) async throws -> Data {
-    try await self.decompressAsync(data, algorithm)
+    try await self.decompressAsync(data, algorithm())
   }
 }

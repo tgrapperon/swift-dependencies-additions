@@ -2,10 +2,11 @@ import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
 import NotificationCenterDependency
 import XCTest
-
 @MainActor
 final class NotificationCenterDependencyTests: XCTestCase {
+  nonisolated
   func notificationName1() -> Notification.Name { .init("NotificationCenterDependencyTests_1") }
+  nonisolated
   func notificationName2() -> Notification.Name { .init("NotificationCenterDependencyTests_2") }
 
   // TODO: Strenghten this
@@ -20,7 +21,10 @@ final class NotificationCenterDependencyTests: XCTestCase {
       await withTimeout { group in
         group.addTask {
           var count = 0
-          for await notification in notificationCenter.notifications(named: n1) {
+          let notifications = await MainActor.run{
+            UncheckedSendable(notificationCenter.notifications(named: n1))
+          }.value
+          for await notification in notifications {
             XCTAssertEqual(notification.name, n1)
             count += 1
             if count == 3 { break }
