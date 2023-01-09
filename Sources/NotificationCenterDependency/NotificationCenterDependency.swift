@@ -67,7 +67,9 @@ extension NotificationCenter {
       @_inheritActorContext removeObserver: @escaping @Sendable (
         AnyObject, NSNotification.Name?, AnyObject?, StaticString, UInt
       ) -> Void,
-      @_inheritActorContext publisher: @escaping @Sendable (Notification.Name, AnyObject?, StaticString, UInt) ->
+      @_inheritActorContext publisher: @escaping @Sendable (
+        Notification.Name, AnyObject?, StaticString, UInt
+      ) ->
         AnyPublisher<Notification, Never>
     ) {
       self._post = post

@@ -2,12 +2,15 @@ import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
 import NotificationCenterDependency
 import XCTest
+
 @MainActor
 final class NotificationCenterDependencyTests: XCTestCase {
   nonisolated
-  func notificationName1() -> Notification.Name { .init("NotificationCenterDependencyTests_1") }
+    func notificationName1() -> Notification.Name
+  { .init("NotificationCenterDependencyTests_1") }
   nonisolated
-  func notificationName2() -> Notification.Name { .init("NotificationCenterDependencyTests_2") }
+    func notificationName2() -> Notification.Name
+  { .init("NotificationCenterDependencyTests_2") }
 
   // TODO: Strenghten this
   func testNotificationCenterStream() async throws {
@@ -21,7 +24,7 @@ final class NotificationCenterDependencyTests: XCTestCase {
       await withTimeout { group in
         group.addTask {
           var count = 0
-          let notifications = await MainActor.run{
+          let notifications = await MainActor.run {
             UncheckedSendable(notificationCenter.notifications(named: n1))
           }.value
           for await notification in notifications {

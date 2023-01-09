@@ -121,7 +121,8 @@ public struct ReadWriteBinding<Value>: Sendable {
     self.set = getSet.1
   }
   /// Initializes a ``ReadWriteProxy`` from a ``ProxyBindable`` value, like `LockIsolated`.
-  public init<Bindable: ProxyBindable & Sendable>(_ bindable: Bindable) where Bindable.Value == Value {
+  public init<Bindable: ProxyBindable & Sendable>(_ bindable: Bindable)
+  where Bindable.Value == Value {
     self.init(
       get: {
         bindable.getValue()
@@ -299,7 +300,8 @@ public struct MainActorReadWriteBinding<Value>: Sendable {
     self.set = getSet.1
   }
 
-  public init<Bindable: ProxyBindable & Sendable>(_ bindable: Bindable) where Bindable.Value == Value {
+  public init<Bindable: ProxyBindable & Sendable>(_ bindable: Bindable)
+  where Bindable.Value == Value {
     self.init(
       get: {
         bindable.getValue()
