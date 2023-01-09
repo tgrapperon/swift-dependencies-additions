@@ -1,3 +1,4 @@
+#if canImport(Security)
 import Dependencies
 import Security
 
@@ -27,3 +28,4 @@ public struct SecureRandomNumberGenerator: RandomNumberGenerator, Sendable {
     return result
   }
 }
+#endif
