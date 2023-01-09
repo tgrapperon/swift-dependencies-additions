@@ -121,8 +121,8 @@ The library exposes two dependencies to help with coding or decoding your `Codab
 @Dependency(\.decode) var decode
 
 struct Point: Codable {
- var x: Double
- var y: Double
+  var x: Double
+  var y: Double
 }
 
 let point = Point(x: 12, y: 35)
@@ -226,21 +226,21 @@ The projected value is an `AsyncStream<Value>` of this user preference's values.
 @Dependency.AppStorage("isSoundEnabled") var isSoundEnabled: Bool = false
 
 for await isSoundEnabled in $isSoundEnabled {
- await isSoundEnabled ? audioEngine.start() : audioEngine.stop()
+  await isSoundEnabled ? audioEngine.start() : audioEngine.stop()
 }
 ```
 ### Notifications
 This dependency allows exposing `Notification`s as typed `AsyncSequence`s.
 ```swift
 extension Notifications {
- /// A typed `Notification` that publishes the current device's battery level.
- @MainActor
- public var batterLevelDidChange: NotificationOf<Float> {
-  .init(UIDevice.batteryLevelDidChangeNotification) { notification in
-   @Dependency(\.device.batteryLevel) var level;
-   return level
+  /// A typed `Notification` that publishes the current device's battery level.
+  @MainActor
+  public var batterLevelDidChange: SystemNotificationOf<Float> {
+    .init(UIDevice.batteryLevelDidChangeNotification) { notification in
+      @Dependency(\.device.batteryLevel) var level;
+      return level
+    }
   }
- }
 }
 ```
 You can then expose this notification with a dedicated property wrapper:
@@ -250,9 +250,9 @@ You can then expose this notification with a dedicated property wrapper:
 The exposed value is an async sequence of `Float` representing the `batteryLevel`:
 ```swift
 for await level in batteryLevel {
- if level < 0.2 {
-  self.isLowPowerModeEnabled = true
- }
+  if level < 0.2 {
+    self.isLowPowerModeEnabled = true
+  }
 }
 ```
 ### SwiftUI Environment
@@ -265,8 +265,8 @@ Then, in any `View`, you use the `.observeEnvironmentAsDependency(\.colorScheme)
 bubble up this value into the model:
 ```swift
 HStack { … }
- .observeEnvironmentAsDependency(\.colorScheme)
- .observeEnvironmentAsDependency(\.dismiss)
+  .observeEnvironmentAsDependency(\.colorScheme)
+  .observeEnvironmentAsDependency(\.dismiss)
 ```
 In the example above, `self.colorScheme` is a `ColorScheme?`, and `self.dismissAction` is a 
 `DismissAction?`. Both are optional because they're conditioned by the existence of the `View`, and
@@ -275,7 +275,7 @@ You can observe their value through the projected value which is an `AsyncSequen
 value:
 ```swift
 for await colorScheme in self.$colorScheme.compactMap{ $0 }.dropFirst() {
- self.logger.info("ColorScheme did change: \(colorScheme)")
+  self.logger.info("ColorScheme did change: \(colorScheme)")
 }
 ```
 ### Core Data (WIP)
@@ -297,7 +297,7 @@ https://github.com/tgrapperon/swift-dependencies-additions
 If you want to use DependenciesAdditions in a SwiftPM project, it's as simple as adding it to your Package.swift:
 
 dependencies: [
- .package(url: "https://github.com/tgrapperon/swift-dependencies-additions", from: "0.1.0")
+  .package(url: "https://github.com/tgrapperon/swift-dependencies-additions", from: "0.1.0")
 ]
 
 ## License
