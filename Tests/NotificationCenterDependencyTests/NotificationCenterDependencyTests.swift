@@ -54,7 +54,7 @@ final class NotificationCenterDependencyTests: XCTestCase {
     }
   }
 
-  #if DEBUG
+  #if DEBUG && os(macOS)
     func testNotificationCenterFailure1() {
       @Dependency(\.notificationCenter) var notificationCenter
       let _ = __dummySeparator__

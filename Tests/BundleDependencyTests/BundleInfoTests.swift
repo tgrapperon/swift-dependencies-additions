@@ -26,7 +26,7 @@ final class BundleInfoTests: XCTestCase {
     }
   }
 
-  #if DEBUG
+  #if DEBUG && os(macOS)
     func testFailingTestBundleInfo_bundleIdentifier() {
       XCTExpectFailure {
         _ = bundleInfo.bundleIdentifier

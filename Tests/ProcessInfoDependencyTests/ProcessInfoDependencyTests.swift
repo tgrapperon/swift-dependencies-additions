@@ -14,7 +14,7 @@ final class ProcessInfoDependencyTests: XCTestCase {
       XCTAssertEqual(processInfo.processorCount, 128)
     }
   }
-  #if DEBUG
+  #if DEBUG && os(macOS)
     func testFailingTestProcessInfo_environment() {
       XCTExpectFailure {
         let _ = processInfo.environment
