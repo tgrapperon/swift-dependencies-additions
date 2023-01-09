@@ -1,3 +1,4 @@
+#if canImport(Compression)
 import CompressionDependency
 import Dependencies
 import XCTest
@@ -20,3 +21,4 @@ final class CompressionDependencyTests: XCTestCase {
     }
   }
 }
+#endif
