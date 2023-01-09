@@ -1,3 +1,4 @@
+#if canImport(CoreData)
 @preconcurrency import CoreData
 @_exported import Dependencies
 @_exported import DependenciesAdditionsBasics
@@ -617,3 +618,4 @@ extension Array {
     }
   }
 }
+#endif

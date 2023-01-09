@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import Combine
 @_exported import Dependencies
 @_spi(Internals)@_exported import DependenciesAdditionsBasics
@@ -171,3 +172,4 @@ extension Equatable {
     }
   }
 }
+#endif

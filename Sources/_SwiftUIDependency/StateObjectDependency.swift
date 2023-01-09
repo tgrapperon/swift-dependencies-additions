@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import Dependencies
 import SwiftUI
 
@@ -34,3 +35,4 @@ extension StateObject {
     }
   }
 }
+#endif
