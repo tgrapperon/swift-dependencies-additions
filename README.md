@@ -68,6 +68,10 @@ In each module you need access to these dependencies, add:
   ]
 ),
 ```
+This gives access to all non-underscored dependencies. Experimental dependencies need to be imported individually. For example:
+```swift
+.product(name: "_AppStorage", package: "swift-dependencies-additions")
+```
 
 ## A quick tour of the dependencies
 
@@ -294,13 +298,16 @@ If you want to contribute a dependency, feel free to open a thread in the discus
 ## Installation
 
 You can add DependenciesAdditions to an Xcode project by adding it to your project as a package.
-
+```
 https://github.com/tgrapperon/swift-dependencies-additions
-If you want to use DependenciesAdditions in a SwiftPM project, it's as simple as adding it to your Package.swift:
+```
 
+If you want to use DependenciesAdditions in a SwiftPM project, it's as simple as adding it to your Package.swift:
+```swift
 dependencies: [
   .package(url: "https://github.com/tgrapperon/swift-dependencies-additions", from: "0.1.0")
 ]
+```
 
 ## License
 This library is released under the MIT license. See LICENSE for details.
