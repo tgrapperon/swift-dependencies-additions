@@ -1,3 +1,4 @@
+#if !os(Linux) // TODO: Scope better for Linux
 import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
 import Foundation
@@ -449,3 +450,4 @@ extension ProcessInfo.Value {
     )
   }
 }
+#endif

@@ -1,3 +1,4 @@
+#if !os(Linux)
 import Dependencies
 import ProcessInfoDependency
 import XCTest
@@ -157,3 +158,4 @@ final class ProcessInfoDependencyTests: XCTestCase {
     #endif
   #endif
 }
+#endif
