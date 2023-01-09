@@ -30,3 +30,13 @@ jobs:
         run: CONFIG=${{ matrix.config }} make build-all-platforms
       - name: Build for library evolution
         run: make build-for-library-evolution
+        
+  ubuntu-tests:
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run tests
+        run: make test-swift
