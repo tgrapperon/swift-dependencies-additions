@@ -3,7 +3,6 @@ import Dependencies
 import ProcessInfoDependency
 import XCTest
 
-@MainActor
 final class ProcessInfoDependencyTests: XCTestCase {
   @Dependency(\.processInfo) var processInfo
 

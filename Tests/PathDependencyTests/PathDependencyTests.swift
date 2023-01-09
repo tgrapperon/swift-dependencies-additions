@@ -2,7 +2,6 @@ import Dependencies
 import PathDependency
 import XCTest
 
-@MainActor
 final class PathDependencyTests: XCTestCase {
   @Dependency(\.path) var path
 

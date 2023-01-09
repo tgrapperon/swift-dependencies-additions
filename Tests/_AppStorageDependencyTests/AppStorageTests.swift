@@ -4,7 +4,6 @@ import UserDefaultsDependency
 import XCTest
 import _AppStorageDependency
 
-@MainActor
 final class AppStorageTests: XCTestCase {
   func testAppStorage() {
     enum RawRep: String {

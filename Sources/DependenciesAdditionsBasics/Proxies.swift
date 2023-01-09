@@ -455,8 +455,7 @@ public struct AnyProxyBindable<Value: Sendable>: ProxyBindable {
   public var setValue: @Sendable (Value) -> Void
 }
 
-public protocol _Sendable: Sendable {}
-extension LockIsolated: ProxyBindable where Value: _Sendable {
+extension LockIsolated: ProxyBindable {
   public var getValue: @Sendable () -> Value {
     { self.value }
   }

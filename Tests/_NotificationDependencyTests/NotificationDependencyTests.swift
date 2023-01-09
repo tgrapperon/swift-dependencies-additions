@@ -30,7 +30,6 @@ extension Notifications {
   }
 }
 
-@MainActor
 final class NotificationDependencyTests: XCTestCase {
   func testLiveNotifications() async throws {
     @Dependency.Notification(\.testNotificationWithBidirectionalTransform) var testNotification

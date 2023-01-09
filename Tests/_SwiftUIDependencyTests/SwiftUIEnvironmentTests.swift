@@ -16,8 +16,8 @@ extension EnvironmentValues {
   }
 }
 
-@MainActor
 final class SwiftUIEnvironmentTests: XCTestCase {
+  @MainActor
   func testSwiftUIEnvironment() async throws {
     @Dependency.Environment(\.test) var testValue
     let _ = ()  // Separator, as swift-format removes the terminal semicolon above

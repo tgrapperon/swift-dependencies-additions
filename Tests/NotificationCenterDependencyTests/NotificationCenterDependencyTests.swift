@@ -3,7 +3,7 @@ import Dependencies
 import NotificationCenterDependency
 import XCTest
 #if canImport(Combine) && canImport(ObjectiveC)
-@MainActor
+
 final class NotificationCenterDependencyTests: XCTestCase {
   nonisolated
     func notificationName1() -> Notification.Name
@@ -24,10 +24,7 @@ final class NotificationCenterDependencyTests: XCTestCase {
       await withTimeout { group in
         group.addTask {
           var count = 0
-          let notifications = await MainActor.run {
-            UncheckedSendable(notificationCenter.notifications(named: n1))
-          }.value
-          for await notification in notifications {
+          for await notification in notificationCenter.notifications(named: n1) {
             XCTAssertEqual(notification.name, n1)
             count += 1
             if count == 3 { break }
@@ -37,18 +34,22 @@ final class NotificationCenterDependencyTests: XCTestCase {
           // Let the subscription above be active
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC)
           // This hops and allows notifications to be delivered
-          await MainActor.run {
+          await Task {
+            await Task.yield()
             notificationCenter.post(name: n1)
-          }
-          await MainActor.run {
+          }.value
+          await Task {
+            await Task.yield()
             notificationCenter.post(name: n2)
-          }
-          await MainActor.run {
+          }.value
+          await Task {
+            await Task.yield()
             notificationCenter.post(name: n1)
-          }
-          await MainActor.run {
+          }.value
+          await Task {
+            await Task.yield()
             notificationCenter.post(name: n1)
-          }
+          }.value
         }
       }
     }

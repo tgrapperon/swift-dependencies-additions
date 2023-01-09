@@ -3,7 +3,6 @@ import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
 import XCTest
 
-@MainActor
 final class DataDependencyTests: XCTestCase {
 
   func testEphemeralRoundTripping() throws {

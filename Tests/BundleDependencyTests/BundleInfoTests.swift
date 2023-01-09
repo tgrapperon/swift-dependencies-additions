@@ -2,7 +2,6 @@ import BundleDependency
 import Dependencies
 import XCTest
 
-@MainActor
 final class BundleInfoTests: XCTestCase {
   @Dependency(\.bundleInfo) var bundleInfo
 
