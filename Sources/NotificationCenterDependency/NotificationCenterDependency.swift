@@ -1,10 +1,8 @@
+#if canImport(Combine) && canImport(ObjectiveC)
+@preconcurrency import Combine
 import Dependencies
 import Foundation
 import XCTestDynamicOverlay
-
-#if canImport(Combine)
-  @preconcurrency import Combine
-#endif
 
 extension DependencyValues {
   /// An abstraction of a `NotificationCenter`.
@@ -29,34 +27,20 @@ extension NotificationCenter.Dependency {
   /// An unimplemented `NotificationCenter` that fails during testing when its endpoints are
   /// reached.
   public static var unimplemented: Self {
-    #if canImport(Combine)
-      .init(
-        post: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.notificationCenter.post)"#,
-          placeholder: { @Sendable _, _, _, _, _ in () }),
-        addObserver: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.notificationCenter.addObserver)"#,
-          placeholder: { @Sendable _, _, _, _, _, _ in () }),
-        removeObserver: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.notificationCenter.removeObserver)"#,
-          placeholder: { @Sendable _, _, _, _, _ in () }),
-        publisher: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.notificationCenter.publisher)"#,
-          placeholder: { @Sendable _, _, _, _ in Empty().eraseToAnyPublisher() })
-      )
-    #else
-      .init(
-        post: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.notificationCenter.post)"#,
-          placeholder: { @Sendable _, _, _, _, _ in () }),
-        addObserver: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.notificationCenter.addObserver)"#,
-          placeholder: { @Sendable _, _, _, _, _, _ in () }),
-        removeObserver: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.notificationCenter.removeObserver)"#,
-          placeholder: { @Sendable _, _, _, _, _ in () })
-      )
-    #endif
+    .init(
+      post: XCTestDynamicOverlay.unimplemented(
+        #"@Dependency(\.notificationCenter.post)"#,
+        placeholder: { @Sendable _, _, _, _, _ in () }),
+      addObserver: XCTestDynamicOverlay.unimplemented(
+        #"@Dependency(\.notificationCenter.addObserver)"#,
+        placeholder: { @Sendable _, _, _, _, _, _ in () }),
+      removeObserver: XCTestDynamicOverlay.unimplemented(
+        #"@Dependency(\.notificationCenter.removeObserver)"#,
+        placeholder: { @Sendable _, _, _, _, _ in () }),
+      publisher: XCTestDynamicOverlay.unimplemented(
+        #"@Dependency(\.notificationCenter.publisher)"#,
+        placeholder: { @Sendable _, _, _, _ in Empty().eraseToAnyPublisher() })
+    )
   }
 }
 
@@ -66,54 +50,34 @@ extension NotificationCenter {
     let _post:
       @Sendable (NSNotification.Name, AnyObject?, [AnyHashable: Any]?, StaticString, UInt) -> Void
     let _addObserver:
-      @Sendable (AnyObject, Selector, NSNotification.Name?, AnyObject?, StaticString, UInt) ->
-        Void
+      @Sendable (AnyObject, Selector, NSNotification.Name?, AnyObject?, StaticString, UInt) -> Void
     let _removeObserver:
       @Sendable (AnyObject, NSNotification.Name?, AnyObject?, StaticString, UInt) -> Void
-    #if canImport(Combine)
-      let _publisher:
-        @Sendable (Notification.Name, AnyObject?, StaticString, UInt) -> AnyPublisher<
-          Notification, Never
-        >
-    #endif
-    #if canImport(Combine)
-      init(
-        @_inheritActorContext post: @escaping @Sendable (
-          NSNotification.Name, AnyObject?, [AnyHashable: Any]?, StaticString, UInt
-        ) -> Void,
-        @_inheritActorContext addObserver: @escaping @Sendable (
-          AnyObject, Selector, NSNotification.Name?, AnyObject?, StaticString, UInt
-        ) -> Void,
-        @_inheritActorContext removeObserver: @escaping @Sendable (
-          AnyObject, NSNotification.Name?, AnyObject?, StaticString, UInt
-        ) -> Void,
-        @_inheritActorContext publisher: @escaping @Sendable (
-          Notification.Name, AnyObject?, StaticString, UInt
-        ) ->
-          AnyPublisher<Notification, Never>
-      ) {
-        self._post = post
-        self._addObserver = addObserver
-        self._removeObserver = removeObserver
-        self._publisher = publisher
-      }
-    #else
-      init(
-        @_inheritActorContext post: @escaping @Sendable (
-          NSNotification.Name, AnyObject?, [AnyHashable: Any]?, StaticString, UInt
-        ) -> Void,
-        @_inheritActorContext addObserver: @escaping @Sendable (
-          AnyObject, Selector, NSNotification.Name?, AnyObject?, StaticString, UInt
-        ) -> Void,
-        @_inheritActorContext removeObserver: @escaping @Sendable (
-          AnyObject, NSNotification.Name?, AnyObject?, StaticString, UInt
-        ) -> Void
-      ) {
-        self._post = post
-        self._addObserver = addObserver
-        self._removeObserver = removeObserver
-      }
-    #endif
+    let _publisher:
+      @Sendable (Notification.Name, AnyObject?, StaticString, UInt) -> AnyPublisher<
+        Notification, Never
+      >
+
+    init(
+      @_inheritActorContext post: @escaping @Sendable (
+        NSNotification.Name, AnyObject?, [AnyHashable: Any]?, StaticString, UInt
+      ) -> Void,
+      @_inheritActorContext addObserver: @escaping @Sendable (
+        AnyObject, Selector, NSNotification.Name?, AnyObject?, StaticString, UInt
+      ) -> Void,
+      @_inheritActorContext removeObserver: @escaping @Sendable (
+        AnyObject, NSNotification.Name?, AnyObject?, StaticString, UInt
+      ) -> Void,
+      @_inheritActorContext publisher: @escaping @Sendable (
+        Notification.Name, AnyObject?, StaticString, UInt
+      ) ->
+        AnyPublisher<Notification, Never>
+    ) {
+      self._post = post
+      self._addObserver = addObserver
+      self._removeObserver = removeObserver
+      self._publisher = publisher
+    }
     /// Creates a notification with a given name, sender, and information and posts it to the
     /// notification center.
     public func post(
@@ -148,19 +112,17 @@ extension NotificationCenter {
     ) {
       self._removeObserver(observer, name, object, file, line)
     }
-    #if canImport(Combine)
-      /// Returns a publisher that emits events when broadcasting notifications.
-      public func publisher(
-        for name: Notification.Name,
-        object: AnyObject? = nil,
-        file: StaticString = #filePath,
-        line: UInt = #line
-      ) -> AnyPublisher<
-        Notification, Never
-      > {
-        self._publisher(name, object, file, line)
-      }
-    #endif
+    /// Returns a publisher that emits events when broadcasting notifications.
+    public func publisher(
+      for name: Notification.Name,
+      object: AnyObject? = nil,
+      file: StaticString = #filePath,
+      line: UInt = #line
+    ) -> AnyPublisher<
+      Notification, Never
+    > {
+      self._publisher(name, object, file, line)
+    }
   }
 }
 
@@ -174,41 +136,36 @@ extension NotificationCenter.Dependency {
     line: UInt = #line
   ) -> AsyncStream<Notification> {
     AsyncStream(Notification.self, bufferingPolicy: .bufferingNewest(0)) { continuation in
-      #if canImport(ObjectiveC)
-        final class Observer: NSObject, Sendable {
-          let continuation: AsyncStream<Notification>.Continuation
-          init(with continuation: AsyncStream<Notification>.Continuation) {
-            self.continuation = continuation
-            super.init()
-          }
-
-          @objc func onNotification(notification: Notification) {
-            self.continuation.yield(notification)
-          }
+      final class Observer: NSObject, Sendable {
+        let continuation: AsyncStream<Notification>.Continuation
+        init(with continuation: AsyncStream<Notification>.Continuation) {
+          self.continuation = continuation
+          super.init()
         }
 
-        let observer = Observer(with: continuation)
+        @objc func onNotification(notification: Notification) {
+          self.continuation.yield(notification)
+        }
+      }
 
-        self.addObserver(
+      let observer = Observer(with: continuation)
+
+      self.addObserver(
+        observer,
+        selector: #selector(Observer.onNotification(notification:)),
+        name: name,
+        object: object,
+        file: file,
+        line: line
+      )
+      let uncheckedObject = UncheckedSendable(object)
+      continuation.onTermination = { _ in
+        self.removeObserver(
           observer,
-          selector: #selector(Observer.onNotification(notification:)),
           name: name,
-          object: object,
-          file: file,
-          line: line
+          object: uncheckedObject.wrappedValue
         )
-        let uncheckedObject = UncheckedSendable(object)
-        continuation.onTermination = { _ in
-          self.removeObserver(
-            observer,
-            name: name,
-            object: uncheckedObject.wrappedValue
-          )
-        }
-      #else
-        print("AsyncStream of Notifications is currently not supported on Linux")
-        continuation.finish()
-      #endif
+      }
     }
   }
 }
@@ -237,3 +194,4 @@ extension NotificationCenter.Dependency {
     }
   }
 }
+#endif

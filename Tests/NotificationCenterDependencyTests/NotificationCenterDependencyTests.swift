@@ -2,7 +2,7 @@ import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
 import NotificationCenterDependency
 import XCTest
-#if canImport(Combine)  // TODO: Improve scope for Linux & Windows
+#if canImport(Combine) && canImport(ObjectiveC)
 @MainActor
 final class NotificationCenterDependencyTests: XCTestCase {
   nonisolated
