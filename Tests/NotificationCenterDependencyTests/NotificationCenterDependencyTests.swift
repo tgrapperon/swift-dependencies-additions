@@ -3,7 +3,6 @@ import Dependencies
 import NotificationCenterDependency
 import XCTest
 #if canImport(Combine) && canImport(ObjectiveC)
-
 final class NotificationCenterDependencyTests: XCTestCase {
   nonisolated
     func notificationName1() -> Notification.Name
@@ -13,6 +12,7 @@ final class NotificationCenterDependencyTests: XCTestCase {
   { .init("NotificationCenterDependencyTests_2") }
 
   // TODO: Strenghten this
+  @MainActor
   func testNotificationCenterStream() async throws {
     @Dependency(\.notificationCenter) var notificationCenter
     let _ = __dummySeparator__
@@ -24,7 +24,10 @@ final class NotificationCenterDependencyTests: XCTestCase {
       await withTimeout { group in
         group.addTask {
           var count = 0
-          for await notification in notificationCenter.notifications(named: n1) {
+          let notifications = await MainActor.run {
+            UncheckedSendable(notificationCenter.notifications(named: n1))
+          }.value
+          for await notification in notifications {
             XCTAssertEqual(notification.name, n1)
             count += 1
             if count == 3 { break }
@@ -34,22 +37,18 @@ final class NotificationCenterDependencyTests: XCTestCase {
           // Let the subscription above be active
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC)
           // This hops and allows notifications to be delivered
-          await Task {
-            await Task.yield()
+          await MainActor.run {
             notificationCenter.post(name: n1)
-          }.value
-          await Task {
-            await Task.yield()
+          }
+          await MainActor.run {
             notificationCenter.post(name: n2)
-          }.value
-          await Task {
-            await Task.yield()
+          }
+          await MainActor.run {
             notificationCenter.post(name: n1)
-          }.value
-          await Task {
-            await Task.yield()
+          }
+          await MainActor.run {
             notificationCenter.post(name: n1)
-          }.value
+          }
         }
       }
     }
