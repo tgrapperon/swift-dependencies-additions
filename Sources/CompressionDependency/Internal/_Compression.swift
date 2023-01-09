@@ -1,3 +1,4 @@
+#if canImport(Compression)
 import Compression
 import Dependencies
 import Foundation
@@ -64,3 +65,4 @@ func defaultAsync(_ operation: FilterOperation) -> @Sendable (
     return processed
   }
 }
+#endif
