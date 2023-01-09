@@ -4,13 +4,10 @@ import NotificationCenterDependency
 import XCTest
 @MainActor
 final class NotificationCenterDependencyTests: XCTestCase {
-  nonisolated
   func notificationName1() -> Notification.Name { .init("NotificationCenterDependencyTests_1") }
-  nonisolated
   func notificationName2() -> Notification.Name { .init("NotificationCenterDependencyTests_2") }
 
   // TODO: Strenghten this
-  nonisolated
   func testNotificationCenterStream() async throws {
     @Dependency(\.notificationCenter) var notificationCenter
     let _ = __dummySeparator__

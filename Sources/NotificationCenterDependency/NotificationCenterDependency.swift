@@ -58,16 +58,16 @@ extension NotificationCenter {
       >
 
     init(
-      post: @escaping @Sendable (
+      @_inheritActorContext post: @escaping @Sendable (
         NSNotification.Name, AnyObject?, [AnyHashable: Any]?, StaticString, UInt
       ) -> Void,
-      addObserver: @escaping @Sendable (
+      @_inheritActorContext addObserver: @escaping @Sendable (
         AnyObject, Selector, NSNotification.Name?, AnyObject?, StaticString, UInt
       ) -> Void,
-      removeObserver: @escaping @Sendable (
+      @_inheritActorContext removeObserver: @escaping @Sendable (
         AnyObject, NSNotification.Name?, AnyObject?, StaticString, UInt
       ) -> Void,
-      publisher: @escaping @Sendable (Notification.Name, AnyObject?, StaticString, UInt) ->
+      @_inheritActorContext publisher: @escaping @Sendable (Notification.Name, AnyObject?, StaticString, UInt) ->
         AnyPublisher<Notification, Never>
     ) {
       self._post = post
