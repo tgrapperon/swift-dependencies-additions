@@ -1,4 +1,4 @@
-#if !os(Linux)
+#if !os(Linux) && !os(Windows)
 import Dependencies
 import ProcessInfoDependency
 import XCTest

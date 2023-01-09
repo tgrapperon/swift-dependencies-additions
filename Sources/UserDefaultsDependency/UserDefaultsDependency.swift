@@ -1,7 +1,6 @@
 import Dependencies
 import Foundation
 @_spi(Internals) import DependenciesAdditionsBasics
-
 extension DependencyValues {
   /// A dependency that exposes an ``UserDefaults.Dependency`` value that you can use to read and
   /// write to `UserDefaults`.
@@ -73,6 +72,7 @@ extension UserDefaults.Dependency: DependencyKey {
     } values: { key, type in
       // We use KVO to also get out-of-process changes
       AsyncStream((any Sendable)?.self) { continuation in
+        #if canImport(ObjectiveC)
         final class Observer: NSObject, Sendable {
           let key: String
           let type: Any.Type
@@ -113,6 +113,10 @@ extension UserDefaults.Dependency: DependencyKey {
         continuation.onTermination = { _ in
           userDefaults.value.removeObserver(object, forKeyPath: key)
         }
+        #else
+        print("AsyncStream of UserDefaults values is currently not supported on Linux")
+        continuation.finish()
+        #endif
       }
     }
   }
@@ -179,8 +183,8 @@ private extension UserDefaults {
     }
   }
 }
-
-@available(iOS 5.0, tvOS 9.0, macOS 10.7,  watchOS 9.0, *)
+#if canImport(Foundation.NSUbiquitousKeyValueStore)
+@available(iOS 5.0, tvOS 9.0, macOS 10.7, watchOS 9.0, *)
 private extension NSUbiquitousKeyValueStore {
   func contains(key: String) -> Bool {
     self.object(forKey: key) != nil
@@ -234,7 +238,7 @@ private extension NSUbiquitousKeyValueStore {
     }
   }
 }
-
+#endif
 extension UserDefaults.Dependency: TestDependencyKey {
   public static let testValue: Self = {
     XCTFail(#"Unimplemented: @Dependency(\.userDefaults)"#)
@@ -276,11 +280,11 @@ extension UserDefaults.Dependency: TestDependencyKey {
     }
   }
 }
-
+#if canImport(Foundation.NSUbiquitousKeyValueStore)
 extension UserDefaults.Dependency {
   /// An iCloud-based container of key-value pairs you use to share data among
   /// instances of your app running on a user's connected devices.
-  @available(iOS 5.0, tvOS 9.0, macOS 10.7,  watchOS 9.0, *)
+  @available(iOS 5.0, tvOS 9.0, macOS 10.7, watchOS 9.0, *)
   public static var ubiquitous: UserDefaults.Dependency {
     let store = NSUbiquitousKeyValueStore.default
     let userDefaults = UncheckedSendable(store)
@@ -346,3 +350,4 @@ extension UserDefaults.Dependency {
     }
   }
 }
+#endif

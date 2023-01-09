@@ -1,3 +1,4 @@
+#if canImport(DeviceCheck)
 import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
 import DeviceCheck
@@ -73,3 +74,4 @@ extension DeviceCheckDevice {
     )
   }
 }
+#endif
