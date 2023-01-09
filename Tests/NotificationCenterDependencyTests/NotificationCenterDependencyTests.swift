@@ -2,7 +2,7 @@ import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
 import NotificationCenterDependency
 import XCTest
-
+#if canImport(Combine)  // TODO: Improve scope for linux
 @MainActor
 final class NotificationCenterDependencyTests: XCTestCase {
   nonisolated
@@ -104,3 +104,5 @@ final class NotificationCenterDependencyTests: XCTestCase {
 
   #endif
 }
+
+#endif
