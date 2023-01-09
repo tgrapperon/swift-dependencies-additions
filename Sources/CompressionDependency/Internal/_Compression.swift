@@ -16,7 +16,7 @@ func defaultSync(_ operation: FilterOperation) -> @Sendable (
     let count = data.count
     let inputFilter = try InputFilter(
       operation.wrappedValue,
-      using: algorithm,
+      using: algorithm.systemValue,
       bufferCapacity: max(65635, pageSize)
     ) {
       let rangeLength = min($0, count - index)
@@ -44,7 +44,7 @@ func defaultAsync(_ operation: FilterOperation) -> @Sendable (
     let count = data.count
     let inputFilter = try InputFilter(
       operation.wrappedValue,
-      using: algorithm,
+      using: algorithm.systemValue,
       bufferCapacity: max(65635, pageSize)
     ) {
       let rangeLength = min($0, count - index)

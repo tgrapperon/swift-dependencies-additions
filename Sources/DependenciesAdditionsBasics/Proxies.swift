@@ -121,7 +121,7 @@ public struct ReadWriteBinding<Value>: Sendable {
     self.set = getSet.1
   }
   /// Initializes a ``ReadWriteProxy`` from a ``ProxyBindable`` value, like `LockIsolated`.
-  public init<Bindable: ProxyBindable>(_ bindable: Bindable) where Bindable.Value == Value {
+  public init<Bindable: ProxyBindable & Sendable>(_ bindable: Bindable) where Bindable.Value == Value {
     self.init(
       get: {
         bindable.getValue()
@@ -133,7 +133,7 @@ public struct ReadWriteBinding<Value>: Sendable {
   }
 
   /// Initializes a ``ReadWriteProxy`` from a ``ProxyBindable`` value, like `LockIsolated`.
-  public static func bind<Bindable: ProxyBindable>(bindable: Bindable) -> Self
+  public static func bind<Bindable: ProxyBindable & Sendable>(bindable: Bindable) -> Self
   where Bindable.Value == Value {
     .init(bindable)
   }
@@ -299,7 +299,7 @@ public struct MainActorReadWriteBinding<Value>: Sendable {
     self.set = getSet.1
   }
 
-  public init<Bindable: ProxyBindable>(_ bindable: Bindable) where Bindable.Value == Value {
+  public init<Bindable: ProxyBindable & Sendable>(_ bindable: Bindable) where Bindable.Value == Value {
     self.init(
       get: {
         bindable.getValue()
@@ -422,23 +422,24 @@ public struct MainActorReadOnlyProxy<Value: Sendable>: Sendable {
 ///
 /// `LockIsolated` is conforming to this protocol, so you can use `LockIsolated` values
 /// to control writable dependencies properties during tests and SwiftUI previews.
-@dynamicMemberLookup
+//@dynamicMemberLookup
 public protocol ProxyBindable {
   associatedtype Value: Sendable
   var getValue: @Sendable () -> Value { get }
   var setValue: @Sendable (Value) -> Void { get }
 }
 
-extension ProxyBindable {
-  public subscript(dynamicMember keyPath: ReferenceWritableKeyPath<Self, Value>)
-    -> AnyProxyBindable<Value>
-  {
-    return AnyProxyBindable<Value>(
-      getValue: { self[keyPath: keyPath] },
-      setValue: { self[keyPath: keyPath] = $0 }
-    )
-  }
-}
+// Removed for now until a proper way to handle the non-sendable capture is found
+//extension ProxyBindable {
+//  public subscript(dynamicMember keyPath: ReferenceWritableKeyPath<Self, Value>)
+//    -> AnyProxyBindable<Value>
+//  {
+//    return AnyProxyBindable<Value>(
+//      getValue: { self[keyPath: keyPath] },
+//      setValue: { self[keyPath: keyPath] = $0 }
+//    )
+//  }
+//}
 
 /// An erased ``ProxyBindable`` property.
 ///
@@ -447,12 +448,13 @@ extension ProxyBindable {
 ///
 /// For example, `LockIsolated(["a", "b", "c"]).count` returns an ``AnyProxyBindable<Int>``
 /// that you can bind to a writable dependency.
-public struct AnyProxyBindable<Value>: ProxyBindable {
+public struct AnyProxyBindable<Value: Sendable>: ProxyBindable {
   public var getValue: @Sendable () -> Value
   public var setValue: @Sendable (Value) -> Void
 }
 
-extension LockIsolated: ProxyBindable {
+public protocol _Sendable: Sendable {}
+extension LockIsolated: ProxyBindable where Value: _Sendable {
   public var getValue: @Sendable () -> Value {
     { self.value }
   }
