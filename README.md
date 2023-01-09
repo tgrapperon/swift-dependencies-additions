@@ -22,9 +22,9 @@ The library currently proposes a few low-level dependencies to interface with:
 - `PersistentContainer`, that abstracts a CoreData `NSPersistentContainer`;
 - `UserDefaults`;
 - `UserNotificationCenter`;
-- `Path`, a generalized collection of `AnyHashable`, to which you can push and pop identifiers to contextualize your models.
-- `ProcessInfo`
-- `Device` (`UIDevice`, `WKInterfaceDevice`, `DCDevice`,…)
+- `Path`, a generalized collection of `AnyHashable`, to which you can push and pop identifiers to contextualize your models;
+- `ProcessInfo`;
+- `Device` (`UIDevice`, `WKInterfaceDevice`, `DCDevice`,…).
 
 It also ships with more experimental and higher-level abstractions for:
 - `AppStorage`, which proposes a `@Dependency.AppStorage` property wrapper that mimics `SwiftUI`s `@AppStorage`, but usable from your model and or any concurrent context.
