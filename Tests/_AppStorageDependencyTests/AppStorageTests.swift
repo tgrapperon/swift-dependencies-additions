@@ -47,7 +47,7 @@ final class AppStorageTests: XCTestCase {
       XCTAssertEqual(int2, -52)
     }
   }
-
+  #if os(macOS)
   func testStream() async throws {
     final class Model: @unchecked Sendable {
       @Dependency.AppStorage("SomeKey") var int = 42
@@ -84,6 +84,7 @@ final class AppStorageTests: XCTestCase {
       }
     }
   }
+  #endif
 
   func testLiveURLAppStorage() {
     let url1 = URL(string: "https://pointfree.co/")!
@@ -122,6 +123,7 @@ final class AppStorageTests: XCTestCase {
     }
   }
 
+  #if os(macOS)
   func testLiveStream() async throws {
 
     final class Model: @unchecked Sendable {
@@ -165,4 +167,5 @@ final class AppStorageTests: XCTestCase {
       }
     }
   }
+  #endif
 }
