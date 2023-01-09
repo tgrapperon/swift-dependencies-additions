@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
 import SwiftUI
@@ -50,3 +51,4 @@ final class SwiftUIEnvironmentTests: XCTestCase {
     }
   }
 }
+#endif
