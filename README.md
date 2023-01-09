@@ -9,7 +9,7 @@ A companion library to Point-Free's [`swift-dependencies`](https://github.com/po
 ## On the menu
 [`Dependencies`](https://github.com/pointfreeco/swift-dependencies) is a fantastic library that helps you to manage your dependencies in a similar fashion SwiftUI handles its `Environment`. `Dependencies` already ships with many built-in fundamental dependencies, like `clock`, `uuid`, `date`, etc.
 
-`Dependencies Additions` intends to extend these core dependencies, and provide coherent and testable implementations to many additional dependencies that are commonly needed when developing on Apple's platforms.
+"Dependencies Additions" intends to extend these core dependencies, and provide coherent and testable implementations to many additional dependencies that are commonly needed when developing on Apple's platforms.
 
 The library currently proposes a few low-level dependencies to interface with:
 - `Application`, an abstraction over `UIApplication.shared`;
@@ -74,7 +74,7 @@ In each module you need access to these dependencies, add:
 We present here a few of the dependencies currently shipping with the library.
 If you're more interested in experimental abstractions like `AppStorage` or typed `Notification`, you can directly jump to the [Higher-level dependencies](#higher-level-dependencies) section.
 
-### `Application`
+### Application
 
 An abstraction over `UIApplication` that you can use to communicate with your app's instance.
 
@@ -104,9 +104,9 @@ func testAlternateIconIsSet() async throws -> Void {
 } 
 ```
 
-### `BundleInfo`
+### BundleInfo
 
-This very simple dependency exposes a `BundleInfo` type that allows to simply retrieve a few `info.plist`-related fields, like the `bundleIdentifier` or the app's `version`. 
+This simple dependency exposes a `BundleInfo` type that allows to simply retrieve a few `info.plist`-related fields, like the `bundleIdentifier` or the app's `version`. 
 
 For example:
 ```swift
@@ -183,6 +183,7 @@ var previews: some View {
   SmoothieView(model: model)
 }
 ```
+
 ### ProcessInfo
 A simple abstraction over `ProcessInfo` that allows to retrieve low-level information on the system.
 ```swift
@@ -193,6 +194,7 @@ if thermalState == .critical {
 }
 ```
 Because it's a dependency, you can test it very easily without having to modify your model.
+
 ### UserDefaults
 An abstraction over `UserDefaults`, where you can read and save from the user preferences.
 The library exposes the same types as SwiftUI's AppStorage, so you can simply store and retrieve 
