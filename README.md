@@ -57,7 +57,7 @@ Add the `swift-dependencies-additions` package, and only select "DependenciesAdd
 
 In the `dependencies` section, add:
 ```swift
-.package(url: "https://github.com/tgrapperon/swift-dependencies-addtions", from: "0.1.0")
+.package(url: "https://github.com/tgrapperon/swift-dependencies-additions", from: "0.1.0")
 ```
 In each module you need access to these dependencies, add:
 ```swift
