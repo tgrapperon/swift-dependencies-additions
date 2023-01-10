@@ -1,4 +1,4 @@
-#if !os(Linux) && !os(Windows) // TODO: Scope better for Linux
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
 import Foundation

@@ -1,4 +1,4 @@
-#if canImport(Combine) && canImport(ObjectiveC)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 @preconcurrency import Combine
 import Dependencies
 import Foundation

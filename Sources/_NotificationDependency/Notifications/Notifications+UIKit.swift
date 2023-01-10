@@ -1,4 +1,4 @@
-#if canImport(ObjectiveC)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
   // WIP - Should we ship a bunch of common notifications?
   import Dependencies
 

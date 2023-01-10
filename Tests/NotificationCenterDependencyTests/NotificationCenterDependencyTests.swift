@@ -1,8 +1,8 @@
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
 import NotificationCenterDependency
 import XCTest
-#if canImport(Combine) && canImport(ObjectiveC)
 final class NotificationCenterDependencyTests: XCTestCase {
   nonisolated
     func notificationName1() -> Notification.Name
@@ -54,7 +54,7 @@ final class NotificationCenterDependencyTests: XCTestCase {
     }
   }
 
-  #if DEBUG && os(macOS)
+  #if DEBUG
     func testNotificationCenterFailure1() {
       @Dependency(\.notificationCenter) var notificationCenter
       let _ = __dummySeparator__
@@ -104,5 +104,4 @@ final class NotificationCenterDependencyTests: XCTestCase {
 
   #endif
 }
-
 #endif

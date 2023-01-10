@@ -1,4 +1,4 @@
-#if !os(Linux) && !os(Windows)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 import Dependencies
 import ProcessInfoDependency
 import XCTest
@@ -13,7 +13,7 @@ final class ProcessInfoDependencyTests: XCTestCase {
       XCTAssertEqual(processInfo.processorCount, 128)
     }
   }
-  #if DEBUG && os(macOS)
+  #if DEBUG
     func testFailingTestProcessInfo_environment() {
       XCTExpectFailure {
         let _ = processInfo.environment
