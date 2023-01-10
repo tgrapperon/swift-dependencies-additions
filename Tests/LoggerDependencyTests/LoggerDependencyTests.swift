@@ -9,7 +9,7 @@
   final class LoggerDependencyTests: XCTestCase {
     @Dependency(\.logger) var logger
 
-    #if DEBUG && os(macOS)
+    #if DEBUG
       func testFailingTestLogger() {
         XCTExpectFailure {
           logger.log("TestValue")

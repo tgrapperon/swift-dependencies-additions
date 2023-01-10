@@ -38,8 +38,11 @@
   }
 
   extension PersistentContainer {
-    public static func `default`(inMemory: Bool = false) -> PersistentContainer {
-      var name = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
+    public static func `default`(
+      name: String? = nil,
+      inMemory: Bool = false
+    ) -> PersistentContainer {
+      var name = name ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
       if Bundle.main.url(forResource: name, withExtension: "momd") == nil {
         name =
           Bundle.main.url(forResource: nil, withExtension: "momd")?
@@ -72,7 +75,11 @@
     private let _newChildViewContext: @Sendable () -> NSManagedObjectContext
     private let _newBackgroundContext: @Sendable () -> NSManagedObjectContext
 
-    public init(_ persistentContainer: NSPersistentContainer) {
+    public init(_ persistentContainer: NSPersistentContainer, inMemory: Bool = false) {
+      if inMemory {
+        persistentContainer.persistentStoreDescriptions.first!.url = URL(
+          fileURLWithPath: "/dev/null")
+      }
       let persistentContainer = UncheckedSendable(persistentContainer)
       self._viewContext = { persistentContainer.viewContext }
       self._newBackgroundContext = {
