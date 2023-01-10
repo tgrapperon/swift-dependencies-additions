@@ -35,9 +35,11 @@ It also ships with more experimental and higher-level abstractions for:
 These higher-level dependencies are currently all experimental, and their targets are named with underscores.
 They could eventually evolve out of `Dependencies Additions` into dedicated repositories if their size/behavior justifies it.
 
-The list above is preliminary, and many new dependencies will be added to this library in the upcoming weeks.
-If you need one dependency in particular, feel free to open a discussion, so we can find the better way it can
-integrate with the other dependencies.
+This library also proposes a few direct extensions to "core" dependencies like some new date and random numbers generators, as well as some tools to help mixing `AsyncSequence`s with Combine for example.
+
+This list is preliminary, and many new dependencies will be added to this library in the upcoming weeks.
+If you need one specific dependency, feel free to open a discussion, so we can find the better way it can
+integrate with the other ones.
 
 ## How to use `Dependencies Additions`?
 
