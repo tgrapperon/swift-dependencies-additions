@@ -1,4 +1,14 @@
 version: 1
 builder:
   configs:
-    - documentation_targets: [DependenciesAdditions]
+  - documentation_targets: [DependenciesAdditions]
+  - platform: ios
+    scheme: DependenciesAdditions
+  - platform: tvos
+    scheme: DependenciesAdditions
+  - platform: macos
+    scheme: DependenciesAdditions
+  - platform: watchos
+    scheme: DependenciesAdditions
+  - platform: linux
+    scheme: DependenciesAdditions
