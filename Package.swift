@@ -27,7 +27,7 @@ import PackageDescription
 /// - `_SwiftUIDependency`:            `@Dependency.Environment` property wrapper
 
 let package = Package(
-  name: "DependenciesAdditions",
+  name: "swift-dependencies-additions",
   platforms: [
     .iOS(.v13),
     .macOS(.v10_15),
