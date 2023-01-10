@@ -1,3 +1,4 @@
+#if canImport(CoreData)
 import CoreData
 import Dependencies
 
@@ -202,3 +203,4 @@ extension PersistentContainer {
     return self
   }
 }
+#endif

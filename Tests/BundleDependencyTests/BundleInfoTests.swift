@@ -2,7 +2,6 @@ import BundleDependency
 import Dependencies
 import XCTest
 
-@MainActor
 final class BundleInfoTests: XCTestCase {
   @Dependency(\.bundleInfo) var bundleInfo
 
@@ -26,7 +25,7 @@ final class BundleInfoTests: XCTestCase {
     }
   }
 
-  #if DEBUG
+  #if DEBUG && os(macOS)
     func testFailingTestBundleInfo_bundleIdentifier() {
       XCTExpectFailure {
         _ = bundleInfo.bundleIdentifier

@@ -1,3 +1,4 @@
+#if canImport(SwiftUI)
 import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
 import SwiftUI
@@ -15,8 +16,8 @@ extension EnvironmentValues {
   }
 }
 
-@MainActor
 final class SwiftUIEnvironmentTests: XCTestCase {
+  @MainActor
   func testSwiftUIEnvironment() async throws {
     @Dependency.Environment(\.test) var testValue
     let _ = ()  // Separator, as swift-format removes the terminal semicolon above
@@ -50,3 +51,4 @@ final class SwiftUIEnvironmentTests: XCTestCase {
     }
   }
 }
+#endif

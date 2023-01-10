@@ -1,8 +1,8 @@
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 import Dependencies
 import ProcessInfoDependency
 import XCTest
 
-@MainActor
 final class ProcessInfoDependencyTests: XCTestCase {
   @Dependency(\.processInfo) var processInfo
 
@@ -157,3 +157,4 @@ final class ProcessInfoDependencyTests: XCTestCase {
     #endif
   #endif
 }
+#endif

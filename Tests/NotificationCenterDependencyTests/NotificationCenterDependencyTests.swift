@@ -1,9 +1,8 @@
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
 import NotificationCenterDependency
 import XCTest
-
-@MainActor
 final class NotificationCenterDependencyTests: XCTestCase {
   nonisolated
     func notificationName1() -> Notification.Name
@@ -13,6 +12,7 @@ final class NotificationCenterDependencyTests: XCTestCase {
   { .init("NotificationCenterDependencyTests_2") }
 
   // TODO: Strenghten this
+  @MainActor
   func testNotificationCenterStream() async throws {
     @Dependency(\.notificationCenter) var notificationCenter
     let _ = __dummySeparator__
@@ -104,3 +104,4 @@ final class NotificationCenterDependencyTests: XCTestCase {
 
   #endif
 }
+#endif

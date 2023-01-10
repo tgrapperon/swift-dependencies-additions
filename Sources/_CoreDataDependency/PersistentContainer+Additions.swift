@@ -1,3 +1,4 @@
+#if canImport(CoreData)
 import CoreData
 @_exported import PersistentContainerDependency
 
@@ -30,3 +31,4 @@ extension PersistentContainer {
     return Fetched(id: object.objectID, context: context, viewContext: context)
   }
 }
+#endif

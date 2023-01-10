@@ -1,3 +1,4 @@
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
 @preconcurrency import Combine
 import Dependencies
 import Foundation
@@ -193,3 +194,4 @@ extension NotificationCenter.Dependency {
     }
   }
 }
+#endif

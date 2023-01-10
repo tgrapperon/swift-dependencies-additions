@@ -1,3 +1,4 @@
+#if canImport(Compression)
 import Compression
 import Dependencies
 import Foundation
@@ -62,3 +63,4 @@ public struct Decompressor: Sendable {
     try await self.decompressAsync(data, algorithm())
   }
 }
+#endif

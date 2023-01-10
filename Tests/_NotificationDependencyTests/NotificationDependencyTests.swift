@@ -2,7 +2,7 @@ import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
 import XCTest
 import _NotificationDependency
-
+#if canImport(ObjectiveC)
 let notificationName = Notification.Name("SomeNotificationName")
 
 func notification(_ int: Int = 0) -> Notification {
@@ -30,7 +30,6 @@ extension Notifications {
   }
 }
 
-@MainActor
 final class NotificationDependencyTests: XCTestCase {
   func testLiveNotifications() async throws {
     @Dependency.Notification(\.testNotificationWithBidirectionalTransform) var testNotification
@@ -155,3 +154,4 @@ final class NotificationDependencyTests: XCTestCase {
     }
   }
 }
+#endif

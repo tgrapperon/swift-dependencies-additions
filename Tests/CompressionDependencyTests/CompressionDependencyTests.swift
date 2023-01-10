@@ -1,8 +1,8 @@
+#if canImport(Compression)
 import CompressionDependency
 import Dependencies
 import XCTest
 
-@MainActor
 final class CompressionDependencyTests: XCTestCase {
   @Dependency(\.compress) var compress
   @Dependency(\.decompress) var decompress
@@ -20,3 +20,4 @@ final class CompressionDependencyTests: XCTestCase {
     }
   }
 }
+#endif
