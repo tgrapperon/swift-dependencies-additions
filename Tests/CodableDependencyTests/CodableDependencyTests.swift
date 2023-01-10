@@ -2,7 +2,6 @@ import CodableDependency
 import Dependencies
 import XCTest
 
-
 final class CodableDependencyTests: XCTestCase {
   @Dependency(\.encode) var encode
   @Dependency(\.decode) var decode
