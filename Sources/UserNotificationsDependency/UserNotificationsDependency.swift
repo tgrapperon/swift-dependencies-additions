@@ -155,21 +155,43 @@
 
   extension UserNotificationCenter {
     static var system: Self {
-      .init(
+      final class _UserNotificationCenter: Sendable {
+        static let current: _UserNotificationCenter = _UserNotificationCenter()
+        var notificationCenter: UNUserNotificationCenter {
+          let center = UNUserNotificationCenter.current()
+          center.delegate = delegate.object
+          return center
+        }
+        private let _delegate: LockIsolated<UserNotificationCenter.Delegate>
+        
+        var delegate: UserNotificationCenter.Delegate {
+          get { _delegate.value }
+          set { _delegate.withValue {
+            $0 = newValue
+            UNUserNotificationCenter.current().delegate = $0.object
+          }}
+        }
+        nonisolated init() {
+          self._delegate = .init(UserNotificationCenter.Delegate(_implementation: .init()))
+        }
+      }
+      let center = _UserNotificationCenter()
+
+      return .init(
         notificationSettings: {
-          await UNUserNotificationCenter.current().notificationSettings()
+          await center.notificationCenter.notificationSettings()
         },
         setBadgeCount: { count in
           if #available(iOS 16.0, tvOS 16.0, macOS 13.0, *) {
             #if !os(watchOS)
-              try await UNUserNotificationCenter.current().setBadgeCount(count)
+            try await center.notificationCenter.setBadgeCount(count)
             #endif
           } else {
             fatalError()
           }
         },
         requestAuthorization: {
-          try await UNUserNotificationCenter.current().requestAuthorization(options: $0)
+          try await center.notificationCenter.requestAuthorization(options: $0)
         },
         delegate: (
           { UNUserNotificationCenter.current().delegate },
@@ -177,31 +199,31 @@
         ),
         supportsContentExtensions: UNUserNotificationCenter.current().supportsContentExtensions,
         add: {
-          try await UNUserNotificationCenter.current().add($0)
+          try await center.notificationCenter.add($0)
         },
         pendingNotificationRequests: {
-          await UNUserNotificationCenter.current().pendingNotificationRequests()
+          await center.notificationCenter.pendingNotificationRequests()
         },
         removePendingNotificationRequests: {
-          UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: $0)
+          center.notificationCenter.removePendingNotificationRequests(withIdentifiers: $0)
         },
         removeAllPendingNotificationRequests: {
-          UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+          center.notificationCenter.removeAllPendingNotificationRequests()
         },
         deliveredNotifications: {
-          await UNUserNotificationCenter.current().deliveredNotifications()
+          await center.notificationCenter.deliveredNotifications()
         },
         removeDeliveredNotifications: {
-          UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: $0)
+          center.notificationCenter.removeDeliveredNotifications(withIdentifiers: $0)
         },
         removeAllDeliveredNotifications: {
-          UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+          center.notificationCenter.removeAllDeliveredNotifications()
         },
         setNotificationCategories: {
-          UNUserNotificationCenter.current().setNotificationCategories($0)
+          center.notificationCenter.setNotificationCategories($0)
         },
         notificationCategories: {
-          await UNUserNotificationCenter.current().notificationCategories()
+          await center.notificationCenter.notificationCategories()
         })
     }
   }
@@ -239,6 +261,113 @@
           #"@Dependency(\,.userNotificationCenter.setNotificationCategories)"#),
         notificationCategories: XCTestDynamicOverlay.unimplemented(
           #"@Dependency(\,.userNotificationCenter.notificationCategories)"#))
+    }
+  }
+
+  extension UserNotificationCenter {
+    struct Delegate: ConfigurableProxy, Sendable {
+      @_spi(Internals) public var _implementation: Implementation
+
+      public static var `default`: Delegate { .init(_implementation: .init()) }
+      public var object: UNUserNotificationCenterDelegate {
+        Object(implementation: _implementation)
+      }
+
+      public struct Implementation {
+        @FunctionProxy public var willPresent:
+          @MainActor @Sendable (UNUserNotificationCenter, UNNotification) async ->
+            UNNotificationPresentationOptions
+        @FunctionProxy public var didReceive:
+          @MainActor @Sendable (UNUserNotificationCenter, UNNotificationResponse) async -> Void
+        @FunctionProxy public var openSettings:
+          @Sendable (UNUserNotificationCenter, UNNotification?) -> Void
+
+        init(
+          willPresent: @escaping @MainActor @Sendable (UNUserNotificationCenter, UNNotification)
+            async ->
+            UNNotificationPresentationOptions = { _, _ in [] },
+          didReceive: @escaping @MainActor @Sendable (
+            UNUserNotificationCenter, UNNotificationResponse
+          ) async -> Void = { _, _ in () },
+          openSettings: @escaping @Sendable (UNUserNotificationCenter, UNNotification?) -> Void = {
+            _, _ in ()
+          }
+        ) {
+          self._willPresent = .init({ willPresent })
+          self._didReceive = .init({ didReceive })
+          self._openSettings = .init({ openSettings })
+        }
+
+        public init(delegate: UNUserNotificationCenterDelegate) {
+          // The compiler doesn't want to build the async variant, likely because of the optional
+          // implementation.
+          self._willPresent = .init({
+            { center, notification in
+              return await withCheckedContinuation { continuation in
+                delegate.userNotificationCenter?(center, willPresent: notification) { options in
+                  continuation.resume(returning: options)
+                } ?? { continuation.resume(returning: []) }()
+              }
+            }
+          })
+          self._didReceive = .init({
+            { center, response in
+              await withCheckedContinuation { continuation in
+                delegate.userNotificationCenter?(center, didReceive: response) {
+                  continuation.resume()
+                } ?? { continuation.resume() }()
+              }
+            }
+          })
+          self._openSettings = .init({
+            { delegate.userNotificationCenter?($0, openSettingsFor: $1) }
+          })
+        }
+
+        func userNotificationCenter(
+          _ center: UNUserNotificationCenter, willPresent notification: UNNotification
+        ) async -> UNNotificationPresentationOptions {
+          return await self.willPresent(center, notification)
+        }
+
+        func userNotificationCenter(
+          _ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse
+        ) async {
+          await self.didReceive(center, response)
+        }
+
+        func userNotificationCenter(
+          _ center: UNUserNotificationCenter, openSettingsFor notification: UNNotification?
+        ) {
+          self.openSettings(center, notification)
+        }
+      }
+
+      public final class Object: NSObject, UNUserNotificationCenterDelegate {
+        let implementation: Implementation
+
+        init(implementation: Implementation) {
+          self.implementation = implementation
+        }
+
+        func userNotificationCenter(
+          _ center: UNUserNotificationCenter, willPresent notification: UNNotification
+        ) async -> UNNotificationPresentationOptions {
+          return await self.implementation.willPresent(center, notification)
+        }
+
+        func userNotificationCenter(
+          _ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse
+        ) async {
+          await self.implementation.didReceive(center, response)
+        }
+
+        func userNotificationCenter(
+          _ center: UNUserNotificationCenter, openSettingsFor notification: UNNotification?
+        ) {
+          self.implementation.openSettings(center, notification)
+        }
+      }
     }
   }
 
