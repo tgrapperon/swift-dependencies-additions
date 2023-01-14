@@ -163,20 +163,21 @@
           return center
         }
         private let _delegate: LockIsolated<UserNotificationCenter.Delegate>
-        
+
         var delegate: UserNotificationCenter.Delegate {
           get { _delegate.value }
-          set { _delegate.withValue {
-            $0 = newValue
-            UNUserNotificationCenter.current().delegate = $0.object
-          }}
+          set {
+            _delegate.withValue {
+              $0 = newValue
+              UNUserNotificationCenter.current().delegate = $0.object
+            }
+          }
         }
         nonisolated init() {
           self._delegate = .init(UserNotificationCenter.Delegate(_implementation: .init()))
         }
       }
       let center = _UserNotificationCenter()
-
       return .init(
         notificationSettings: {
           await center.notificationCenter.notificationSettings()
@@ -184,11 +185,12 @@
         setBadgeCount: { count in
           if #available(iOS 16.0, tvOS 16.0, macOS 13.0, *) {
             #if !os(watchOS)
-            try await center.notificationCenter.setBadgeCount(count)
+              try await center.notificationCenter.setBadgeCount(count)
             #endif
           } else {
             fatalError()
           }
+          
         },
         requestAuthorization: {
           try await center.notificationCenter.requestAuthorization(options: $0)
