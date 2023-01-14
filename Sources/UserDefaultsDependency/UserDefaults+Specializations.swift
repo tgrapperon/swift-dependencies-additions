@@ -157,7 +157,7 @@ extension UserDefaults.Dependency {
   public func date(forKey key: String) -> Date? {
     self._get(key, Date.self) as? Date
   }
-  
+
   /// Sets the value of the specified default key to the specified Date value.
   /// - Parameters:
   ///   - value: The Date value to store in the user's defaults store. If the value is `nil`,

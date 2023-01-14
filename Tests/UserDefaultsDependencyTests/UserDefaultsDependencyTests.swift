@@ -1,6 +1,6 @@
 import Dependencies
-import XCTest
 import UserDefaultsDependency
+import XCTest
 
 // TODO: Expand this suite
 
@@ -20,7 +20,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
       XCTAssertEqual(self.userDefaults.date(forKey: "date"), date)
     }
   }
-  
+
   func testLiveUserDefaultsDate() {
     let date = Date(timeIntervalSince1970: 1000)
     UserDefaults.standard.removeObject(forKey: "date")
