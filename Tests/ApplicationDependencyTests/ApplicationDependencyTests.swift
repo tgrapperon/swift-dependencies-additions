@@ -4,7 +4,7 @@ import XCTest
 
 #if os(iOS) || os(tvOS)
   final class ApplicationDependencyTests: XCTestCase {
-    @Depen @MainActordency(\.application) var application
+    @Dependency(\.application) var application
     @MainActor
     func testApplicationIOS() {
       withDependencies {

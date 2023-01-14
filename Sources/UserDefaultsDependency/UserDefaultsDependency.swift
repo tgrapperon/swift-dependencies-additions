@@ -143,14 +143,16 @@ private extension UserDefaults {
     case let type where type == Bool.self, let type where type == Bool?.self:
       guard self.contains(key: key) else { return nil }
       return self.bool(forKey: key)
-    case let type where type == Int.self, let type where type == Int?.self:
-      guard self.contains(key: key) else { return nil }
-      return self.integer(forKey: key)
+    case let type where type == Data.self, let type where type == Data?.self:
+      return self.data(forKey: key)
+    case let type where type == Date.self, let type where type == Date?.self:
+      return self.object(forKey:key) as? Date
     case let type where type == Double.self, let type where type == Double?.self:
       guard self.contains(key: key) else { return nil }
       return self.double(forKey: key)
-    case let type where type == Data.self, let type where type == Data?.self:
-      return self.data(forKey: key)
+    case let type where type == Int.self, let type where type == Int?.self:
+      guard self.contains(key: key) else { return nil }
+      return self.integer(forKey: key)
     case let type where type == String.self, let type where type == String?.self:
       return self.string(forKey: key)
     case let type where type == URL.self, let type where type == URL?.self:
@@ -168,11 +170,13 @@ private extension UserDefaults {
     switch value {
     case let value as Bool:
       self.set(value, forKey: key)
-    case let value as Int:
+    case let value as Data:
+      self.set(value, forKey: key)
+    case let value as Date:
       self.set(value, forKey: key)
     case let value as Double:
       self.set(value, forKey: key)
-    case let value as Data:
+    case let value as Int:
       self.set(value, forKey: key)
     case let value as String:
       self.set(value, forKey: key)
@@ -195,14 +199,16 @@ private extension NSUbiquitousKeyValueStore {
     case let type where type == Bool.self, let type where type == Bool?.self:
       guard self.contains(key: key) else { return nil }
       return self.bool(forKey: key)
-    case let type where type == Int.self, let type where type == Int?.self:
-      guard self.contains(key: key) else { return nil }
-      return Int(self.longLong(forKey: key))
+    case let type where type == Data.self, let type where type == Data?.self:
+      return self.data(forKey: key)
+    case let type where type == Date.self, let type where type == Date?.self:
+      return self.object(forKey: key) as? Date
     case let type where type == Double.self, let type where type == Double?.self:
       guard self.contains(key: key) else { return nil }
       return self.double(forKey: key)
-    case let type where type == Data.self, let type where type == Data?.self:
-      return self.data(forKey: key)
+    case let type where type == Int.self, let type where type == Int?.self:
+      guard self.contains(key: key) else { return nil }
+      return Int(self.longLong(forKey: key))
     case let type where type == String.self, let type where type == String?.self:
       return self.string(forKey: key)
     case let type where type == URL.self, let type where type == URL?.self:
@@ -222,11 +228,13 @@ private extension NSUbiquitousKeyValueStore {
     switch value {
     case let value as Bool:
       self.set(value, forKey: key)
-    case let value as Int:
+    case let value as Data:
+      self.set(value, forKey: key)
+    case let value as Date:
       self.set(value, forKey: key)
     case let value as Double:
       self.set(value, forKey: key)
-    case let value as Data:
+    case let value as Int:
       self.set(value, forKey: key)
     case let value as String:
       self.set(value, forKey: key)

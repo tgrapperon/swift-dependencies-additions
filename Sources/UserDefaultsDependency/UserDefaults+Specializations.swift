@@ -147,3 +147,23 @@ extension UserDefaults.Dependency {
     self._set(value?.rawValue, key)
   }
 }
+
+// NS Extensions
+extension UserDefaults.Dependency {
+  /// Returns the Date value associated with the specified key.
+  /// - Parameter key: A key in the current user defaults store.
+  /// - Returns: The Boolean value associated with the specified key, or `nil` if there is no value
+  /// associated to `key`
+  public func date(forKey key: String) -> Date? {
+    self._get(key, Date.self) as? Date
+  }
+  
+  /// Sets the value of the specified default key to the specified Date value.
+  /// - Parameters:
+  ///   - value: The Date value to store in the user's defaults store. If the value is `nil`,
+  ///   the associated value will be removed from the store.
+  ///   - key: The key with which to associate the value.
+  public func set(_ value: Date?, forKey key: String) {
+    self._set(value, key)
+  }
+}
