@@ -61,7 +61,7 @@ extension Dependency.AppStorage {
   where Value == String {
     self.init(wrappedValue: wrappedValue, key: key, store: store)
   }
-
+  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
   /// Creates a property that can read and write to a url user default.
   ///
   /// - Parameters:
@@ -75,7 +75,7 @@ extension Dependency.AppStorage {
   where Value == URL {
     self.init(wrappedValue: wrappedValue, key: key, store: store)
   }
-
+  #endif
   /// Creates a property that can read and write to a user default as data.
   ///
   /// Avoid storing large data blobs in user defaults, such as image data,
@@ -226,7 +226,7 @@ extension Dependency.AppStorage where Value: ExpressibleByNilLiteral {
   where Value == String? {
     self.init(key: key, store: store)
   }
-
+  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
   /// Creates a property that can read and write an Optional URL user
   /// default.
   ///
@@ -241,7 +241,7 @@ extension Dependency.AppStorage where Value: ExpressibleByNilLiteral {
   where Value == URL? {
     self.init(key: key, store: store)
   }
-
+  #endif
   /// Creates a property that can read and write an Optional data user
   /// default.
   ///

@@ -40,7 +40,7 @@ extension UserDefaults.Dependency {
   /// - Returns: The Double value associated with the specified key, or `nil` if there is no value
   /// associated to `key`
   public func double(forKey key: String) -> Double? {
-    self._get(key, String.self) as? Double
+    self._get(key, Double.self) as? Double
   }
 
   /// Sets the value of the specified default key to the specified Double value.
@@ -86,6 +86,7 @@ extension UserDefaults.Dependency {
     self._set(value, key)
   }
 
+  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
   /// Returns the URL value associated with the specified key.
   /// - Parameter key: A key in the current user defaults store.
   /// - Returns: The URL value associated with the specified key, or `nil` if there is no value
@@ -102,6 +103,7 @@ extension UserDefaults.Dependency {
   public func set(_ value: URL?, forKey key: String) {
     self._set(value, key)
   }
+  #endif
 
   /// Removes the specified for the specified key. You can alternatively set a `nil` value using
   /// any typed ``set(_:forKey:)`` overload.
