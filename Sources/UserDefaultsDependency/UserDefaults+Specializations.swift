@@ -23,7 +23,7 @@ extension UserDefaults.Dependency {
   /// - Returns: The Data value associated with the specified key, or `nil` if there is no value
   /// associated to `key`
   public func data(forKey key: String) -> Data? {
-    self._get(key, Date.self) as? Data
+    self._get(key, Data.self) as? Data
   }
 
   /// Sets the value of the specified default key to the specified Data value.
