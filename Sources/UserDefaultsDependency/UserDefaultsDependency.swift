@@ -146,7 +146,7 @@ private extension UserDefaults {
     case let type where type == Data.self, let type where type == Data?.self:
       return self.data(forKey: key)
     case let type where type == Date.self, let type where type == Date?.self:
-      return self.object(forKey:key) as? Date
+      return self.object(forKey: key) as? Date
     case let type where type == Double.self, let type where type == Double?.self:
       guard self.contains(key: key) else { return nil }
       return self.double(forKey: key)
