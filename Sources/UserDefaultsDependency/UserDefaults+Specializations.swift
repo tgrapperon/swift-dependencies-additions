@@ -95,7 +95,7 @@ extension UserDefaults.Dependency {
       self._get(key, URL.self) as? URL
     #else
       if let url = self._get(key, URL.self) as? URL { return url }
-      if let absoluteString = self._get(key, String.self) as? String, let url = URL(string: string)
+      if let string = self._get(key, String.self) as? String, let url = URL(string: string)
       {
         return url
       }
