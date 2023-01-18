@@ -91,7 +91,16 @@ extension UserDefaults.Dependency {
   /// - Returns: The URL value associated with the specified key, or `nil` if there is no value
   /// associated to `key`
   public func url(forKey key: String) -> URL? {
-    self._get(key, URL.self) as? URL
+    #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
+      self._get(key, URL.self) as? URL
+    #else
+      if let url = self._get(key, URL.self) as? URL { return url }
+      if let absoluteString = self._get(key, String.self) as? String, let url = URL(string: string)
+      {
+        return url
+      }
+      return nil
+    #endif
   }
 
   /// Sets the value of the specified default key to the specified URL value.
@@ -100,7 +109,16 @@ extension UserDefaults.Dependency {
   ///   the associated value will be removed from the store.
   ///   - key: The key with which to associate the value.
   public func set(_ value: URL?, forKey key: String) {
-    self._set(value, key)
+    #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
+      self._set(value, key)
+    #else
+      if value?.isFileURL {
+        self._set(value, key)
+      } else {
+        // On Linux, we fallback to String
+        self._set(value?.absoluteString, key)
+      }
+    #endif
   }
 
   /// Removes the specified for the specified key. You can alternatively set a `nil` value using

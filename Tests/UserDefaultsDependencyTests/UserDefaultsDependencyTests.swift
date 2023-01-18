@@ -130,8 +130,24 @@ final class UserDefaultsDependencyTests: XCTestCase {
     }
     UserDefaults.standard.removeObject(forKey: "url")
   }
-
-  func testLiveUserDefaultsStringRawRepresentatble() {
+  
+  func testLiveUserDefaultsFileURL() {
+    let url = FileManager.default.temporaryDirectory.appendingPathComponent("Tests")
+    UserDefaults.standard.removeObject(forKey: "url")
+    withDependencies {
+      $0.userDefaults = .standard
+    } operation: {
+      self.userDefaults.set(url, forKey: "url")
+    }
+    withDependencies {
+      $0.userDefaults = .standard
+    } operation: {
+      XCTAssertEqual(self.userDefaults.url(forKey: "url"), url)
+    }
+    UserDefaults.standard.removeObject(forKey: "url")
+  }
+  
+  func testLiveUserDefaultsStringRawRepresentable() {
     enum Value: String {
       case one
       case two
@@ -151,7 +167,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
     UserDefaults.standard.removeObject(forKey: "raw")
   }
 
-  func testLiveUserDefaultsIntRawRepresentatble() {
+  func testLiveUserDefaultsIntRawRepresentable() {
     enum Value: Int {
       case one
       case two
