@@ -103,6 +103,29 @@ extension UserDefaults.Dependency {
     public func set(_ value: URL?, forKey key: String) {
       self._set(value, key)
     }
+  #else
+    /// Returns the URL value associated with the specified key.
+    /// - Parameter key: A key in the current user defaults store.
+    /// - Returns: The URL value associated with the specified key, or `nil` if there is no value
+    /// associated to `key`
+    @available(
+      *, unavailable, message: "Reading URLs from UserDefaults is not supported on this platform."
+    )
+    public func url(forKey key: String) -> URL? {
+      self._get(key, URL.self) as? URL
+    }
+
+    /// Sets the value of the specified default key to the specified URL value.
+    /// - Parameters:
+    ///   - value: The URL value to store in the user's defaults store. If the value is `nil`,
+    ///   the associated value will be removed from the store.
+    ///   - key: The key with which to associate the value.
+    @available(
+      *, unavailable, message: "Writing URLs to UserDefaults is not supported on this platform."
+    )
+    public func set(_ value: URL?, forKey key: String) {
+      self._set(value, key)
+    }
   #endif
 
   /// Removes the specified for the specified key. You can alternatively set a `nil` value using
