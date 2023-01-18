@@ -40,7 +40,7 @@ extension UserDefaults.Dependency {
   /// - Returns: The Double value associated with the specified key, or `nil` if there is no value
   /// associated to `key`
   public func double(forKey key: String) -> Double? {
-    self._get(key, String.self) as? Double
+    self._get(key, Double.self) as? Double
   }
 
   /// Sets the value of the specified default key to the specified Double value.
