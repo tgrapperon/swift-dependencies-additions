@@ -112,10 +112,10 @@ extension UserDefaults.Dependency {
     #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
       self._set(value, key)
     #else
-      if value?.isFileURL {
+      if value?.isFileURL == true {
         self._set(value, key)
       } else {
-        // On Linux, we fallback to String
+        // Storing non file urls doesn't work on Linux, so we fallback to String:
         self._set(value?.absoluteString, key)
       }
     #endif
