@@ -114,7 +114,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
     }
     UserDefaults.standard.removeObject(forKey: "string")
   }
-
+  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
   func testLiveUserDefaultsURL() {
     let url = URL(string: "https://github.com/tgrapperon/swift-dependencies-additions")
     UserDefaults.standard.removeObject(forKey: "url")
@@ -146,7 +146,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
     }
     UserDefaults.standard.removeObject(forKey: "url")
   }
-  
+  #endif
   func testLiveUserDefaultsStringRawRepresentable() {
     enum Value: String {
       case one
