@@ -95,7 +95,8 @@ extension UserDefaults.Dependency {
       self._get(key, URL.self) as? URL
     #else
       if let url = self._get(key, URL.self) as? URL { return url }
-      if let string = self._get(key, String.self) as? String, let url = URL(string: string)
+      if let data = self._get(key, Data.self) as? Data,
+        let url = URL(dataRepresentation: data, relativeTo: nil)
       {
         return url
       }
@@ -115,8 +116,8 @@ extension UserDefaults.Dependency {
       if value?.isFileURL == true {
         self._set(value, key)
       } else {
-        // Storing non file urls doesn't work on Linux, so we fallback to String:
-        self._set(value?.absoluteString, key)
+        // Storing non file urls doesn't work on Linux, so we fallback to Data:
+        self._set(value?.dataRepresentation, key)
       }
     #endif
   }
