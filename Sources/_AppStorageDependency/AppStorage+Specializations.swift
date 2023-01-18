@@ -62,19 +62,21 @@ extension Dependency.AppStorage {
     self.init(wrappedValue: wrappedValue, key: key, store: store)
   }
   #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
-  /// Creates a property that can read and write to a url user default.
-  ///
-  /// - Parameters:
-  ///   - wrappedValue: The default value if a url value is not specified for
-  ///     the given key.
-  ///   - key: The key to read and write the value to in the user defaults
-  ///     store.
-  ///   - store: The user defaults store to read and write to. A value
-  ///     of `nil` will use the user default store from the dependencies.
-  public convenience init(wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil)
-  where Value == URL {
-    self.init(wrappedValue: wrappedValue, key: key, store: store)
-  }
+    /// Creates a property that can read and write to a url user default.
+    ///
+    /// - Parameters:
+    ///   - wrappedValue: The default value if a url value is not specified for
+    ///     the given key.
+    ///   - key: The key to read and write the value to in the user defaults
+    ///     store.
+    ///   - store: The user defaults store to read and write to. A value
+    ///     of `nil` will use the user default store from the dependencies.
+    public convenience init(
+      wrappedValue: Value, _ key: String, store: UserDefaults.Dependency? = nil
+    )
+    where Value == URL {
+      self.init(wrappedValue: wrappedValue, key: key, store: store)
+    }
   #endif
   /// Creates a property that can read and write to a user default as data.
   ///
@@ -227,20 +229,20 @@ extension Dependency.AppStorage where Value: ExpressibleByNilLiteral {
     self.init(key: key, store: store)
   }
   #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
-  /// Creates a property that can read and write an Optional URL user
-  /// default.
-  ///
-  /// Defaults to nil if there is no restored value.
-  ///
-  /// - Parameters:
-  ///   - key: The key to read and write the value to in the user defaults
-  ///     store.
-  ///   - store: The user defaults store to read and write to. A value
-  ///     of `nil` will use the user default store from the dependencies.
-  public convenience init(_ key: String, store: UserDefaults.Dependency? = nil)
-  where Value == URL? {
-    self.init(key: key, store: store)
-  }
+    /// Creates a property that can read and write an Optional URL user
+    /// default.
+    ///
+    /// Defaults to nil if there is no restored value.
+    ///
+    /// - Parameters:
+    ///   - key: The key to read and write the value to in the user defaults
+    ///     store.
+    ///   - store: The user defaults store to read and write to. A value
+    ///     of `nil` will use the user default store from the dependencies.
+    public convenience init(_ key: String, store: UserDefaults.Dependency? = nil)
+    where Value == URL? {
+      self.init(key: key, store: store)
+    }
   #endif
   /// Creates a property that can read and write an Optional data user
   /// default.

@@ -87,22 +87,22 @@ extension UserDefaults.Dependency {
   }
 
   #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
-  /// Returns the URL value associated with the specified key.
-  /// - Parameter key: A key in the current user defaults store.
-  /// - Returns: The URL value associated with the specified key, or `nil` if there is no value
-  /// associated to `key`
-  public func url(forKey key: String) -> URL? {
-    self._get(key, URL.self) as? URL
-  }
+    /// Returns the URL value associated with the specified key.
+    /// - Parameter key: A key in the current user defaults store.
+    /// - Returns: The URL value associated with the specified key, or `nil` if there is no value
+    /// associated to `key`
+    public func url(forKey key: String) -> URL? {
+      self._get(key, URL.self) as? URL
+    }
 
-  /// Sets the value of the specified default key to the specified URL value.
-  /// - Parameters:
-  ///   - value: The URL value to store in the user's defaults store. If the value is `nil`,
-  ///   the associated value will be removed from the store.
-  ///   - key: The key with which to associate the value.
-  public func set(_ value: URL?, forKey key: String) {
-    self._set(value, key)
-  }
+    /// Sets the value of the specified default key to the specified URL value.
+    /// - Parameters:
+    ///   - value: The URL value to store in the user's defaults store. If the value is `nil`,
+    ///   the associated value will be removed from the store.
+    ///   - key: The key with which to associate the value.
+    public func set(_ value: URL?, forKey key: String) {
+      self._set(value, key)
+    }
   #endif
 
   /// Removes the specified for the specified key. You can alternatively set a `nil` value using

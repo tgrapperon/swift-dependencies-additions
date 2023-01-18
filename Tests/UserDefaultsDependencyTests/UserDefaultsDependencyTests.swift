@@ -115,37 +115,37 @@ final class UserDefaultsDependencyTests: XCTestCase {
     UserDefaults.standard.removeObject(forKey: "string")
   }
   #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
-  func testLiveUserDefaultsURL() {
-    let url = URL(string: "https://github.com/tgrapperon/swift-dependencies-additions")
-    UserDefaults.standard.removeObject(forKey: "url")
-    withDependencies {
-      $0.userDefaults = .standard
-    } operation: {
-      self.userDefaults.set(url, forKey: "url")
+    func testLiveUserDefaultsURL() {
+      let url = URL(string: "https://github.com/tgrapperon/swift-dependencies-additions")
+      UserDefaults.standard.removeObject(forKey: "url")
+      withDependencies {
+        $0.userDefaults = .standard
+      } operation: {
+        self.userDefaults.set(url, forKey: "url")
+      }
+      withDependencies {
+        $0.userDefaults = .standard
+      } operation: {
+        XCTAssertEqual(self.userDefaults.url(forKey: "url"), url)
+      }
+      UserDefaults.standard.removeObject(forKey: "url")
     }
-    withDependencies {
-      $0.userDefaults = .standard
-    } operation: {
-      XCTAssertEqual(self.userDefaults.url(forKey: "url"), url)
+
+    func testLiveUserDefaultsFileURL() {
+      let url = FileManager.default.temporaryDirectory.appendingPathComponent("Tests")
+      UserDefaults.standard.removeObject(forKey: "url")
+      withDependencies {
+        $0.userDefaults = .standard
+      } operation: {
+        self.userDefaults.set(url, forKey: "url")
+      }
+      withDependencies {
+        $0.userDefaults = .standard
+      } operation: {
+        XCTAssertEqual(self.userDefaults.url(forKey: "url"), url)
+      }
+      UserDefaults.standard.removeObject(forKey: "url")
     }
-    UserDefaults.standard.removeObject(forKey: "url")
-  }
-  
-  func testLiveUserDefaultsFileURL() {
-    let url = FileManager.default.temporaryDirectory.appendingPathComponent("Tests")
-    UserDefaults.standard.removeObject(forKey: "url")
-    withDependencies {
-      $0.userDefaults = .standard
-    } operation: {
-      self.userDefaults.set(url, forKey: "url")
-    }
-    withDependencies {
-      $0.userDefaults = .standard
-    } operation: {
-      XCTAssertEqual(self.userDefaults.url(forKey: "url"), url)
-    }
-    UserDefaults.standard.removeObject(forKey: "url")
-  }
   #endif
   func testLiveUserDefaultsStringRawRepresentable() {
     enum Value: String {
