@@ -243,6 +243,25 @@ extension Dependency.AppStorage where Value: ExpressibleByNilLiteral {
     where Value == URL? {
       self.init(key: key, store: store)
     }
+  #else
+    /// Creates a property that can read and write an Optional URL user
+    /// default.
+    ///
+    /// Defaults to nil if there is no restored value.
+    ///
+    /// - Parameters:
+    ///   - key: The key to read and write the value to in the user defaults
+    ///     store.
+    ///   - store: The user defaults store to read and write to. A value
+    ///     of `nil` will use the user default store from the dependencies.
+    @available(
+      *, unavailable,
+      message: "Reading and writing URLs from UserDefaults is not supported on this platform."
+    )
+    public convenience init(_ key: String, store: UserDefaults.Dependency? = nil)
+    where Value == URL? {
+      self.init(key: key, store: store)
+    }
   #endif
   /// Creates a property that can read and write an Optional data user
   /// default.
