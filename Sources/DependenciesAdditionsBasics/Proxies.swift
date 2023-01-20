@@ -236,7 +236,7 @@ extension ReadOnlyProxy {
   public static func unimplemented(
     _ description: String, placeholder: @autoclosure @escaping @Sendable () -> Value
   ) -> Self {
-    ReadOnlyProxy(XCTestDynamicOverlay.unimplemented(description, placeholder: placeholder))
+    ReadOnlyProxy({ XCTestDynamicOverlay.unimplemented(description, placeholder: placeholder)() })
   }
 }
 
@@ -283,7 +283,7 @@ extension FunctionProxy {
   public static func unimplemented(
     _ description: String, placeholder: @autoclosure @escaping @Sendable () -> Value
   ) -> Self {
-    FunctionProxy(XCTestDynamicOverlay.unimplemented(description, placeholder: placeholder))
+    FunctionProxy({ XCTestDynamicOverlay.unimplemented(description, placeholder: placeholder)() })
   }
 }
 
