@@ -229,6 +229,17 @@ public struct ReadOnlyProxy<Value: Sendable>: Sendable {
   }
 }
 
+extension ReadOnlyProxy {
+  public static func unimplemented(_ description: String) -> Self {
+    ReadOnlyProxy(XCTestDynamicOverlay.unimplemented(description))
+  }
+  public static func unimplemented(
+    _ description: String, placeholder: @autoclosure @escaping @Sendable () -> Value
+  ) -> Self {
+    ReadOnlyProxy(XCTestDynamicOverlay.unimplemented(description, placeholder: placeholder))
+  }
+}
+
 /// A property wrapper that characterizes a function that is backed by another type.
 ///
 /// You directly access the value in `live` context. In other context, you can assign another
@@ -262,6 +273,17 @@ public struct FunctionProxy<Value: Sendable>: Sendable {
   public var projectedValue: Self {
     get { self }
     set { self = newValue }
+  }
+}
+
+extension FunctionProxy {
+  public static func unimplemented(_ description: String) -> Self {
+    FunctionProxy(XCTestDynamicOverlay.unimplemented(description))
+  }
+  public static func unimplemented(
+    _ description: String, placeholder: @autoclosure @escaping @Sendable () -> Value
+  ) -> Self {
+    FunctionProxy(XCTestDynamicOverlay.unimplemented(description, placeholder: placeholder))
   }
 }
 

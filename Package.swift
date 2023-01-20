@@ -335,7 +335,7 @@ let package = Package(
 )
 
 /// Temporary dependencies
-// define("CryptoDependency")
+define("AccessibilityDependency", dependencies: "DependenciesAdditionsBasics")
 // define("KeyChainDependency")
 // define("Version")?
 
