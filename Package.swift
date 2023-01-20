@@ -48,6 +48,20 @@ let package = Package(
   targets: [
 
     .target(
+      name: "AccessibilityDependency",
+      dependencies: [
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        "DependenciesAdditionsBasics",
+      ]
+    ),
+    .testTarget(
+      name: "AccessibilityDependencyTests",
+      dependencies: [
+        "AccessibilityDependency"
+      ]
+    ),
+    
+    .target(
       name: "ApplicationDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
@@ -136,6 +150,7 @@ let package = Package(
       name: "DependenciesAdditions",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
+        "AccessibilityDependency",
         "ApplicationDependency",
         "BundleDependency",
         "CodableDependency",
@@ -335,7 +350,7 @@ let package = Package(
 )
 
 /// Temporary dependencies
-define("AccessibilityDependency", dependencies: "DependenciesAdditionsBasics")
+//define("AccessibilityDependency", dependencies: "DependenciesAdditionsBasics")
 // define("KeyChainDependency")
 // define("Version")?
 
@@ -368,6 +383,7 @@ func addIndividualProducts() {
   package.products.append(contentsOf: [
     .library(name: "DependenciesAdditionsBasics", targets: ["DependenciesAdditionsBasics"]),
     .library(name: "ApplicationDependency", targets: ["ApplicationDependency"]),
+    .library(name: "AccessibilityDependency", targets: ["AccessibilityDependency"]),
     .library(name: "BundleDependency", targets: ["BundleDependency"]),
     .library(name: "CodableDependency", targets: ["CodableDependency"]),
     .library(name: "CompressionDependency", targets: ["CompressionDependency"]),
