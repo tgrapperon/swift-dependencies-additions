@@ -231,6 +231,7 @@ let package = Package(
       name: "_NotificationDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
+        "AccessibilityDependency",
         "DependenciesAdditionsBasics",
         "DeviceDependency",
         "NotificationCenterDependency",
