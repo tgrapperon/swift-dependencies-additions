@@ -12,6 +12,7 @@ A companion library to Point-Free's [`swift-dependencies`](https://github.com/po
 "Dependencies Additions" intends to extend these core dependencies, and provide coherent and testable implementations to many additional dependencies that are commonly needed when developing on Apple's platforms.
 
 The library currently proposes a few low-level dependencies to interface with:
+- `Accessibility`, an abstraction over `UIAccessibility`;
 - `Application`, an abstraction over `UIApplication.shared`;
 - `BundleInfo`, an abstraction over the app's `info.plist`;
 - `Codable`, to encode/decode `Codable` types to `Data`;
@@ -79,6 +80,34 @@ This gives access to all non-underscored dependencies. Experimental dependencies
 
 We present here a few of the dependencies currently shipping with the library.
 If you're more interested in experimental abstractions like `AppStorage` or typed `Notification`, you can directly jump to the [Higher-level dependencies](#higher-level-dependencies) section.
+
+### Accessibility
+
+An abstraction over `UIAccessibility` that you can use to monitor the accessibility state of
+your app's instance.
+
+For example:
+```swift
+class Model {
+  @Dependency(\.accessibility) var accessibility
+
+  @MainActor
+  func isSystemFontBold() -> Bool {
+    self.accessibility.isBoldTextEnabled
+  }
+}
+```
+
+And then, when testing:
+```swift
+@MainActor 
+func testIsSystemBold() {
+  let model = withDependencies {
+    $0.accessibility.$isBoldTextEnabled = true
+  } operation: { Model() }
+  XCTAssertTrue(model.isSystemFontBold())
+} 
+```
 
 ### Application
 
