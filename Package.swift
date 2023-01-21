@@ -60,7 +60,7 @@ let package = Package(
         "AccessibilityDependency"
       ]
     ),
-    
+
     .target(
       name: "ApplicationDependency",
       dependencies: [
