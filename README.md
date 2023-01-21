@@ -81,34 +81,6 @@ This gives access to all non-underscored dependencies. Experimental dependencies
 We present here a few of the dependencies currently shipping with the library.
 If you're more interested in experimental abstractions like `AppStorage` or typed `Notification`, you can directly jump to the [Higher-level dependencies](#higher-level-dependencies) section.
 
-### Accessibility
-
-An abstraction over `UIAccessibility` that you can use to monitor the accessibility state of
-your app's instance.
-
-For example:
-```swift
-class Model {
-  @Dependency(\.accessibility) var accessibility
-
-  @MainActor
-  func isSystemFontBold() -> Bool {
-    self.accessibility.isBoldTextEnabled
-  }
-}
-```
-
-And then, when testing:
-```swift
-@MainActor 
-func testIsSystemBold() {
-  let model = withDependencies {
-    $0.accessibility.$isBoldTextEnabled = true
-  } operation: { Model() }
-  XCTAssertTrue(model.isSystemFontBold())
-} 
-```
-
 ### Application
 
 An abstraction over `UIApplication` that you can use to communicate with your app's instance.
@@ -137,6 +109,24 @@ func testAlternateIconIsSet() async throws -> Void {
   try await model.setAlternateIcon(name: "blueprint")
   XCTAssertEqual(alternateIconName.value, "blueprint")
 } 
+```
+
+### Accessibility
+
+An abstraction over `UIAccessibility` that you can use to monitor the accessibility state of
+your app's instance.
+
+For example:
+```swift
+class Model {
+  @Dependency(\.accessibility.isClosedCaptioningEnabled) var isClosedCaptioningEnabled
+
+  func play() -> Void {
+    if self.isClosedCaptioningEnabled {
+      self.updateClosedCaptions()
+    }
+  }
+}
 ```
 
 ### BundleInfo
