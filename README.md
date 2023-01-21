@@ -12,6 +12,7 @@ A companion library to Point-Free's [`swift-dependencies`](https://github.com/po
 "Dependencies Additions" intends to extend these core dependencies, and provide coherent and testable implementations to many additional dependencies that are commonly needed when developing on Apple's platforms.
 
 The library currently proposes a few low-level dependencies to interface with:
+- `Accessibility`, an abstraction over `UIAccessibility`;
 - `Application`, an abstraction over `UIApplication.shared`;
 - `BundleInfo`, an abstraction over the app's `info.plist`;
 - `Codable`, to encode/decode `Codable` types to `Data`;
@@ -108,6 +109,24 @@ func testAlternateIconIsSet() async throws -> Void {
   try await model.setAlternateIcon(name: "blueprint")
   XCTAssertEqual(alternateIconName.value, "blueprint")
 } 
+```
+
+### Accessibility
+
+An abstraction over `UIAccessibility` that you can use to monitor the accessibility state of
+your app's instance.
+
+For example:
+```swift
+class Model {
+  @Dependency(\.accessibility.isClosedCaptioningEnabled) var isClosedCaptioningEnabled
+
+  func play() -> Void {
+    if self.isClosedCaptioningEnabled {
+      self.updateClosedCaptions()
+    }
+  }
+}
 ```
 
 ### BundleInfo
