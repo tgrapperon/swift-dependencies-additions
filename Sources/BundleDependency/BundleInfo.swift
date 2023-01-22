@@ -49,7 +49,9 @@ public struct BundleInfo: Sendable, ConfigurableProxy {
   public var version: String {
     self._implementation.version
   }
+}
 
+extension BundleInfo {
   /// Creates a ``BundleInfo`` value.
   /// - Parameters:
   ///   - bundleIdentifier: A unique identifier for a bundle.
@@ -110,18 +112,14 @@ extension BundleInfo: DependencyKey {
 extension BundleInfo {
   static var unimplemented: BundleInfo {
     BundleInfo(
-      bundleIdentifier: XCTestDynamicOverlay.unimplemented(
-        #"@Dependency(\.bundleInfo.bundleIdentifier)"#),
-      name: XCTestDynamicOverlay.unimplemented(
-        #"@Dependency(\.bundleInfo.name)"#),
-      displayName: XCTestDynamicOverlay.unimplemented(
-        #"@Dependency(\.bundleInfo.displayName)"#),
-      spokenName: XCTestDynamicOverlay.unimplemented(
-        #"@Dependency(\.bundleInfo.spokenName)"#),
-      shortVersion: XCTestDynamicOverlay.unimplemented(
-        #"@Dependency(\.bundleInfo.shortVersion)"#),
-      version: XCTestDynamicOverlay.unimplemented(
-        #"@Dependency(\.bundleInfo.version)"#)
+      _implementation: .init(
+        bundleIdentifier: .unimplemented(#"@Dependency(\.bundleInfo.bundleIdentifier)"#),
+        name: .unimplemented(#"@Dependency(\.bundleInfo.name)"#),
+        displayName: .unimplemented(#"@Dependency(\.bundleInfo.displayName)"#),
+        spokenName: .unimplemented(#"@Dependency(\.bundleInfo.spokenName)"#),
+        shortVersion: .unimplemented(#"@Dependency(\.bundleInfo.shortVersion)"#),
+        version: .unimplemented(#"@Dependency(\.bundleInfo.version)"#)
+      )
     )
   }
 }
