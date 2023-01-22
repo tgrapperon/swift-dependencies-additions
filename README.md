@@ -227,7 +227,7 @@ your data.
 ```swift
 @Dependency(\.userDefaults) var userDefaults
 
-userDefaults.save(true, forKey: "hasUserPassedOnboarding")
+userDefaults.set(true, forKey: "hasUserPassedOnboarding")
 ```
 With one line of code, you can make your whole app write to your app group user defaults, an in-memory version for testing, or even to `NSUbiquitousKeyValueStore` that syncs user preferences over iCloud.
 
