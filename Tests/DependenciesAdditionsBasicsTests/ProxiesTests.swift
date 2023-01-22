@@ -3,12 +3,6 @@ import Dependencies
 import XCTest
 
 final class ProxiesTests: XCTestCase {
-  //  struct Foo {
-  //    @ReadWriteProxy var writable: String
-  //    @ReadOnlyProxy var readable: String
-  //    @FunctionProxy var function: () -> String
-  //  }
-
   func testReadWriteProxy() {
     struct Foo: ConfigurableProxy {
       struct Implementation {
@@ -46,6 +40,58 @@ final class ProxiesTests: XCTestCase {
         @FunctionProxy var value: (Int) -> String
       }
       var _implementation: Implementation
+      func value(index: Int) -> String {
+        _implementation.value(index)
+      }
+    }
+    var unimplemented = Foo(_implementation: .init(value: .init(unimplemented())))
+    unimplemented.$value = { "Hello! \($0)" }
+    XCTAssertEqual("Hello! 3", unimplemented.value(index: 3))
+  }
+  
+  @MainActor
+  func testMainActorReadWriteProxy() {
+    struct Foo: ConfigurableProxy {
+      struct Implementation {
+        @MainActorReadWriteProxy var value: String
+      }
+      var _implementation: Implementation
+      @MainActor
+      var value: String {
+        get { _implementation.value }
+        nonmutating set { _implementation.value = newValue }
+      }
+    }
+    let unimplemented = Foo(_implementation: .init(value: .unimplemented()))
+    unimplemented.value = "Hello!"
+    XCTAssertEqual("Hello!", unimplemented.value)
+  }
+  
+@MainActor
+  func testMainActorReadOnlyProxy() {
+    struct Foo: ConfigurableProxy {
+      struct Implementation {
+        @MainActorReadOnlyProxy var value: String
+      }
+      var _implementation: Implementation
+      @MainActor
+      var value: String {
+        _implementation.value
+      }
+    }
+    var unimplemented = Foo(_implementation: .init(value: .unimplemented()))
+    unimplemented.$value = "Hello!"
+    XCTAssertEqual("Hello!", unimplemented.value)
+  }
+  
+@MainActor
+  func testMainActorFunctionProxy() {
+    struct Foo: ConfigurableProxy {
+      struct Implementation {
+        @MainActorFunctionProxy var value: (Int) -> String
+      }
+      var _implementation: Implementation
+      @MainActor
       func value(index: Int) -> String {
         _implementation.value(index)
       }
@@ -106,5 +152,62 @@ final class ProxiesTests: XCTestCase {
         let _ = unimplemented.value(index: 4)
       }
     }
+  
+  @MainActor
+  func testUnimplementedMainActorReadWriteProxy() {
+    struct Foo: ConfigurableProxy {
+      struct Implementation {
+        @MainActorReadWriteProxy var value: String
+      }
+      var _implementation: Implementation
+      @MainActor
+      var value: String {
+        get { _implementation.value }
+        nonmutating set { _implementation.value = newValue }
+      }
+    }
+    let unimplemented = Foo(_implementation: .init(value: .unimplemented()))
+    XCTExpectFailure {
+      let _ = unimplemented.value
+    }
+    unimplemented.value = "Hello!"  // This shouldn't trip .unimplemented
+  }
+
+  @MainActor
+  func testUnimplementedMainActorReadOnlyProxy() {
+    struct Foo: ConfigurableProxy {
+      struct Implementation {
+        @MainActorReadOnlyProxy var value: String
+      }
+      var _implementation: Implementation
+      @MainActor
+      var value: String {
+        _implementation.value
+      }
+    }
+    let unimplemented = Foo(_implementation: .init(value: .unimplemented()))
+    XCTExpectFailure {
+      let _ = unimplemented.value
+    }
+  }
+
+  @MainActor
+  func testUnimplementedMainActorFunctionProxy() {
+    struct Foo: ConfigurableProxy {
+      struct Implementation {
+        @MainActorFunctionProxy var value: (Int) -> String
+      }
+      var _implementation: Implementation
+      @MainActor
+      func value(index: Int) -> String {
+        _implementation.value(index)
+      }
+    }
+    let unimplemented = Foo(
+      _implementation: .init(value: .init({ XCTestDynamicOverlay.unimplemented() })))
+    XCTExpectFailure {
+      let _ = unimplemented.value(index: 4)
+    }
+  }
   #endif
 }
