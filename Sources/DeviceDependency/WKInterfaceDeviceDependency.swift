@@ -28,24 +28,24 @@ import XCTestDynamicOverlay
   /// An object that provides information about the user’s Apple Watch.
   public struct Device: Sendable, ConfigurableProxy {
     public struct Implementation: Sendable {
-      @FunctionProxy public var name: String
-      @FunctionProxy public var model: String
-      @FunctionProxy public var localizedModel: String
-      @FunctionProxy public var systemName: String
-      @FunctionProxy public var systemVersion: String
-      @FunctionProxy public var identifierForVendor: UUID?
-      @FunctionProxy public var screenBounds: CGRect
-      @FunctionProxy public var screenScale: CGFloat
-      @FunctionProxy public var preferredContentSizeCategory: String
-      @FunctionProxy public var layoutDirection: WKInterfaceLayoutDirection
-      @FunctionProxy public var wristLocation: WKInterfaceDeviceWristLocation
-      @FunctionProxy public var crownOrientation: WKInterfaceDeviceCrownOrientation
+      @ReadOnlyProxy public var name: String
+      @ReadOnlyProxy public var model: String
+      @ReadOnlyProxy public var localizedModel: String
+      @ReadOnlyProxy public var systemName: String
+      @ReadOnlyProxy public var systemVersion: String
+      @ReadOnlyProxy public var identifierForVendor: UUID?
+      @ReadOnlyProxy public var screenBounds: CGRect
+      @ReadOnlyProxy public var screenScale: CGFloat
+      @ReadOnlyProxy public var preferredContentSizeCategory: String
+      @ReadOnlyProxy public var layoutDirection: WKInterfaceLayoutDirection
+      @ReadOnlyProxy public var wristLocation: WKInterfaceDeviceWristLocation
+      @ReadOnlyProxy public var crownOrientation: WKInterfaceDeviceCrownOrientation
       @ReadWriteProxy public var isBatteryMonitoringEnabled: Bool
-      @FunctionProxy public var batteryState: WKInterfaceDeviceBatteryState
-      @FunctionProxy public var batteryLevel: Float
-      @FunctionProxy public var waterResistanceRating: WKWaterResistanceRating
-      @FunctionProxy public var isWaterLockEnabled: Bool
-      @FunctionProxy public var supportsAudioStreaming: Bool
+      @ReadOnlyProxy public var batteryState: WKInterfaceDeviceBatteryState
+      @ReadOnlyProxy public var batteryLevel: Float
+      @ReadOnlyProxy public var waterResistanceRating: WKWaterResistanceRating
+      @ReadOnlyProxy public var isWaterLockEnabled: Bool
+      @ReadOnlyProxy public var supportsAudioStreaming: Bool
       @FunctionProxy public var play: @Sendable (WKHapticType) -> Void
       @FunctionProxy public var enableWaterLock: @Sendable () -> Void
     }

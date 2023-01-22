@@ -251,7 +251,7 @@ public struct ReadWriteProxy<Value: Sendable>: Sendable {
 
 extension ReadWriteProxy {
   public static func unimplemented(
-    _ description: String,
+    _ description: String = "",
     file: StaticString = #file,
     fileID: StaticString = #fileID,
     line: UInt = #line
@@ -266,7 +266,7 @@ extension ReadWriteProxy {
     )
   }
   public static func unimplemented(
-    _ description: String, placeholder: @autoclosure @escaping @Sendable () -> Value,
+    _ description: String = "", placeholder: @autoclosure @escaping @Sendable () -> Value,
     fileID: StaticString = #fileID,
     line: UInt = #line
   ) -> Self {
@@ -302,7 +302,7 @@ extension ReadWriteProxy {
 /// ```
 @propertyWrapper
 public struct ReadOnlyProxy<Value: Sendable>: Sendable {
-  public var _value: @Sendable () -> Value
+  var _value: @Sendable () -> Value
 
   public init(_ value: @autoclosure @escaping @Sendable () -> Value) {
     self._value = value
@@ -323,7 +323,7 @@ public struct ReadOnlyProxy<Value: Sendable>: Sendable {
 
 extension ReadOnlyProxy {
   public static func unimplemented(
-    _ description: String,
+    _ description: String = "",
     file: StaticString = #file,
     fileID: StaticString = #fileID,
     line: UInt = #line
@@ -332,7 +332,7 @@ extension ReadOnlyProxy {
       XCTestDynamicOverlay.unimplemented(description, file: file, fileID: fileID, line: line))
   }
   public static func unimplemented(
-    _ description: String,
+    _ description: String = "",
     placeholder: @autoclosure @escaping @Sendable () -> Value,
     fileID: StaticString = #fileID,
     line: UInt = #line
@@ -386,34 +386,29 @@ public struct FunctionProxy<Value: Sendable>: Sendable {
 
 extension FunctionProxy {
   public static func unimplemented(
-    _ description: String,
-    file: StaticString = #file,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    FunctionProxy(
-      XCTestDynamicOverlay.unimplemented(
-        description,
-        file: file,
-        fileID: fileID,
-        line: line
-      )
-    )
-  }
-  public static func unimplemented(
-    _ description: String,
+    _ description: String = "",
     placeholder: @autoclosure @escaping @Sendable () -> Value,
     fileID: StaticString = #fileID,
     line: UInt = #line
   ) -> Self {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
-        description, placeholder: placeholder,
+        description,
+        placeholder: placeholder,
         fileID: fileID,
         line: line
       )()
     })
   }
+}
+
+func _unimplemented<V>(
+  description: String,
+  file: StaticString = #file,
+  fileID: StaticString = #fileID,
+  line: UInt = #line
+) -> V {
+  { unimplemented(description, file: file, fileID: fileID, line: line) }()
 }
 
 /// A value that describe a bidirectional binding on `MainActor`.
@@ -573,7 +568,7 @@ public struct MainActorReadWriteProxy<Value: Sendable>: Sendable {
 
 extension MainActorReadWriteProxy {
   public static func unimplemented(
-    _ description: String,
+    _ description: String = "",
     file: StaticString = #file,
     fileID: StaticString = #fileID,
     line: UInt = #line
@@ -588,7 +583,7 @@ extension MainActorReadWriteProxy {
     )
   }
   public static func unimplemented(
-    _ description: String,
+    _ description: String = "",
     placeholder: @autoclosure @escaping @Sendable () -> Value,
     fileID: StaticString = #fileID,
     line: UInt = #line
@@ -626,7 +621,7 @@ extension MainActorReadWriteProxy {
 /// ```
 @propertyWrapper
 public struct MainActorReadOnlyProxy<Value: Sendable>: Sendable {
-  public var _value: @Sendable @MainActor () -> Value
+  var _value: @Sendable @MainActor () -> Value
 
   public init(_ value: @autoclosure @escaping @MainActor @Sendable () -> Value) {
     self._value = value
@@ -647,7 +642,7 @@ public struct MainActorReadOnlyProxy<Value: Sendable>: Sendable {
 
 extension MainActorReadOnlyProxy {
   public static func unimplemented(
-    _ description: String,
+    _ description: String = "",
     file: StaticString = #file,
     fileID: StaticString = #fileID,
     line: UInt = #line
@@ -662,7 +657,7 @@ extension MainActorReadOnlyProxy {
     )
   }
   public static func unimplemented(
-    _ description: String,
+    _ description: String = "",
     placeholder: @autoclosure @escaping @Sendable () -> Value,
     fileID: StaticString = #fileID,
     line: UInt = #line
@@ -698,7 +693,7 @@ extension MainActorReadOnlyProxy {
 /// ```
 @propertyWrapper
 public struct MainActorFunctionProxy<Value: Sendable>: Sendable {
-  public var _value: @Sendable @MainActor () -> Value
+  var _value: @Sendable @MainActor () -> Value
 
   public init(_ value: @escaping @Sendable @MainActor () -> Value) {
     self._value = value
@@ -717,21 +712,7 @@ public struct MainActorFunctionProxy<Value: Sendable>: Sendable {
 
 extension MainActorFunctionProxy {
   public static func unimplemented(
-    _ description: String,
-    file: StaticString = #file,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    MainActorFunctionProxy(
-      XCTestDynamicOverlay.unimplemented(
-        description,
-        file: file,
-        fileID: fileID,
-        line: line)
-    )
-  }
-  public static func unimplemented(
-    _ description: String,
+    _ description: String = "",
     placeholder: @autoclosure @escaping @Sendable () -> Value,
     fileID: StaticString = #fileID,
     line: UInt = #line
