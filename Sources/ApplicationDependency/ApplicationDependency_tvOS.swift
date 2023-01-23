@@ -304,10 +304,10 @@ import XCTestDynamicOverlay
             get: { UIApplication.shared.isIdleTimerDisabled },
             set: { UIApplication.shared.isIdleTimerDisabled = $0 }
           )),
-        canOpenURL: .init { { UIApplication.shared.canOpenURL($0) } },
-        open: .init { { await UIApplication.shared.open($0, options: $1) } },
-        sendEvent: .init { { UIApplication.shared.sendEvent($0) } },
-        sendAction: .init { { UIApplication.shared.sendAction($0, to: $1, from: $2, for: $3) } },
+        canOpenURL: .init { UIApplication.shared.canOpenURL($0) },
+        open: .init { await UIApplication.shared.open($0, options: $1) },
+        sendEvent: .init { UIApplication.shared.sendEvent($0) },
+        sendAction: .init { UIApplication.shared.sendAction($0, to: $1, from: $2, for: $3) },
         applicationIconBadgeNumber: .init(
           .init(
             get: { UIApplication.shared.applicationIconBadgeNumber },
@@ -318,7 +318,7 @@ import XCTestDynamicOverlay
         beginBackgroundTask: .init {
           { UIApplication.shared.beginBackgroundTask(withName: $0, expirationHandler: $1) }
         },
-        endBackgroundTask: .init { { UIApplication.shared.endBackgroundTask($0) } },
+        endBackgroundTask: .init { UIApplication.shared.endBackgroundTask($0) },
         backgroundRefreshStatus: .init { UIApplication.shared.backgroundRefreshStatus },
         isProtectedDataAvailable: .init { UIApplication.shared.isProtectedDataAvailable },
         userInterfaceLayoutDirection: .init { UIApplication.shared.userInterfaceLayoutDirection },
@@ -354,11 +354,11 @@ import XCTestDynamicOverlay
           { UIApplication.shared.endReceivingRemoteControlEvents() }
         },
         supportsAlternateIcons: .init { UIApplication.shared.supportsAlternateIcons },
-        setAlternateIconName: .init({ { try await UIApplication.shared.setAlternateIconName($0) } }
+        setAlternateIconName: .init({ try await UIApplication.shared.setAlternateIconName($0) }
         ),
         alternateIconName: .init { UIApplication.shared.alternateIconName },
-        extendStateRestoration: .init { { UIApplication.shared.extendStateRestoration() } },
-        completeStateRestoration: .init { { UIApplication.shared.completeStateRestoration() } },
+        extendStateRestoration: .init { UIApplication.shared.extendStateRestoration() },
+        completeStateRestoration: .init { UIApplication.shared.completeStateRestoration() },
         ignoreSnapshotOnNextApplicationLaunch: .init {
           { UIApplication.shared.ignoreSnapshotOnNextApplicationLaunch() }
         })

@@ -38,9 +38,9 @@ import XCTestDynamicOverlay
       @MainActorReadOnlyProxy public var orientation: UIDeviceOrientation
       @MainActorReadOnlyProxy public var isGeneratingDeviceOrientationNotifications: Bool
       @FunctionProxy public var beginGeneratingDeviceOrientationNotifications:
-      @MainActor @Sendable () -> Void
+        @MainActor @Sendable () -> Void
       @FunctionProxy public var endGeneratingDeviceOrientationNotifications:
-      @MainActor @Sendable () -> Void
+        @MainActor @Sendable () -> Void
       @MainActorReadWriteProxy public var isBatteryMonitoringEnabled: Bool
       @MainActorReadOnlyProxy public var batteryState: UIDevice.BatteryState
       @MainActorReadOnlyProxy public var batteryLevel: Float
@@ -50,7 +50,7 @@ import XCTestDynamicOverlay
       @MainActorReadOnlyProxy public var userInterfaceIdiom: UIUserInterfaceIdiom
       @FunctionProxy public var playInputClick: @MainActor @Sendable () -> Void
     }
-    
+
     @_spi(Internals) public var _implementation: Implementation
 
     /// The name of the device.
@@ -146,7 +146,7 @@ import XCTestDynamicOverlay
       self._implementation.playInputClick()
     }
 
-    nonisolated 
+    nonisolated
       init(
         name: @escaping @MainActor @Sendable () -> String,
         model: @escaping @MainActor @Sendable () -> String,
@@ -183,12 +183,12 @@ import XCTestDynamicOverlay
         orientation: .init(orientation),
         isGeneratingDeviceOrientationNotifications: .init(
           isGeneratingDeviceOrientationNotifications),
-        beginGeneratingDeviceOrientationNotifications: .init({
-          { beginGeneratingDeviceOrientationNotifications() }
-        }),
-        endGeneratingDeviceOrientationNotifications: .init({
-          { endGeneratingDeviceOrientationNotifications() }
-        }),
+        beginGeneratingDeviceOrientationNotifications: .init {
+          beginGeneratingDeviceOrientationNotifications()
+        },
+        endGeneratingDeviceOrientationNotifications: .init {
+          endGeneratingDeviceOrientationNotifications()
+        },
         isBatteryMonitoringEnabled: .init(.init(isBatteryMonitoringEnabled)),
         batteryState: .init(batteryState),
         batteryLevel: .init(batteryLevel),
@@ -196,7 +196,7 @@ import XCTestDynamicOverlay
         proximityState: .init(proximityState),
         isMultitaskingSupported: .init(isMultitaskingSupported),
         userInterfaceIdiom: .init(userInterfaceIdiom),
-        playInputClick: .init({ { playInputClick() } })
+        playInputClick: .init { playInputClick() }
       )
     }
   }

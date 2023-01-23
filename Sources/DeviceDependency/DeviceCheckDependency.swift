@@ -43,7 +43,7 @@
     ) {
       self._implementation = .init(
         isSupported: .init(isSupported),
-        generateToken: .init({ generateToken })
+        generateToken: .init(generateToken)
       )
     }
   }
@@ -58,12 +58,10 @@
             fatalError()
           },
           generateToken: .init {
-            {
-              if #available(iOS 11.0, macOS 10.15, tvOS 11.0, watchOS 9.0, *) {
-                return try await DCDevice.current.generateToken()
-              }
-              fatalError()
+            if #available(iOS 11.0, macOS 10.15, tvOS 11.0, watchOS 9.0, *) {
+              return try await DCDevice.current.generateToken()
             }
+            fatalError()
           }
         ))
     }

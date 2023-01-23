@@ -335,12 +335,12 @@ import XCTestDynamicOverlay
             get: { UIApplication.shared.isIdleTimerDisabled },
             set: { UIApplication.shared.isIdleTimerDisabled = $0 }
           )),
-        canOpenURL: .init { { UIApplication.shared.canOpenURL($0) } },
-        open: .init { { await UIApplication.shared.open($0, options: $1) } },
-        sendEvent: .init { { UIApplication.shared.sendEvent($0) } },
-        sendAction: .init { { UIApplication.shared.sendAction($0, to: $1, from: $2, for: $3) } },
+        canOpenURL: .init { UIApplication.shared.canOpenURL($0) },
+        open: .init { await UIApplication.shared.open($0, options: $1) },
+        sendEvent: .init { UIApplication.shared.sendEvent($0) },
+        sendAction: .init { UIApplication.shared.sendAction($0, to: $1, from: $2, for: $3) },
         supportedInterfaceOrientations: .init {
-          { UIApplication.shared.supportedInterfaceOrientations(for: $0) }
+          UIApplication.shared.supportedInterfaceOrientations(for: $0)
         },
         applicationIconBadgeNumber: .init(
           .init(
@@ -355,9 +355,9 @@ import XCTestDynamicOverlay
         applicationState: .init { UIApplication.shared.applicationState },
         backgroundTimeRemaining: .init { UIApplication.shared.backgroundTimeRemaining },
         beginBackgroundTask: .init {
-          { UIApplication.shared.beginBackgroundTask(withName: $0, expirationHandler: $1) }
+          UIApplication.shared.beginBackgroundTask(withName: $0, expirationHandler: $1)
         },
-        endBackgroundTask: .init { { UIApplication.shared.endBackgroundTask($0) } },
+        endBackgroundTask: .init { UIApplication.shared.endBackgroundTask($0) },
         backgroundRefreshStatus: .init { UIApplication.shared.backgroundRefreshStatus },
         isProtectedDataAvailable: .init { UIApplication.shared.isProtectedDataAvailable },
         userInterfaceLayoutDirection: .init { UIApplication.shared.userInterfaceLayoutDirection },
@@ -366,31 +366,29 @@ import XCTestDynamicOverlay
         openSessions: .init { UIApplication.shared.openSessions },
         supportsMultipleScenes: .init { UIApplication.shared.supportsMultipleScenes },
         requestSceneSessionActivation: .init {
-          {
-            UIApplication.shared.requestSceneSessionActivation(
-              $0, userActivity: $1, options: $2, errorHandler: $3)
-          }
+          UIApplication.shared.requestSceneSessionActivation(
+            $0, userActivity: $1, options: $2, errorHandler: $3)
         },
         requestSceneSessionDestruction: .init {
-          { UIApplication.shared.requestSceneSessionDestruction($0, options: $1, errorHandler: $2) }
+          UIApplication.shared.requestSceneSessionDestruction($0, options: $1, errorHandler: $2)
         },
         requestSceneSessionRefresh: .init {
-          { UIApplication.shared.requestSceneSessionRefresh($0) }
+          UIApplication.shared.requestSceneSessionRefresh($0)
         },
         registerForRemoteNotifications: .init {
-          { UIApplication.shared.registerForRemoteNotifications() }
+          UIApplication.shared.registerForRemoteNotifications()
         },
         unregisterForRemoteNotifications: .init {
-          { UIApplication.shared.unregisterForRemoteNotifications() }
+          UIApplication.shared.unregisterForRemoteNotifications()
         },
         isRegisteredForRemoteNotifications: .init {
           UIApplication.shared.isRegisteredForRemoteNotifications
         },
         beginReceivingRemoteControlEvents: .init {
-          { UIApplication.shared.beginReceivingRemoteControlEvents() }
+          UIApplication.shared.beginReceivingRemoteControlEvents()
         },
         endReceivingRemoteControlEvents: .init {
-          { UIApplication.shared.endReceivingRemoteControlEvents() }
+          UIApplication.shared.endReceivingRemoteControlEvents()
         },
         shortcutItems: .init(
           .init(
@@ -402,14 +400,15 @@ import XCTestDynamicOverlay
             }
           )),
         supportsAlternateIcons: .init { UIApplication.shared.supportsAlternateIcons },
-        setAlternateIconName: .init({ { try await UIApplication.shared.setAlternateIconName($0) } }
+        setAlternateIconName: .init({ try await UIApplication.shared.setAlternateIconName($0) }
         ),
         alternateIconName: .init { UIApplication.shared.alternateIconName },
-        extendStateRestoration: .init { { UIApplication.shared.extendStateRestoration() } },
-        completeStateRestoration: .init { { UIApplication.shared.completeStateRestoration() } },
+        extendStateRestoration: .init { UIApplication.shared.extendStateRestoration() },
+        completeStateRestoration: .init { UIApplication.shared.completeStateRestoration() },
         ignoreSnapshotOnNextApplicationLaunch: .init {
-          { UIApplication.shared.ignoreSnapshotOnNextApplicationLaunch() }
-        })
+          UIApplication.shared.ignoreSnapshotOnNextApplicationLaunch()
+        }
+      )
       return Application(_implementation: _implementation)
     }
   }
@@ -497,10 +496,10 @@ import XCTestDynamicOverlay
           placeholder: nil),
         supportsAlternateIcons: .unimplemented(
           #"@Dependency(\.application.supportsAlternateIcons)"#),
-        setAlternateIconName: .init { // The convenience version crashes the compiler
+        setAlternateIconName: .init (  // The convenience version crashes the compiler
           XCTestDynamicOverlay
             .unimplemented(#"@Dependency(\.application.setAlternateIconName)"#)
-        },
+        ),
         alternateIconName: .unimplemented(
           #"@Dependency(\.application.alternateIconName)"#,
           placeholder: nil),

@@ -129,7 +129,7 @@ import XCTestDynamicOverlay
         proximityState: .init(proximityState),
         isMultitaskingSupported: .init(isMultitaskingSupported),
         userInterfaceIdiom: .init(userInterfaceIdiom),
-        playInputClick: .init({ { playInputClick() } })
+        playInputClick: .init { playInputClick() }
       )
     }
   }

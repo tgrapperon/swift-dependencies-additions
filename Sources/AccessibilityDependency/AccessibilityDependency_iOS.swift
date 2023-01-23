@@ -289,45 +289,41 @@
               UIAccessibility.shouldDifferentiateWithoutColor
             },
             configureForGuidedAccess:
-              .init {
-                { features, enabled in
-                  try await withUnsafeThrowingContinuation { continuation in
-                    UIAccessibility.configureForGuidedAccess(features: features, enabled: enabled) {
-                      enabled, error in
-                      if let error {
-                        continuation.resume(with: .failure(error))
-                      } else {
-                        continuation.resume(with: .success(enabled))
-                      }
+              .init { features, enabled in
+                try await withUnsafeThrowingContinuation { continuation in
+                  UIAccessibility.configureForGuidedAccess(features: features, enabled: enabled) {
+                    enabled, error in
+                    if let error {
+                      continuation.resume(with: .failure(error))
+                    } else {
+                      continuation.resume(with: .success(enabled))
                     }
                   }
                 }
               },
             convertToScreenCoordinatesUsingUIBezierPath:
-              .init { { UIAccessibility.convertToScreenCoordinates($0, in: $1) } },
+              .init { UIAccessibility.convertToScreenCoordinates($0, in: $1) },
             convertToScreenCoordinatesUsingUIView:
-              .init { { UIAccessibility.convertToScreenCoordinates($0, in: $1) } },
+              .init { UIAccessibility.convertToScreenCoordinates($0, in: $1) },
             focusedElement:
-              .init { { UIAccessibility.focusedElement(using: $0) } },
+              .init { UIAccessibility.focusedElement(using: $0) },
             guidedAccessRestrictionState:
-              .init { { UIAccessibility.guidedAccessRestrictionState(forIdentifier: $0) } },
-            post: .init { { UIAccessibility.post(notification: $0, argument: $1) } },
+              .init { UIAccessibility.guidedAccessRestrictionState(forIdentifier: $0) },
+            post: .init { UIAccessibility.post(notification: $0, argument: $1) },
             registerGestureConflictWithZoom: .init {
-              { UIAccessibility.registerGestureConflictWithZoom() }
+              UIAccessibility.registerGestureConflictWithZoom()
             },
             requestGuidedAccessSession: .init {
-              { enabled in
-                await withUnsafeContinuation { continuation in
-                  UIAccessibility.requestGuidedAccessSession(enabled: enabled) {
-                    continuation.resume(returning: $0)
-                  }
+              enabled in
+              await withUnsafeContinuation { continuation in
+                UIAccessibility.requestGuidedAccessSession(enabled: enabled) {
+                  continuation.resume(returning: $0)
                 }
               }
+
             },
             zoomFocusChanged: .init {
-              {
-                UIAccessibility.zoomFocusChanged(zoomType: $0, toFrame: $1, in: $2)
-              }
+              UIAccessibility.zoomFocusChanged(zoomType: $0, toFrame: $1, in: $2)
             }
           )
         )
@@ -369,14 +365,14 @@
               UIAccessibility.shouldDifferentiateWithoutColor
             },
             convertToScreenCoordinatesUsingUIBezierPath:
-              .init { { UIAccessibility.convertToScreenCoordinates($0, in: $1) } },
+              .init { UIAccessibility.convertToScreenCoordinates($0, in: $1) },
             convertToScreenCoordinatesUsingUIView:
-              .init { { UIAccessibility.convertToScreenCoordinates($0, in: $1) } },
+              .init { UIAccessibility.convertToScreenCoordinates($0, in: $1) },
             focusedElement:
-              .init { { UIAccessibility.focusedElement(using: $0) } },
+              .init { UIAccessibility.focusedElement(using: $0) },
             guidedAccessRestrictionState:
-              .init { { UIAccessibility.guidedAccessRestrictionState(forIdentifier: $0) } },
-            post: .init { { UIAccessibility.post(notification: $0, argument: $1) } },
+              .init { UIAccessibility.guidedAccessRestrictionState(forIdentifier: $0) },
+            post: .init { UIAccessibility.post(notification: $0, argument: $1) },
             registerGestureConflictWithZoom: .init {
               { UIAccessibility.registerGestureConflictWithZoom() }
             },

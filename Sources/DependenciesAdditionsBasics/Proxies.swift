@@ -357,6 +357,7 @@ extension ReadOnlyProxy {
 public struct FunctionProxy<Value: Sendable>: Sendable {
   var _value: @Sendable () -> Value
 
+  @available(*, deprecated, message: "Use Value directly")
   public init(_ value: @escaping @Sendable () -> Value) {
     self._value = value
   }
