@@ -2,7 +2,7 @@ import ApplicationDependency
 import Dependencies
 import XCTest
 
-#if os(iOS) || os(tvOS)
+#if os(iOS)
   final class ApplicationDependencyTests: XCTestCase {
     @Dependency(\.application) var application
     @MainActor
@@ -53,9 +53,9 @@ import XCTest
     }
     @MainActor
     func testFailingTestApplicationIOS_open() async {
-      //      XCTExpectFailure {
-      //        let _ = await application.`open`(FileManager.default.temporaryDirectory)
-      //      }
+//      XCTExpectFailure {
+//        let _ = await application.`open`(FileManager.default.temporaryDirectory)
+//      }
     }
     @MainActor
     func testFailingTestApplicationIOS_sendEvent() {

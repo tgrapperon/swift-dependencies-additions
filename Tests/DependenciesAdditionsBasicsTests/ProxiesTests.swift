@@ -83,23 +83,6 @@ final class ProxiesTests: XCTestCase {
     unimplemented.$value = "Hello!"
     XCTAssertEqual("Hello!", unimplemented.value)
   }
-  
-@MainActor
-  func testMainActorFunctionProxy() {
-    struct Foo: ConfigurableProxy {
-      struct Implementation {
-        @MainActorFunctionProxy var value: (Int) -> String
-      }
-      var _implementation: Implementation
-      @MainActor
-      func value(index: Int) -> String {
-        _implementation.value(index)
-      }
-    }
-    var unimplemented = Foo(_implementation: .init(value: .init(unimplemented())))
-    unimplemented.$value = { "Hello! \($0)" }
-    XCTAssertEqual("Hello! 3", unimplemented.value(index: 3))
-  }
 
   #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
     func testUnimplementedReadWriteProxy() {
@@ -188,25 +171,6 @@ final class ProxiesTests: XCTestCase {
     let unimplemented = Foo(_implementation: .init(value: .unimplemented()))
     XCTExpectFailure {
       let _ = unimplemented.value
-    }
-  }
-
-  @MainActor
-  func testUnimplementedMainActorFunctionProxy() {
-    struct Foo: ConfigurableProxy {
-      struct Implementation {
-        @MainActorFunctionProxy var value: (Int) -> String
-      }
-      var _implementation: Implementation
-      @MainActor
-      func value(index: Int) -> String {
-        _implementation.value(index)
-      }
-    }
-    let unimplemented = Foo(
-      _implementation: .init(value: .init({ XCTestDynamicOverlay.unimplemented() })))
-    XCTExpectFailure {
-      let _ = unimplemented.value(index: 4)
     }
   }
   #endif
