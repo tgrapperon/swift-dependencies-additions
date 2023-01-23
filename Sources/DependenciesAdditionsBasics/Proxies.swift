@@ -357,7 +357,6 @@ extension ReadOnlyProxy {
 public struct FunctionProxy<Value: Sendable>: Sendable {
   var _value: @Sendable () -> Value
 
-  @available(*, deprecated, message: "Use Value directly")
   public init(_ value: @escaping @Sendable () -> Value) {
     self._value = value
   }
@@ -377,6 +376,9 @@ public struct FunctionProxy<Value: Sendable>: Sendable {
 }
 
 extension FunctionProxy {
+  /// - Warning: This convenience helper can crash the compiler if the function is async. In this
+  /// case, you should use the standard initializer with an unimplemented argument:
+  /// `.init(unimplemented(…))`.
   public static func unimplemented(
     _ description: String = "",
     placeholder: @autoclosure @escaping @Sendable () -> Value,
