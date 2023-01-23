@@ -38,9 +38,9 @@ import XCTestDynamicOverlay
       @MainActorReadOnlyProxy public var orientation: UIDeviceOrientation
       @MainActorReadOnlyProxy public var isGeneratingDeviceOrientationNotifications: Bool
       @FunctionProxy public var beginGeneratingDeviceOrientationNotifications:
-        @MainActor @Sendable () -> Void
+      @MainActor @Sendable () -> Void
       @FunctionProxy public var endGeneratingDeviceOrientationNotifications:
-        @MainActor @Sendable () -> Void
+      @MainActor @Sendable () -> Void
       @MainActorReadWriteProxy public var isBatteryMonitoringEnabled: Bool
       @MainActorReadOnlyProxy public var batteryState: UIDevice.BatteryState
       @MainActorReadOnlyProxy public var batteryLevel: Float
@@ -49,53 +49,8 @@ import XCTestDynamicOverlay
       @MainActorReadOnlyProxy public var isMultitaskingSupported: Bool
       @MainActorReadOnlyProxy public var userInterfaceIdiom: UIUserInterfaceIdiom
       @FunctionProxy public var playInputClick: @MainActor @Sendable () -> Void
-
-      init(
-        name: MainActorReadOnlyProxy<String>,
-        model: MainActorReadOnlyProxy<String>,
-        localizedModel: MainActorReadOnlyProxy<String>,
-        systemName: MainActorReadOnlyProxy<String>,
-        systemVersion: MainActorReadOnlyProxy<String>,
-        identifierForVendor: MainActorReadOnlyProxy<UUID?>,
-        orientation: MainActorReadOnlyProxy<UIDeviceOrientation>,
-        isGeneratingDeviceOrientationNotifications: MainActorReadOnlyProxy<Bool>,
-        beginGeneratingDeviceOrientationNotifications: FunctionProxy<
-          @MainActor @Sendable () -> Void
-        >,
-        endGeneratingDeviceOrientationNotifications: FunctionProxy<@MainActor @Sendable () -> Void>,
-        isBatteryMonitoringEnabled: MainActorReadWriteProxy<Bool>,
-        batteryState: MainActorReadOnlyProxy<UIDevice.BatteryState>,
-        batteryLevel: MainActorReadOnlyProxy<Float>,
-        isProximityMonitoringEnabled: MainActorReadWriteProxy<Bool>,
-        proximityState: MainActorReadOnlyProxy<Bool>,
-        isMultitaskingSupported: MainActorReadOnlyProxy<Bool>,
-        userInterfaceIdiom: MainActorReadOnlyProxy<UIUserInterfaceIdiom>,
-        playInputClick: FunctionProxy<@MainActor @Sendable () -> Void>
-      ) {
-        self._name = name
-        self._model = model
-        self._localizedModel = localizedModel
-        self._systemName = systemName
-        self._systemVersion = systemVersion
-        self._identifierForVendor = identifierForVendor
-        self._orientation = orientation
-        self._isGeneratingDeviceOrientationNotifications =
-          isGeneratingDeviceOrientationNotifications
-        self._beginGeneratingDeviceOrientationNotifications =
-          beginGeneratingDeviceOrientationNotifications
-        self._endGeneratingDeviceOrientationNotifications =
-          endGeneratingDeviceOrientationNotifications
-        self._isBatteryMonitoringEnabled = isBatteryMonitoringEnabled
-        self._batteryState = batteryState
-        self._batteryLevel = batteryLevel
-        self._isProximityMonitoringEnabled = isProximityMonitoringEnabled
-        self._proximityState = proximityState
-        self._isMultitaskingSupported = isMultitaskingSupported
-        self._userInterfaceIdiom = userInterfaceIdiom
-        self._playInputClick = playInputClick
-      }
     }
-
+    
     @_spi(Internals) public var _implementation: Implementation
 
     /// The name of the device.
@@ -191,7 +146,7 @@ import XCTestDynamicOverlay
       self._implementation.playInputClick()
     }
 
-    nonisolated  // Don't know why this is needed, as `Device` is not actor-isolated
+    nonisolated 
       init(
         name: @escaping @MainActor @Sendable () -> String,
         model: @escaping @MainActor @Sendable () -> String,

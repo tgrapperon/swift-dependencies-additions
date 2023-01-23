@@ -40,32 +40,6 @@ import XCTestDynamicOverlay
       @MainActorReadOnlyProxy public var isMultitaskingSupported: Bool
       @MainActorReadOnlyProxy public var userInterfaceIdiom: UIUserInterfaceIdiom
       @FunctionProxy public var playInputClick: @MainActor @Sendable () -> Void
-
-      init(
-        name: MainActorReadOnlyProxy<String>,
-        model: MainActorReadOnlyProxy<String>,
-        localizedModel: MainActorReadOnlyProxy<String>,
-        systemName: MainActorReadOnlyProxy<String>,
-        systemVersion: MainActorReadOnlyProxy<String>,
-        identifierForVendor: MainActorReadOnlyProxy<UUID?>,
-        isProximityMonitoringEnabled: MainActorReadWriteProxy<Bool>,
-        proximityState: MainActorReadOnlyProxy<Bool>,
-        isMultitaskingSupported: MainActorReadOnlyProxy<Bool>,
-        userInterfaceIdiom: MainActorReadOnlyProxy<UIUserInterfaceIdiom>,
-        playInputClick: FunctionProxy<@MainActor @Sendable () -> Void>
-      ) {
-        self._name = name
-        self._model = model
-        self._localizedModel = localizedModel
-        self._systemName = systemName
-        self._systemVersion = systemVersion
-        self._identifierForVendor = identifierForVendor
-        self._isProximityMonitoringEnabled = isProximityMonitoringEnabled
-        self._proximityState = proximityState
-        self._isMultitaskingSupported = isMultitaskingSupported
-        self._userInterfaceIdiom = userInterfaceIdiom
-        self._playInputClick = playInputClick
-      }
     }
 
     @_spi(Internals) public var _implementation: Implementation
@@ -127,7 +101,7 @@ import XCTestDynamicOverlay
       self._implementation.playInputClick()
     }
 
-    nonisolated  // Don't know why this is needed, as `Device` is not actor-isolated
+    nonisolated
       init(
         name: @escaping @MainActor @Sendable () -> String,
         model: @escaping @MainActor @Sendable () -> String,
