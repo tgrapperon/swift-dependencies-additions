@@ -58,71 +58,74 @@
 
       @_spi(Internals) public var _implementation: Implementation
 
-      init(
-        environment: @escaping @autoclosure @Sendable () -> [String: String],
-        arguments: @escaping @autoclosure @Sendable () -> [String],
-        hostName: @escaping @autoclosure @Sendable () -> String,
-        processName: @escaping @autoclosure @Sendable () -> String,
-        processIdentifier: @escaping @autoclosure @Sendable () -> Int32,
-        globallyUniqueString: @escaping @autoclosure @Sendable () -> String,
-        operatingSystemVersionString: @escaping @autoclosure @Sendable () -> String,
-        operatingSystemVersion: @escaping @autoclosure @Sendable () -> OperatingSystemVersion,
-        processorCount: @escaping @autoclosure @Sendable () -> Int,
-        activeProcessorCount: @escaping @autoclosure @Sendable () -> Int,
-        physicalMemory: @escaping @autoclosure @Sendable () -> UInt64,
-        systemUptime: @escaping @autoclosure @Sendable () -> TimeInterval,
-        thermalState: @escaping @autoclosure @Sendable () -> ProcessInfo.ThermalState,
-        isLowPowerModeEnabled: @escaping @autoclosure @Sendable () -> Bool,
-        isMacCatalystApp: @escaping @autoclosure @Sendable () -> Bool,
-        isiOSAppOnMac: @escaping @autoclosure @Sendable () -> Bool,
-        userName: @escaping @autoclosure @Sendable () -> String,
-        fullUserName: @escaping @autoclosure @Sendable () -> String,
-        automaticTerminationSupportEnabled: @escaping @autoclosure @Sendable () -> Bool,
-        isOperatingSystemAtLeast: @escaping @Sendable (OperatingSystemVersion) -> Bool,
-        beginActivity: @escaping @Sendable (ProcessInfo.ActivityOptions, String) ->
-          NSObjectProtocol,
-        endActivity: @escaping @Sendable (NSObjectProtocol) -> Void,
-        performActivity: @escaping @Sendable (
-          ProcessInfo.ActivityOptions, String, @escaping @Sendable () -> Void
-        ) -> Void,
-        performExpiringActivity: @escaping @Sendable (String, @escaping @Sendable (Bool) -> Void) ->
-          Void,
-        disableSuddenTermination: @escaping @Sendable () -> Void,
-        enableSuddenTermination: @escaping @Sendable () -> Void,
-        disableAutomaticTermination: @escaping @Sendable (String) -> Void,
-        enableAutomaticTermination: @escaping @Sendable (String) -> Void
-      ) {
-        self._implementation = .init(
-          environment: .init(environment),
-          arguments: .init(arguments),
-          hostName: .init(hostName),
-          processName: .init(processName),
-          processIdentifier: .init(processIdentifier),
-          globallyUniqueString: .init(globallyUniqueString),
-          operatingSystemVersionString: .init(operatingSystemVersionString),
-          operatingSystemVersion: .init(operatingSystemVersion),
-          processorCount: .init(processorCount),
-          activeProcessorCount: .init(activeProcessorCount),
-          physicalMemory: .init(physicalMemory),
-          systemUptime: .init(systemUptime),
-          thermalState: .init(thermalState),
-          isLowPowerModeEnabled: .init(isLowPowerModeEnabled),
-          isMacCatalystApp: .init(isMacCatalystApp),
-          isiOSAppOnMac: .init(isiOSAppOnMac),
-          userName: .init(userName),
-          fullUserName: .init(fullUserName),
-          automaticTerminationSupportEnabled: .init(automaticTerminationSupportEnabled),
-          beginActivity: .init({ beginActivity }),
-          endActivity: .init({ endActivity }),
-          performActivity: .init({ performActivity }),
-          performExpiringActivity: .init({ performExpiringActivity }),
-          disableSuddenTermination: .init({ disableSuddenTermination }),
-          enableSuddenTermination: .init({ enableSuddenTermination }),
-          disableAutomaticTermination: .init({ disableAutomaticTermination }),
-          enableAutomaticTermination: .init({ enableAutomaticTermination }),
-          isOperatingSystemAtLeast: .init({ isOperatingSystemAtLeast })
-        )
-      }
+    }
+  }
+
+  extension ProcessInfo.Value {
+    init(
+      environment: @escaping @autoclosure @Sendable () -> [String: String],
+      arguments: @escaping @autoclosure @Sendable () -> [String],
+      hostName: @escaping @autoclosure @Sendable () -> String,
+      processName: @escaping @autoclosure @Sendable () -> String,
+      processIdentifier: @escaping @autoclosure @Sendable () -> Int32,
+      globallyUniqueString: @escaping @autoclosure @Sendable () -> String,
+      operatingSystemVersionString: @escaping @autoclosure @Sendable () -> String,
+      operatingSystemVersion: @escaping @autoclosure @Sendable () -> OperatingSystemVersion,
+      processorCount: @escaping @autoclosure @Sendable () -> Int,
+      activeProcessorCount: @escaping @autoclosure @Sendable () -> Int,
+      physicalMemory: @escaping @autoclosure @Sendable () -> UInt64,
+      systemUptime: @escaping @autoclosure @Sendable () -> TimeInterval,
+      thermalState: @escaping @autoclosure @Sendable () -> ProcessInfo.ThermalState,
+      isLowPowerModeEnabled: @escaping @autoclosure @Sendable () -> Bool,
+      isMacCatalystApp: @escaping @autoclosure @Sendable () -> Bool,
+      isiOSAppOnMac: @escaping @autoclosure @Sendable () -> Bool,
+      userName: @escaping @autoclosure @Sendable () -> String,
+      fullUserName: @escaping @autoclosure @Sendable () -> String,
+      automaticTerminationSupportEnabled: @escaping @autoclosure @Sendable () -> Bool,
+      isOperatingSystemAtLeast: @escaping @Sendable (OperatingSystemVersion) -> Bool,
+      beginActivity: @escaping @Sendable (ProcessInfo.ActivityOptions, String) ->
+        NSObjectProtocol,
+      endActivity: @escaping @Sendable (NSObjectProtocol) -> Void,
+      performActivity: @escaping @Sendable (
+        ProcessInfo.ActivityOptions, String, @escaping @Sendable () -> Void
+      ) -> Void,
+      performExpiringActivity: @escaping @Sendable (String, @escaping @Sendable (Bool) -> Void) ->
+        Void,
+      disableSuddenTermination: @escaping @Sendable () -> Void,
+      enableSuddenTermination: @escaping @Sendable () -> Void,
+      disableAutomaticTermination: @escaping @Sendable (String) -> Void,
+      enableAutomaticTermination: @escaping @Sendable (String) -> Void
+    ) {
+      self._implementation = .init(
+        environment: .init(environment),
+        arguments: .init(arguments),
+        hostName: .init(hostName),
+        processName: .init(processName),
+        processIdentifier: .init(processIdentifier),
+        globallyUniqueString: .init(globallyUniqueString),
+        operatingSystemVersionString: .init(operatingSystemVersionString),
+        operatingSystemVersion: .init(operatingSystemVersion),
+        processorCount: .init(processorCount),
+        activeProcessorCount: .init(activeProcessorCount),
+        physicalMemory: .init(physicalMemory),
+        systemUptime: .init(systemUptime),
+        thermalState: .init(thermalState),
+        isLowPowerModeEnabled: .init(isLowPowerModeEnabled),
+        isMacCatalystApp: .init(isMacCatalystApp),
+        isiOSAppOnMac: .init(isiOSAppOnMac),
+        userName: .init(userName),
+        fullUserName: .init(fullUserName),
+        automaticTerminationSupportEnabled: .init(automaticTerminationSupportEnabled),
+        beginActivity: .init({ beginActivity }),
+        endActivity: .init({ endActivity }),
+        performActivity: .init({ performActivity }),
+        performExpiringActivity: .init({ performExpiringActivity }),
+        disableSuddenTermination: .init({ disableSuddenTermination }),
+        enableSuddenTermination: .init({ enableSuddenTermination }),
+        disableAutomaticTermination: .init({ disableAutomaticTermination }),
+        enableAutomaticTermination: .init({ enableAutomaticTermination }),
+        isOperatingSystemAtLeast: .init({ isOperatingSystemAtLeast })
+      )
     }
   }
 
@@ -298,157 +301,179 @@
   }
 
   extension ProcessInfo.Value {
-    static var processInfo: ProcessInfo.Value {
-      return .init(
-        environment: ProcessInfo.processInfo.environment,
-        arguments: ProcessInfo.processInfo.arguments,
-        hostName: ProcessInfo.processInfo.hostName,
-        processName: ProcessInfo.processInfo.processName,
-        processIdentifier: ProcessInfo.processInfo.processIdentifier,
-        globallyUniqueString: ProcessInfo.processInfo.globallyUniqueString,
-        operatingSystemVersionString: ProcessInfo.processInfo.operatingSystemVersionString,
-        operatingSystemVersion: ProcessInfo.processInfo.operatingSystemVersion,
-        processorCount: ProcessInfo.processInfo.processorCount,
-        activeProcessorCount: ProcessInfo.processInfo.activeProcessorCount,
-        physicalMemory: ProcessInfo.processInfo.physicalMemory,
-        systemUptime: ProcessInfo.processInfo.systemUptime,
-        thermalState: ProcessInfo.processInfo.thermalState,
-        isLowPowerModeEnabled: {
-          if #available(macOS 12.0, iOS 9.0, tvOS 9.0, watchOS 2.0, *) {
-            return ProcessInfo.processInfo.isLowPowerModeEnabled
-          } else {
-            return false
+    public static var processInfo: ProcessInfo.Value {
+      .init(
+        _implementation: .init(
+          environment: .init(ProcessInfo.processInfo.environment),
+          arguments: .init(ProcessInfo.processInfo.arguments),
+          hostName: .init(ProcessInfo.processInfo.hostName),
+          processName: .init(ProcessInfo.processInfo.processName),
+          processIdentifier: .init(ProcessInfo.processInfo.processIdentifier),
+          globallyUniqueString: .init(ProcessInfo.processInfo.globallyUniqueString),
+          operatingSystemVersionString: .init(ProcessInfo.processInfo.operatingSystemVersionString),
+          operatingSystemVersion: .init(ProcessInfo.processInfo.operatingSystemVersion),
+          processorCount: .init(ProcessInfo.processInfo.processorCount),
+          activeProcessorCount: .init(ProcessInfo.processInfo.activeProcessorCount),
+          physicalMemory: .init(ProcessInfo.processInfo.physicalMemory),
+          systemUptime: .init(ProcessInfo.processInfo.systemUptime),
+          thermalState: .init(ProcessInfo.processInfo.thermalState),
+          isLowPowerModeEnabled: .init {
+            if #available(macOS 12.0, iOS 9.0, tvOS 9.0, watchOS 2.0, *) {
+              return ProcessInfo.processInfo.isLowPowerModeEnabled
+            } else {
+              return false
+            }
+          },
+          isMacCatalystApp: .init(ProcessInfo.processInfo.isMacCatalystApp),
+          isiOSAppOnMac: .init {
+            if #available(macOS 11.0, iOS 14.0, tvOS 14.0, watchOS 7.0, *) {
+              return ProcessInfo.processInfo.isiOSAppOnMac
+            } else {
+              return false
+            }
+          },
+          userName: .init {
+            #if os(macOS)
+              ProcessInfo.processInfo.userName
+            #else
+              return ""
+            #endif
+          },
+          fullUserName: .init {
+            #if os(macOS)
+              ProcessInfo.processInfo.fullUserName
+            #else
+              return ""
+            #endif
+          },
+          automaticTerminationSupportEnabled: .init {
+            #if os(macOS)
+              ProcessInfo.processInfo.automaticTerminationSupportEnabled
+            #else
+              return false
+            #endif
+          },
+          beginActivity: .init {
+            ProcessInfo.processInfo.beginActivity(options: $0, reason: $1)
+          },
+          endActivity: .init { ProcessInfo.processInfo.endActivity($0) },
+          performActivity: .init {
+            ProcessInfo.processInfo.performActivity(options: $0, reason: $1, using: $2)
+          },
+          performExpiringActivity: .init { reason, block in
+            #if os(iOS) || os(tvOS) || os(watchOS)
+              ProcessInfo.processInfo.performExpiringActivity(withReason: reason, using: block)
+            #endif
+          },
+          disableSuddenTermination: .init {
+            #if os(macOS)
+              ProcessInfo.processInfo.disableSuddenTermination()
+            #else
+              ()
+            #endif
+          },
+          enableSuddenTermination: .init {
+            #if os(macOS)
+              ProcessInfo.processInfo.enableSuddenTermination()
+            #else
+              ()
+            #endif
+          },
+          disableAutomaticTermination: .init {
+            #if os(macOS)
+              ProcessInfo.processInfo.disableAutomaticTermination($0)
+            #else
+              ()
+            #endif
+          },
+          enableAutomaticTermination: .init {
+            #if os(macOS)
+              ProcessInfo.processInfo.enableAutomaticTermination($0)
+            #else
+              ()
+            #endif
+          },
+          isOperatingSystemAtLeast: .init {
+            ProcessInfo.processInfo.isOperatingSystemAtLeast($0)
           }
-        }(),
-        isMacCatalystApp: ProcessInfo.processInfo.isMacCatalystApp,
-        isiOSAppOnMac: {
-          if #available(macOS 11.0, iOS 14.0, tvOS 14.0, watchOS 7.0, *) {
-            return ProcessInfo.processInfo.isiOSAppOnMac
-          } else {
-            return false
-          }
-        }(),
-        userName: {
-          #if os(macOS)
-            ProcessInfo.processInfo.userName
-          #else
-            return ""
-          #endif
-        }(),
-        fullUserName: {
-          #if os(macOS)
-            ProcessInfo.processInfo.fullUserName
-          #else
-            return ""
-          #endif
-        }(),
-        automaticTerminationSupportEnabled: {
-          #if os(macOS)
-            ProcessInfo.processInfo.automaticTerminationSupportEnabled
-          #else
-            return false
-          #endif
-        }(),
-        isOperatingSystemAtLeast: {
-          ProcessInfo.processInfo.isOperatingSystemAtLeast($0)
-        },
-        beginActivity: {
-          ProcessInfo.processInfo.beginActivity(options: $0, reason: $1)
-        },
-        endActivity: {
-          ProcessInfo.processInfo.endActivity($0)
-        },
-        performActivity: {
-          ProcessInfo.processInfo.performActivity(options: $0, reason: $1, using: $2)
-        },
-        performExpiringActivity: { reason, block in
-          #if os(iOS) || os(tvOS) || os(watchOS)
-            ProcessInfo.processInfo.performExpiringActivity(withReason: reason, using: block)
-          #endif
-        },
-        disableSuddenTermination: {
-          #if os(macOS)
-            ProcessInfo.processInfo.disableSuddenTermination()
-          #endif
-        },
-        enableSuddenTermination: {
-          #if os(macOS)
-            ProcessInfo.processInfo.enableSuddenTermination()
-          #endif
-        },
-        disableAutomaticTermination: {
-          #if os(macOS)
-            ProcessInfo.processInfo.disableAutomaticTermination($0)
-          #endif
-        },
-        enableAutomaticTermination: {
-          #if os(macOS)
-            ProcessInfo.processInfo.enableAutomaticTermination($0)
-          #endif
-        })
+        )
+      )
     }
   }
 
   extension ProcessInfo.Value {
-    static var unimplemented: Self {
-      .init(
-        environment: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.environment)"#),
-        arguments: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.arguments)"#),
-        hostName: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.hostName)"#),
-        processName: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.processName)"#),
-        processIdentifier: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.processIdentifier)"#),
-        globallyUniqueString: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.globallyUniqueString)"#),
-        operatingSystemVersionString: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.operatingSystemVersionString)"#),
-        operatingSystemVersion: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.operatingSystemVersion)"#,
-          placeholder: .init(majorVersion: 0, minorVersion: 0, patchVersion: 0)),
-        processorCount: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.processorCount)"#),
-        activeProcessorCount: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.activeProcessorCount)"#),
-        physicalMemory: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.physicalMemory)"#),
-        systemUptime: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.systemUptime)"#),
-        thermalState: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.thermalState)"#, placeholder: .nominal),
-        isLowPowerModeEnabled: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.isLowPowerModeEnabled)"#),
-        isMacCatalystApp: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.isMacCatalystApp)"#),
-        isiOSAppOnMac: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.isiOSAppOnMac)"#),
-        userName: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.userName)"#),
-        fullUserName: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.fullUserName)"#),
-        automaticTerminationSupportEnabled: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.automaticTerminationSupportEnabled)"#),
-        isOperatingSystemAtLeast: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.isOperatingSystemAtLeast)"#),
-        beginActivity: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.beginActivity)"#, placeholder: NSObject()),
-        endActivity: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.endActivity)"#),
-        performActivity: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.performActivity)"#),
-        performExpiringActivity: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.performExpiringActivity)"#),
-        disableSuddenTermination: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.disableSuddenTermination)"#),
-        enableSuddenTermination: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.enableSuddenTermination)"#),
-        disableAutomaticTermination: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.disableAutomaticTermination)"#),
-        enableAutomaticTermination: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.processInfo.enableAutomaticTermination)"#)
+    public static var unimplemented: Self {
+      ProcessInfo.Value(
+        _implementation: .init(
+          environment: .unimplemented(
+            #"@Dependency(\.processInfo.environment)"#),
+          arguments: .unimplemented(
+            #"@Dependency(\.processInfo.arguments)"#),
+          hostName: .unimplemented(
+            #"@Dependency(\.processInfo.hostName)"#),
+          processName: .unimplemented(
+            #"@Dependency(\.processInfo.processName)"#),
+          processIdentifier: .unimplemented(
+            #"@Dependency(\.processInfo.processIdentifier)"#),
+          globallyUniqueString: .unimplemented(
+            #"@Dependency(\.processInfo.globallyUniqueString)"#),
+          operatingSystemVersionString: .unimplemented(
+            #"@Dependency(\.processInfo.operatingSystemVersionString)"#),
+          operatingSystemVersion: .unimplemented(
+            #"@Dependency(\.processInfo.operatingSystemVersion)"#,
+            placeholder: .init(majorVersion: 0, minorVersion: 0, patchVersion: 1)),
+          processorCount: .unimplemented(
+            #"@Dependency(\.processInfo.processorCount)"#),
+          activeProcessorCount: .unimplemented(
+            #"@Dependency(\.processInfo.activeProcessorCount)"#),
+          physicalMemory: .unimplemented(
+            #"@Dependency(\.processInfo.physicalMemory)"#),
+          systemUptime: .unimplemented(
+            #"@Dependency(\.processInfo.systemUptime)"#),
+          thermalState: .unimplemented(
+            #"@Dependency(\.processInfo.thermalState)"#,
+            placeholder: .critical),
+          isLowPowerModeEnabled: .unimplemented(
+            #"@Dependency(\.processInfo.isLowPowerModeEnabled)"#),
+          isMacCatalystApp: .unimplemented(
+            #"@Dependency(\.processInfo.isMacCatalystApp)"#),
+          isiOSAppOnMac: .unimplemented(
+            #"@Dependency(\.processInfo.isiOSAppOnMac)"#),
+          userName: .unimplemented(
+            #"@Dependency(\.processInfo.userName)"#),
+          fullUserName: .unimplemented(
+            #"@Dependency(\.processInfo.fullUserName)"#),
+          automaticTerminationSupportEnabled: .unimplemented(
+            #"@Dependency(\.processInfo.automaticTerminationSupportEnabled)"#),
+          beginActivity: .unimplemented(
+            #"@Dependency(\.processInfo.beginActivity)"#,
+            placeholder: { _, _ in NSObject() }),
+          endActivity: .unimplemented(
+            #"@Dependency(\.processInfo.endActivity)"#,
+            placeholder: { _ in () }),
+          performActivity:
+            .unimplemented(
+              #"@Dependency(\.processInfo.performActivity)"#,
+              placeholder: { _, _, _ in () }),
+          performExpiringActivity: .unimplemented(
+            #"@Dependency(\.processInfo.performExpiringActivity)"#,
+            placeholder: { _, _ in () }),
+          disableSuddenTermination: .unimplemented(
+            #"@Dependency(\.processInfo.disableSuddenTermination)"#,
+            placeholder: { () }),
+          enableSuddenTermination: .unimplemented(
+            #"@Dependency(\.processInfo.enableSuddenTermination)"#,
+            placeholder: { () }),
+          disableAutomaticTermination: .unimplemented(
+            #"@Dependency(\.processInfo.disableAutomaticTermination)"#,
+            placeholder: { _ in () }),
+          enableAutomaticTermination: .unimplemented(
+            #"@Dependency(\.processInfo.enableAutomaticTermination)"#,
+            placeholder: { _ in () }),
+          isOperatingSystemAtLeast: .unimplemented(
+            #"@Dependency(\.processInfo.isOperatingSystemAtLeast)"#,
+            placeholder: { _ in false })
+        )
       )
     }
   }

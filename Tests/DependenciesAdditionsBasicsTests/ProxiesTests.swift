@@ -44,7 +44,7 @@ final class ProxiesTests: XCTestCase {
         _implementation.value(index)
       }
     }
-    var unimplemented = Foo(_implementation: .init(value: .init(unimplemented())))
+    var unimplemented = Foo(_implementation: .init(value: .unimplemented(placeholder: { _ in "" })))
     unimplemented.$value = { "Hello! \($0)" }
     XCTAssertEqual("Hello! 3", unimplemented.value(index: 3))
   }

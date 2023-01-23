@@ -360,6 +360,10 @@ public struct FunctionProxy<Value: Sendable>: Sendable {
   public init(_ value: @escaping @Sendable () -> Value) {
     self._value = value
   }
+  
+  public init(_ value: Value) {
+    self._value = { value }
+  }
 
   @_spi(Internals)
   public var wrappedValue: Value {
