@@ -446,7 +446,8 @@
             shouldDifferentiateWithoutColor: .unimplemented(
               #"@Dependency(\.accessibility.shouldDifferentiateWithoutColor)"#),
             configureForGuidedAccess: .unimplemented(
-              #"@Dependency(\.accessibility.configureForGuidedAccess)"#),
+              #"@Dependency(\.accessibility.configureForGuidedAccess)"#,
+              placeholder: { _, _ in false }),
             convertToScreenCoordinatesUsingUIBezierPath: .unimplemented(
               #"@Dependency(\.accessibility.convertToScreenCoordinatesUsingUIBezierPath)"#,
               placeholder: { _, _ in UIBezierPath() }),
@@ -460,13 +461,16 @@
               #"@Dependency(\.accessibility.guidedAccessRestrictionState)"#,
               placeholder: { _ in .deny }),
             post: .unimplemented(
-              #"@Dependency(\.accessibility.post)"#, placeholder: { _, _ in () }),
+              #"@Dependency(\.accessibility.post)"#,
+              placeholder: { _, _ in () }),
             registerGestureConflictWithZoom: .unimplemented(
-              #"@Dependency(\.accessibility.registerGestureConflictWithZoom)"#),
+              #"@Dependency(\.accessibility.registerGestureConflictWithZoom)"#,
+              placeholder: { () }),
             requestGuidedAccessSession: .unimplemented(
-              #"@Dependency(\.accessibility.requestGuidedAccessSession)"#),
+              #"@Dependency(\.accessibility.requestGuidedAccessSession)"#,
+              placeholder: { _ in false }),
             zoomFocusChanged: .unimplemented(
-              #"@Dependency(\.accessibility.zoomFocusChanged)"#)
+              #"@Dependency(\.accessibility.zoomFocusChanged)"#, placeholder: { _, _, _ in () })
           )
         )
       #elseif os(tvOS)
@@ -525,13 +529,17 @@
               #"@Dependency(\.accessibility.guidedAccessRestrictionState)"#,
               placeholder: { _ in .deny }),
             post: .unimplemented(
-              #"@Dependency(\.accessibility.post)"#, placeholder: { _, _ in () }),
+              #"@Dependency(\.accessibility.post)"#,
+              placeholder: { _, _ in () }),
             registerGestureConflictWithZoom: .unimplemented(
-              #"@Dependency(\.accessibility.registerGestureConflictWithZoom)"#),
+              #"@Dependency(\.accessibility.registerGestureConflictWithZoom)"#,
+              placeholder: { () }),
             requestGuidedAccessSession: .unimplemented(
-              #"@Dependency(\.accessibility.requestGuidedAccessSession)"#),
+              #"@Dependency(\.accessibility.requestGuidedAccessSession)"#,
+              placeholder: { _ in false }),
             zoomFocusChanged: .unimplemented(
-              #"@Dependency(\.accessibility.zoomFocusChanged)"#)
+              #"@Dependency(\.accessibility.zoomFocusChanged)"#,
+              placeholder: { _, _, _ in () })
           )
         )
       #endif
