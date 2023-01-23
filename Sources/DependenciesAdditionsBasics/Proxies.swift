@@ -38,12 +38,6 @@ public protocol ConfigurableProxy {
   )
     -> Value
   { @MainActor get set }
-
-  subscript<Value>(
-    dynamicMember keyPath: WritableKeyPath<Implementation, MainActorFunctionProxy<Value>>
-  )
-    -> Value
-  { @MainActor get set }
 }
 extension ConfigurableProxy {
   public subscript<Value>(
@@ -94,13 +88,6 @@ extension ConfigurableProxy {
 
   public subscript<Value>(
     dynamicMember keyPath: WritableKeyPath<Implementation, MainActorReadOnlyProxy<Value>>
-  ) -> Value {
-    @MainActor get { self._implementation[keyPath: keyPath]._value() }
-    set { self._implementation[keyPath: keyPath]._value = { newValue } }
-  }
-
-  public subscript<Value>(
-    dynamicMember keyPath: WritableKeyPath<Implementation, MainActorFunctionProxy<Value>>
   ) -> Value {
     @MainActor get { self._implementation[keyPath: keyPath]._value() }
     set { self._implementation[keyPath: keyPath]._value = { newValue } }
@@ -663,61 +650,6 @@ extension MainActorReadOnlyProxy {
     line: UInt = #line
   ) -> Self {
     MainActorReadOnlyProxy({
-      XCTestDynamicOverlay.unimplemented(
-        description,
-        placeholder: placeholder,
-        fileID: fileID,
-        line: line
-      )()
-    })
-  }
-}
-
-/// A property wrapper that characterizes a `MainActor` function that is backed by another type.
-///
-/// You directly access the value in `live` context. In other context, you can assign another
-/// a function to the projected value to control this property during tests and SwiftUI previews:
-///
-/// ```swift
-/// let isClicked = expectation(description: "An input click is played")
-/// let model = withDependencies {
-///   $0.device.$playInputClick = { isClicked.fulfill() }
-///   // Or, if this value is contant during your test:
-///   $0.device.$batteryLevel = 0.8
-/// } operation {
-///   Model()
-/// }
-/// model.playClick()
-/// // This called `self.device.playInputClick()` in `@Dependency(\.device) var device`, so:
-/// wait(for: [isClicked], timeout: 1)
-/// ```
-@propertyWrapper
-public struct MainActorFunctionProxy<Value: Sendable>: Sendable {
-  var _value: @Sendable @MainActor () -> Value
-
-  public init(_ value: @escaping @Sendable @MainActor () -> Value) {
-    self._value = value
-  }
-
-  @_spi(Internals)
-  @MainActor
-  public var wrappedValue: Value {
-    _value()
-  }
-  public var projectedValue: Self {
-    get { self }
-    set { self = newValue }
-  }
-}
-
-extension MainActorFunctionProxy {
-  public static func unimplemented(
-    _ description: String = "",
-    placeholder: @autoclosure @escaping @Sendable () -> Value,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    MainActorFunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
         placeholder: placeholder,
