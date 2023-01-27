@@ -7,9 +7,9 @@
 
   // TODO: Explore observing any DynamicProperty instead of only `Environment`
 
-  // Trying to make this a `DynamicProperty` itself to automatically udpate the value
-  // at `udpate()` doesn't work as we don't have a guarantee that an internal `@Environment`
-  // value would have received its udpate before this value and expose the latest value.
+  // Trying to make this a `DynamicProperty` itself to automatically update the value
+  // at `update()` doesn't work as we don't have a guarantee that an internal `@Environment`
+  // value would have received its update before this value and expose the latest value.
   // Any attempt to defer the call risks getting out of the `update`/`body` cycle and raise
   // a runtime warning.
   extension Dependency {
