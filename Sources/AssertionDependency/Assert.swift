@@ -13,7 +13,9 @@ extension DependencyValues {
 }
 
 extension AssertAction: DependencyKey {
-  public static let liveValue = AssertAction(action: Swift.assert)
+  public static let liveValue = AssertAction {
+    Swift.assert($0(), $1(), file: $2, line: $3)
+  }
 
   public static let previewValue = AssertAction { _, _, _, _ in
     // no-op
@@ -26,10 +28,10 @@ extension AssertAction: DependencyKey {
   }
 }
 
-public struct AssertAction {
-  public let action: (@autoclosure () -> Bool, @autoclosure () -> String, StaticString, UInt) -> ()
+public struct AssertAction: Sendable {
+  public let action: @Sendable (@autoclosure () -> Bool, @autoclosure () -> String, StaticString, UInt) -> ()
 
-  public init(action: @escaping (() -> Bool, () -> String, StaticString, UInt) -> Void) {
+  public init(action: @Sendable @escaping (() -> Bool, () -> String, StaticString, UInt) -> Void) {
     self.action = action
   }
 

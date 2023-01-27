@@ -9,9 +9,11 @@ final class AssertionDependencyTests: XCTestCase {
   func testAssert() {
     assert(true, "Test assertion does not generate failure for true condition")
 
-    XCTExpectFailure {
-      assert(false, "Test assertion generates failure for false condition")
-    }
+    #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
+      XCTExpectFailure {
+        assert(false, "Test assertion generates failure for false condition")
+      }
+    #endif
 
     withDependencies {
       $0.context = .live
@@ -21,8 +23,10 @@ final class AssertionDependencyTests: XCTestCase {
   }
 
   func testAssertionFailure() {
-    XCTExpectFailure {
-      assertionFailure("Test assertionFailure generates failure")
-    }
+      #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
+        XCTExpectFailure {
+          assertionFailure("Test assertionFailure generates failure")
+        }
+      #endif
   }
 }
