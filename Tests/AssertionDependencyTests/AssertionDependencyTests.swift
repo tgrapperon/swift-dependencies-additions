@@ -7,24 +7,22 @@ final class AssertionDependencyTests: XCTestCase {
   @Dependency(\.assertionFailure) var assertionFailure
 
   func testAssert() {
-    // Test assertion does not generate failure for true condition
-    assert(true)
+    assert(true, "Test assertion does not generate failure for true condition")
 
-    XCTExpectFailure("Test assertion generates failure for false condition") {
-      assert(false)
+    XCTExpectFailure {
+      assert(false, "Test assertion generates failure for false condition")
     }
 
     withDependencies {
       $0.context = .live
     } operation: {
-      // Live assertion does not assert for true condition
-      assert(true)
+      assert(true, "Live assertion does not assert for true condition")
     }
   }
 
   func testAssertionFailure() {
-    XCTExpectFailure("Test assertionFailure generates failure") {
-      assertionFailure("test")
+    XCTExpectFailure {
+      assertionFailure("Test assertionFailure generates failure")
     }
   }
 }
