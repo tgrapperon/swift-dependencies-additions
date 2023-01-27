@@ -29,7 +29,8 @@ extension AssertAction: DependencyKey {
 }
 
 public struct AssertAction: Sendable {
-  public let action: @Sendable (@autoclosure () -> Bool, @autoclosure () -> String, StaticString, UInt) -> ()
+  public let action:
+    @Sendable (@autoclosure () -> Bool, @autoclosure () -> String, StaticString, UInt) -> Void
 
   public init(action: @Sendable @escaping (() -> Bool, () -> String, StaticString, UInt) -> Void) {
     self.action = action

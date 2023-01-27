@@ -26,9 +26,8 @@ extension AssertionFailureAction: DependencyKey {
   }
 }
 
-
 public struct AssertionFailureAction: Sendable {
-  public let action: @Sendable (@autoclosure () -> String, StaticString, UInt) -> ()
+  public let action: @Sendable (@autoclosure () -> String, StaticString, UInt) -> Void
 
   public init(action: @Sendable @escaping (() -> String, StaticString, UInt) -> Void) {
     self.action = action

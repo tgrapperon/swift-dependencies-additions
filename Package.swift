@@ -94,7 +94,7 @@ let package = Package(
     .target(
       name: "AssertionDependency",
       dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "Dependencies", package: "swift-dependencies")
       ]
     ),
     .testTarget(
