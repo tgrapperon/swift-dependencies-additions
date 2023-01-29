@@ -422,17 +422,13 @@ import XCTestDynamicOverlay
         isIdleTimerDisabled: .unimplemented(
           #"@Dependency(\.application.isIdleTimerDisabled.get)"#),
         canOpenURL: .unimplemented(
-          #"@Dependency(\.application.canOpenURL)"#,
-          placeholder: { _ in false }),
+          #"@Dependency(\.application.canOpenURL)"#),
         open: .unimplemented(
-          #"@Dependency(\.application.open)"#,
-          placeholder: { _, _ in false }),
+          #"@Dependency(\.application.open)"#),
         sendEvent: .unimplemented(
-          #"@Dependency(\.application.sendEvent)"#,
-          placeholder: { _ in () }),
+          #"@Dependency(\.application.sendEvent)"#),
         sendAction: .unimplemented(
-          #"@Dependency(\.application.sendAction)"#,
-          placeholder: { _, _, _, _ in false }),
+          #"@Dependency(\.application.sendAction)"#),
         supportedInterfaceOrientations: .unimplemented(
           #"@Dependency(\.application.supportedInterfaceOrientations)"#,
           placeholder: { _ in UIInterfaceOrientationMask() }),
@@ -449,8 +445,7 @@ import XCTestDynamicOverlay
           #"@Dependency(\.application.beginBackgroundTask)"#,
           placeholder: { _, _ in .invalid }),
         endBackgroundTask: .unimplemented(
-          #"@Dependency(\.application.endBackgroundTask)"#,
-          placeholder: { _ in () }),
+          #"@Dependency(\.application.endBackgroundTask)"#),
         backgroundRefreshStatus: .unimplemented(
           #"@Dependency(\.application.backgroundRefreshStatus)"#,
           placeholder: UIBackgroundRefreshStatus.denied),
@@ -469,49 +464,37 @@ import XCTestDynamicOverlay
         supportsMultipleScenes: .unimplemented(
           #"@Dependency(\.application.supportsMultipleScenes)"#),
         requestSceneSessionActivation: .unimplemented(
-          #"@Dependency(\.application.requestSceneSessionActivation)"#,
-          placeholder: { _, _, _, _ in () }),
+          #"@Dependency(\.application.requestSceneSessionActivation)"#),
         requestSceneSessionDestruction: .unimplemented(
-          #"@Dependency(\.application.requestSceneSessionDestruction)"#,
-          placeholder: { _, _, _ in () }),
+          #"@Dependency(\.application.requestSceneSessionDestruction)"#),
         requestSceneSessionRefresh: .unimplemented(
-          #"@Dependency(\.application.requestSceneSessionRefresh)"#,
-          placeholder: { _ in () }),
+          #"@Dependency(\.application.requestSceneSessionRefresh)"#),
         registerForRemoteNotifications: .unimplemented(
-          #"@Dependency(\.application.registerForRemoteNotifications)"#,
-          placeholder: { () }),
+          #"@Dependency(\.application.registerForRemoteNotifications)"#),
         unregisterForRemoteNotifications: .unimplemented(
-          #"@Dependency(\.application.unregisterForRemoteNotifications)"#,
-          placeholder: { () }),
+          #"@Dependency(\.application.unregisterForRemoteNotifications)"#),
         isRegisteredForRemoteNotifications: .unimplemented(
           #"@Dependency(\.application.isRegisteredForRemoteNotifications)"#),
         beginReceivingRemoteControlEvents: .unimplemented(
-          #"@Dependency(\.application.beginReceivingRemoteControlEvents)"#,
-          placeholder: { () }),
+          #"@Dependency(\.application.beginReceivingRemoteControlEvents)"#),
         endReceivingRemoteControlEvents: .unimplemented(
-          #"@Dependency(\.application.endReceivingRemoteControlEvents)"#,
-          placeholder: { () }),
+          #"@Dependency(\.application.endReceivingRemoteControlEvents)"#),
         shortcutItems: .unimplemented(
           #"@Dependency(\.application.shortcutItems.get)"#,
           placeholder: nil),
         supportsAlternateIcons: .unimplemented(
           #"@Dependency(\.application.supportsAlternateIcons)"#),
-        setAlternateIconName: .init (  // The convenience version crashes the compiler
-          XCTestDynamicOverlay
-            .unimplemented(#"@Dependency(\.application.setAlternateIconName)"#)
-        ),
+        setAlternateIconName:
+          .unimplemented(#"@Dependency(\.application.setAlternateIconName)"#),
         alternateIconName: .unimplemented(
           #"@Dependency(\.application.alternateIconName)"#,
           placeholder: nil),
         extendStateRestoration: .unimplemented(
-          #"@Dependency(\.application.extendStateRestoration)"#,
-          placeholder: { () }),
+          #"@Dependency(\.application.extendStateRestoration)"#),
         completeStateRestoration: .unimplemented(
-          #"@Dependency(\.application.completeStateRestoration)"#,
-          placeholder: { () }),
+          #"@Dependency(\.application.completeStateRestoration)"#),
         ignoreSnapshotOnNextApplicationLaunch: .unimplemented(
-          #"@Dependency(\.application.ignoreSnapshotOnNextApplicationLaunch)"#,
-          placeholder: { () })
+          #"@Dependency(\.application.ignoreSnapshotOnNextApplicationLaunch)"#)
       )
       return Application(_implementation: _implementation)
     }

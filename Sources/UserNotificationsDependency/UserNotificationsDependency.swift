@@ -181,47 +181,32 @@
           notificationSettings: .unimplemented(
             #"@Dependency(\.userNotificationCenter.notificationSettings)"#,
             placeholder: { fatalError() }),
-          setBadgeCount: .init(
-            XCTestDynamicOverlay.unimplemented(
-              #"@Dependency(\.userNotificationCenter.setBadgeCount)"#)),
+          setBadgeCount: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.setBadgeCount)"#),
           requestAuthorization: .unimplemented(
-            #"@Dependency(\.userNotificationCenter.requestAuthorization)"#,
-            placeholder: { _ in false }),
+            #"@Dependency(\.userNotificationCenter.requestAuthorization)"#),
           delegate: .unimplemented(
             #"@Dependency(\.userNotificationCenter.delegate.get)"#),
           supportsContentExtensions: .unimplemented(
             #"@Dependency(\.userNotificationCenter.supportsContentExtensions)"#),
-          add: .init(
-            XCTestDynamicOverlay.unimplemented(
-              #"@Dependency(\.userNotificationCenter.add)"#
-            )),
+          add: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.add)"#),
           pendingNotificationRequests: .unimplemented(
-            #"@Dependency(\.userNotificationCenter.pendingNotificationRequests)"#,
-            placeholder: { [] }),
+            #"@Dependency(\.userNotificationCenter.pendingNotificationRequests)"#),
           removePendingNotificationRequests: .unimplemented(
-            #"@Dependency(\.userNotificationCenter.removePendingNotificationRequests)"#,
-            placeholder: { _ in () }),
+            #"@Dependency(\.userNotificationCenter.removePendingNotificationRequests)"#),
           removeAllPendingNotificationRequests: .unimplemented(
-            #"@Dependency(\.userNotificationCenter.removeAllPendingNotificationRequests)"#,
-            placeholder: { () }),
-          deliveredNotifications: .init(
-            XCTestDynamicOverlay.unimplemented(
-              #"@Dependency(\,.userNotificationCenter.deliveredNotifications)"#,
-              placeholder: { @Sendable in [] }
-            )),
+            #"@Dependency(\.userNotificationCenter.removeAllPendingNotificationRequests)"#),
+          deliveredNotifications: .unimplemented(
+              #"@Dependency(\,.userNotificationCenter.deliveredNotifications)"#),
           removeDeliveredNotifications: .unimplemented(
-            #"@Dependency(\.userNotificationCenter.removeDeliveredNotifications)"#,
-            placeholder: { _ in () }),
+            #"@Dependency(\.userNotificationCenter.removeDeliveredNotifications)"#),
           removeAllDeliveredNotifications: .unimplemented(
-            #"@Dependency(\.userNotificationCenter.removeAllDeliveredNotifications)"#,
-            placeholder: { () }),
+            #"@Dependency(\.userNotificationCenter.removeAllDeliveredNotifications)"#),
           setNotificationCategories: .unimplemented(
-            #"@Dependency(\,.userNotificationCenter.setNotificationCategories)"#,
-            placeholder: { _ in () }),
-          notificationCategories: .init(
-            XCTestDynamicOverlay.unimplemented(
-              #"@Dependency(\,.userNotificationCenter.notificationCategories)"#,
-              placeholder: { @Sendable in [] }))
+            #"@Dependency(\,.userNotificationCenter.setNotificationCategories)"#),
+          notificationCategories: .unimplemented(
+              #"@Dependency(\,.userNotificationCenter.notificationCategories)"#)
         )
       )
     }

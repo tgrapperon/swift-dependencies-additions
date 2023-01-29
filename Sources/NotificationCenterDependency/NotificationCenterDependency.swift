@@ -29,14 +29,12 @@
     public static var unimplemented: Self {
       .init(
         post: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.notificationCenter.post)"#,
-          placeholder: { @Sendable _, _, _, _, _ in () }),
+          #"@Dependency(\.notificationCenter.post)"#),
         addObserver: XCTestDynamicOverlay.unimplemented(
           #"@Dependency(\.notificationCenter.addObserver)"#,
           placeholder: { @Sendable _, _, _, _, _, _ in () }),
         removeObserver: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.notificationCenter.removeObserver)"#,
-          placeholder: { @Sendable _, _, _, _, _ in () }),
+          #"@Dependency(\.notificationCenter.removeObserver)"#),
         publisher: XCTestDynamicOverlay.unimplemented(
           #"@Dependency(\.notificationCenter.publisher)"#,
           placeholder: { @Sendable _, _, _, _ in Empty().eraseToAnyPublisher() })

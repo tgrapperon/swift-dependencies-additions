@@ -55,7 +55,7 @@
     }
   #endif
 
-  #if canImport(UIKit.UIDevice) && !os(watchOS)
+  #if canImport(UIKit.UIDevice) && !os(watchOS) && !os(tvOS)
     import UIKit.UIDevice
     import DeviceDependency
     extension Notifications {

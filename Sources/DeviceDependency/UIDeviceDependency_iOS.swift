@@ -145,95 +145,49 @@ import XCTestDynamicOverlay
     public func playInputClick() {
       self._implementation.playInputClick()
     }
-
-    nonisolated
-      init(
-        name: @escaping @MainActor @Sendable () -> String,
-        model: @escaping @MainActor @Sendable () -> String,
-        localizedModel: @escaping @MainActor @Sendable () -> String,
-        systemName: @escaping @MainActor @Sendable () -> String,
-        systemVersion: @escaping @MainActor @Sendable () -> String,
-        identifierForVendor: @escaping @MainActor @Sendable () -> UUID?,
-        orientation: @escaping @MainActor @Sendable () -> UIDeviceOrientation,
-        isGeneratingDeviceOrientationNotifications: @escaping @MainActor @Sendable () -> Bool,
-        isBatteryMonitoringEnabled: (
-          get: @MainActor @Sendable () -> Bool, set: @MainActor @Sendable (Bool) -> Void
-        ),
-        batteryState: @escaping @MainActor @Sendable () -> UIDevice.BatteryState,
-        batteryLevel: @escaping @MainActor @Sendable () -> Float,
-        isProximityMonitoringEnabled: (
-          get: @MainActor @Sendable () -> Bool, set: @MainActor @Sendable (Bool) -> Void
-        ),
-        proximityState: @escaping @MainActor @Sendable () -> Bool,
-        isMultitaskingSupported: @escaping @MainActor @Sendable () -> Bool,
-        userInterfaceIdiom: @escaping @MainActor @Sendable () -> UIUserInterfaceIdiom,
-
-        beginGeneratingDeviceOrientationNotifications: @escaping @MainActor @Sendable () -> Void,
-        endGeneratingDeviceOrientationNotifications: @escaping @MainActor @Sendable () -> Void,
-        playInputClick: @escaping @MainActor @Sendable () -> Void
-      )
-    {
-      self._implementation = .init(
-        name: .init(name),
-        model: .init(model),
-        localizedModel: .init(localizedModel),
-        systemName: .init(systemName),
-        systemVersion: .init(systemVersion),
-        identifierForVendor: .init(identifierForVendor),
-        orientation: .init(orientation),
-        isGeneratingDeviceOrientationNotifications: .init(
-          isGeneratingDeviceOrientationNotifications),
-        beginGeneratingDeviceOrientationNotifications: .init {
-          beginGeneratingDeviceOrientationNotifications()
-        },
-        endGeneratingDeviceOrientationNotifications: .init {
-          endGeneratingDeviceOrientationNotifications()
-        },
-        isBatteryMonitoringEnabled: .init(.init(isBatteryMonitoringEnabled)),
-        batteryState: .init(batteryState),
-        batteryLevel: .init(batteryLevel),
-        isProximityMonitoringEnabled: .init(.init(isProximityMonitoringEnabled)),
-        proximityState: .init(proximityState),
-        isMultitaskingSupported: .init(isMultitaskingSupported),
-        userInterfaceIdiom: .init(userInterfaceIdiom),
-        playInputClick: .init { playInputClick() }
-      )
-    }
   }
 
   extension Device {
     public nonisolated static var current: Device {
-      Device(
-        name: { UIDevice.current.name },
-        model: { UIDevice.current.model },
-        localizedModel: { UIDevice.current.localizedModel },
-        systemName: { UIDevice.current.systemName },
-        systemVersion: { UIDevice.current.systemVersion },
-        identifierForVendor: { UIDevice.current.identifierForVendor },
-        orientation: { UIDevice.current.orientation },
-        isGeneratingDeviceOrientationNotifications: {
-          UIDevice.current.isGeneratingDeviceOrientationNotifications
-        },
-        isBatteryMonitoringEnabled: (
-          { UIDevice.current.isBatteryMonitoringEnabled },
-          { UIDevice.current.isBatteryMonitoringEnabled = $0 }
-        ),
-        batteryState: { UIDevice.current.batteryState },
-        batteryLevel: { UIDevice.current.batteryLevel },
-        isProximityMonitoringEnabled: (
-          { UIDevice.current.isProximityMonitoringEnabled },
-          { UIDevice.current.isProximityMonitoringEnabled = $0 }
-        ),
-        proximityState: { UIDevice.current.proximityState },
-        isMultitaskingSupported: { UIDevice.current.isMultitaskingSupported },
-        userInterfaceIdiom: { UIDevice.current.userInterfaceIdiom },
-        beginGeneratingDeviceOrientationNotifications: {
-          UIDevice.current.beginGeneratingDeviceOrientationNotifications()
-        },
-        endGeneratingDeviceOrientationNotifications: {
-          UIDevice.current.endGeneratingDeviceOrientationNotifications()
-        },
-        playInputClick: { UIDevice.current.playInputClick() }
+      return Device(
+        _implementation: .init(
+          name: .init { UIDevice.current.name },
+          model: .init { UIDevice.current.model },
+          localizedModel: .init { UIDevice.current.localizedModel },
+          systemName: .init { UIDevice.current.systemName },
+          systemVersion: .init { UIDevice.current.systemVersion },
+          identifierForVendor: .init { UIDevice.current.identifierForVendor },
+          orientation: .init { UIDevice.current.orientation },
+          isGeneratingDeviceOrientationNotifications: .init {
+            UIDevice.current.isGeneratingDeviceOrientationNotifications
+          },
+          beginGeneratingDeviceOrientationNotifications: .init {
+            UIDevice.current.beginGeneratingDeviceOrientationNotifications()
+          },
+          endGeneratingDeviceOrientationNotifications: .init {
+            UIDevice.current.endGeneratingDeviceOrientationNotifications()
+          },
+          isBatteryMonitoringEnabled: .init(
+            .init {
+              UIDevice.current.isBatteryMonitoringEnabled
+            } set: {
+              UIDevice.current.isBatteryMonitoringEnabled = $0
+            }),
+          batteryState: .init { UIDevice.current.batteryState },
+          batteryLevel: .init { UIDevice.current.batteryLevel },
+          isProximityMonitoringEnabled: .init(
+            .init {
+              UIDevice.current.isProximityMonitoringEnabled
+            } set: {
+              UIDevice.current.isProximityMonitoringEnabled = $0
+            }),
+          proximityState: .init { UIDevice.current.proximityState },
+          isMultitaskingSupported: .init { UIDevice.current.isMultitaskingSupported },
+          userInterfaceIdiom: .init { UIDevice.current.userInterfaceIdiom },
+          playInputClick: .init {
+            UIDevice.current.playInputClick()
+          }
+        )
       )
     }
   }
@@ -243,48 +197,45 @@ import XCTestDynamicOverlay
       static var unimplemented: Device
     {
       Device(
-        name: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.name)"#),
-        model: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.model)"#),
-        localizedModel: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.localizedModel)"#),
-        systemName: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.systemName)"#),
-        systemVersion: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.systemVersion)"#),
-        identifierForVendor: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.identifierForVendor)"#, placeholder: nil),
-        orientation: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.orientation)"#, placeholder: .unknown),
-        isGeneratingDeviceOrientationNotifications: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.isGeneratingDeviceOrientationNotifications)"#),
-        isBatteryMonitoringEnabled: (
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.device.isBatteryMonitoringEnabled.get)"#),
-          { _ in () }
-        ),
-        batteryState: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.batteryState)"#, placeholder: .unknown),
-        batteryLevel: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.batteryLevel)"#),
-        isProximityMonitoringEnabled: (
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.device.isProximityMonitoringEnabled.get)"#),
-          { _ in () }
-        ),
-        proximityState: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.proximityState)"#),
-        isMultitaskingSupported: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.isMultitaskingSupported)"#),
-        userInterfaceIdiom: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.userInterfaceIdiom)"#, placeholder: .phone),
-        beginGeneratingDeviceOrientationNotifications: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.beginGeneratingDeviceOrientationNotifications)"#),
-        endGeneratingDeviceOrientationNotifications: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.endGeneratingDeviceOrientationNotifications)"#),
-        playInputClick: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.playInputClick)"#)
+        _implementation: .init(
+          name: .unimplemented(
+            #"@Dependency(\.device.name)"#),
+          model: .unimplemented(
+            #"@Dependency(\.device.model)"#),
+          localizedModel: .unimplemented(
+            #"@Dependency(\.device.localizedModel)"#),
+          systemName: .unimplemented(
+            #"@Dependency(\.device.systemName)"#),
+          systemVersion: .unimplemented(
+            #"@Dependency(\.device.systemVersion)"#),
+          identifierForVendor: .unimplemented(
+            #"@Dependency(\.device.identifierForVendor)"#, placeholder: nil),
+          orientation: .unimplemented(
+            #"@Dependency(\.device.orientation)"#, placeholder: .unknown),
+          isGeneratingDeviceOrientationNotifications: .unimplemented(
+            #"@Dependency(\.device.isGeneratingDeviceOrientationNotifications)"#),
+          beginGeneratingDeviceOrientationNotifications: .unimplemented(
+            #"@Dependency(\.device.beginGeneratingDeviceOrientationNotifications)"#),
+          endGeneratingDeviceOrientationNotifications: .unimplemented(
+            #"@Dependency(\.device.endGeneratingDeviceOrientationNotifications)"#),
+          isBatteryMonitoringEnabled: .init(
+            .unimplemented(#"@Dependency(\.device.isBatteryMonitoringEnabled.get)"#)),
+          batteryState: .unimplemented(
+            #"@Dependency(\.device.batteryState)"#, placeholder: .unknown),
+          batteryLevel: .unimplemented(
+            #"@Dependency(\.device.batteryLevel)"#),
+          isProximityMonitoringEnabled:
+            .unimplemented(
+              #"@Dependency(\.device.isProximityMonitoringEnabled.get)"#),
+          proximityState: .unimplemented(
+            #"@Dependency(\.device.proximityState)"#),
+          isMultitaskingSupported: .unimplemented(
+            #"@Dependency(\.device.isMultitaskingSupported)"#),
+          userInterfaceIdiom: .unimplemented(
+            #"@Dependency(\.device.userInterfaceIdiom)"#, placeholder: .phone),
+          playInputClick: .unimplemented(
+            #"@Dependency(\.device.playInputClick)"#)
+        )
       )
     }
   }

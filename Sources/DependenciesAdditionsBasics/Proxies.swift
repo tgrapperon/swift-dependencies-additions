@@ -146,53 +146,6 @@ public struct ReadWriteBinding<Value>: Sendable {
   }
 }
 
-extension ReadWriteBinding {
-  public static func unimplemented(
-    description: String,
-    file: StaticString = #file,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    let value = LockIsolated<() -> Value>(
-      XCTestDynamicOverlay.unimplemented(
-        description,
-        file: file,
-        fileID: fileID,
-        line: line
-      )
-    )
-    return .init {
-      value.value()
-    } set: { newValue in
-      value.withValue {
-        $0 = { newValue }
-      }
-    }
-  }
-  public static func unimplemented(
-    description: String,
-    placeholder: @autoclosure @escaping @Sendable () -> Value,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    let value = LockIsolated<() -> Value>(
-      XCTestDynamicOverlay.unimplemented(
-        description,
-        placeholder: placeholder(),
-        fileID: fileID,
-        line: line
-      )
-    )
-    return .init {
-      value.value()
-    } set: { newValue in
-      value.withValue {
-        $0 = { newValue }
-      }
-    }
-  }
-}
-
 /// A property wrapper that characterizes a value that can be read and written synchronously.
 ///
 /// You directly access the value in `live` context. In other context, you can assign a
@@ -236,38 +189,6 @@ public struct ReadWriteProxy<Value: Sendable>: Sendable {
   }
 }
 
-extension ReadWriteProxy {
-  public static func unimplemented(
-    _ description: String = "",
-    file: StaticString = #file,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    ReadWriteProxy(
-      .unimplemented(
-        description: description,
-        file: file,
-        fileID: fileID,
-        line: line
-      )
-    )
-  }
-  public static func unimplemented(
-    _ description: String = "", placeholder: @autoclosure @escaping @Sendable () -> Value,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    ReadWriteProxy(
-      .unimplemented(
-        description: description,
-        placeholder: placeholder(),
-        fileID: fileID,
-        line: line
-      )
-    )
-  }
-}
-
 /// A property wrapper that characterizes a value that can be read synchronously.
 ///
 /// You directly access the value in `live` context. In other context, you can assign a constant or
@@ -305,33 +226,6 @@ public struct ReadOnlyProxy<Value: Sendable>: Sendable {
   public var projectedValue: Self {
     get { self }
     set { self = newValue }
-  }
-}
-
-extension ReadOnlyProxy {
-  public static func unimplemented(
-    _ description: String = "",
-    file: StaticString = #file,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    ReadOnlyProxy(
-      XCTestDynamicOverlay.unimplemented(description, file: file, fileID: fileID, line: line))
-  }
-  public static func unimplemented(
-    _ description: String = "",
-    placeholder: @autoclosure @escaping @Sendable () -> Value,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    ReadOnlyProxy({
-      XCTestDynamicOverlay.unimplemented(
-        description,
-        placeholder: placeholder,
-        fileID: fileID,
-        line: line
-      )()
-    })
   }
 }
 
@@ -375,35 +269,6 @@ public struct FunctionProxy<Value: Sendable>: Sendable {
   }
 }
 
-extension FunctionProxy {
-  /// - Warning: This convenience helper can crash the compiler if the function is async. In this
-  /// case, you should use the standard initializer with an unimplemented argument:
-  /// `.init(unimplemented(…))`.
-  public static func unimplemented(
-    _ description: String = "",
-    placeholder: @autoclosure @escaping @Sendable () -> Value,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    FunctionProxy({
-      XCTestDynamicOverlay.unimplemented(
-        description,
-        placeholder: placeholder,
-        fileID: fileID,
-        line: line
-      )()
-    })
-  }
-}
-
-func _unimplemented<V>(
-  description: String,
-  file: StaticString = #file,
-  fileID: StaticString = #fileID,
-  line: UInt = #line
-) -> V {
-  { unimplemented(description, file: file, fileID: fileID, line: line) }()
-}
 
 /// A value that describe a bidirectional binding on `MainActor`.
 ///
@@ -456,53 +321,6 @@ public struct MainActorReadWriteBinding<Value>: Sendable {
     -> MainActorReadWriteBinding<Value>
   {
     .init(get: value()) { _ in () }
-  }
-}
-
-extension MainActorReadWriteBinding {
-  public static func unimplemented(
-    description: String,
-    file: StaticString = #file,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    let value = LockIsolated<() -> Value>(
-      XCTestDynamicOverlay.unimplemented(
-        description,
-        file: file,
-        fileID: fileID,
-        line: line
-      )
-    )
-    return .init {
-      value.value()
-    } set: { newValue in
-      value.withValue {
-        $0 = { newValue }
-      }
-    }
-  }
-  public static func unimplemented(
-    description: String,
-    placeholder: @autoclosure @escaping @Sendable () -> Value,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    let value = LockIsolated<() -> Value>(
-      XCTestDynamicOverlay.unimplemented(
-        description,
-        placeholder: placeholder(),
-        fileID: fileID,
-        line: line
-      )
-    )
-    return .init {
-      value.value()
-    } set: { newValue in
-      value.withValue {
-        $0 = { newValue }
-      }
-    }
   }
 }
 
@@ -560,39 +378,6 @@ public struct MainActorReadWriteProxy<Value: Sendable>: Sendable {
   }
 }
 
-extension MainActorReadWriteProxy {
-  public static func unimplemented(
-    _ description: String = "",
-    file: StaticString = #file,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    MainActorReadWriteProxy(
-      .unimplemented(
-        description: description,
-        file: file,
-        fileID: fileID,
-        line: line
-      )
-    )
-  }
-  public static func unimplemented(
-    _ description: String = "",
-    placeholder: @autoclosure @escaping @Sendable () -> Value,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    MainActorReadWriteProxy(
-      .unimplemented(
-        description: description,
-        placeholder: placeholder(),
-        fileID: fileID,
-        line: line
-      )
-    )
-  }
-}
-
 /// A property wrapper that characterizes a value that can be read synchronously on the
 /// `MainActor`
 ///
@@ -634,38 +419,6 @@ public struct MainActorReadOnlyProxy<Value: Sendable>: Sendable {
   }
 }
 
-extension MainActorReadOnlyProxy {
-  public static func unimplemented(
-    _ description: String = "",
-    file: StaticString = #file,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    MainActorReadOnlyProxy(
-      XCTestDynamicOverlay.unimplemented(
-        description,
-        file: file,
-        fileID: fileID,
-        line: line
-      )
-    )
-  }
-  public static func unimplemented(
-    _ description: String = "",
-    placeholder: @autoclosure @escaping @Sendable () -> Value,
-    fileID: StaticString = #fileID,
-    line: UInt = #line
-  ) -> Self {
-    MainActorReadOnlyProxy({
-      XCTestDynamicOverlay.unimplemented(
-        description,
-        placeholder: placeholder,
-        fileID: fileID,
-        line: line
-      )()
-    })
-  }
-}
 
 /// A protocol that describe values that can support other values in "`Proxy`" property
 /// wrappers like ``ReadWriteProxy`` and ``MainActorReadOnlyProxy``.

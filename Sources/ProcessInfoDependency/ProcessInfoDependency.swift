@@ -381,30 +381,22 @@
             #"@Dependency(\.processInfo.beginActivity)"#,
             placeholder: { _, _ in NSObject() }),
           endActivity: .unimplemented(
-            #"@Dependency(\.processInfo.endActivity)"#,
-            placeholder: { _ in () }),
+            #"@Dependency(\.processInfo.endActivity)"#),
           performActivity:
             .unimplemented(
-              #"@Dependency(\.processInfo.performActivity)"#,
-              placeholder: { _, _, _ in () }),
+              #"@Dependency(\.processInfo.performActivity)"#),
           performExpiringActivity: .unimplemented(
-            #"@Dependency(\.processInfo.performExpiringActivity)"#,
-            placeholder: { _, _ in () }),
+            #"@Dependency(\.processInfo.performExpiringActivity)"#),
           disableSuddenTermination: .unimplemented(
-            #"@Dependency(\.processInfo.disableSuddenTermination)"#,
-            placeholder: { () }),
+            #"@Dependency(\.processInfo.disableSuddenTermination)"#),
           enableSuddenTermination: .unimplemented(
-            #"@Dependency(\.processInfo.enableSuddenTermination)"#,
-            placeholder: { () }),
+            #"@Dependency(\.processInfo.enableSuddenTermination)"#),
           disableAutomaticTermination: .unimplemented(
-            #"@Dependency(\.processInfo.disableAutomaticTermination)"#,
-            placeholder: { _ in () }),
+            #"@Dependency(\.processInfo.disableAutomaticTermination)"#),
           enableAutomaticTermination: .unimplemented(
-            #"@Dependency(\.processInfo.enableAutomaticTermination)"#,
-            placeholder: { _ in () }),
+            #"@Dependency(\.processInfo.enableAutomaticTermination)"#),
           isOperatingSystemAtLeast: .unimplemented(
-            #"@Dependency(\.processInfo.isOperatingSystemAtLeast)"#,
-            placeholder: { _ in false })
+            #"@Dependency(\.processInfo.isOperatingSystemAtLeast)"#)
         )
       )
     }

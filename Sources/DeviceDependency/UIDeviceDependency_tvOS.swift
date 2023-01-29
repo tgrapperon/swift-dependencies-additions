@@ -100,57 +100,31 @@ import XCTestDynamicOverlay
     public func playInputClick() {
       self._implementation.playInputClick()
     }
-
-    nonisolated
-      init(
-        name: @escaping @MainActor @Sendable () -> String,
-        model: @escaping @MainActor @Sendable () -> String,
-        localizedModel: @escaping @MainActor @Sendable () -> String,
-        systemName: @escaping @MainActor @Sendable () -> String,
-        systemVersion: @escaping @MainActor @Sendable () -> String,
-        identifierForVendor: @escaping @MainActor @Sendable () -> UUID?,
-        isProximityMonitoringEnabled: (
-          get: @MainActor @Sendable () -> Bool, set: @MainActor @Sendable (Bool) -> Void
-        ),
-        proximityState: @escaping @MainActor @Sendable () -> Bool,
-        isMultitaskingSupported: @escaping @MainActor @Sendable () -> Bool,
-        userInterfaceIdiom: @escaping @MainActor @Sendable () -> UIUserInterfaceIdiom,
-        playInputClick: @escaping @MainActor @Sendable () -> Void
-      )
-    {
-      self._implementation = .init(
-        name: .init(name),
-        model: .init(model),
-        localizedModel: .init(localizedModel),
-        systemName: .init(systemName),
-        systemVersion: .init(systemVersion),
-        identifierForVendor: .init(identifierForVendor),
-        isProximityMonitoringEnabled: .init(.init(isProximityMonitoringEnabled)),
-        proximityState: .init(proximityState),
-        isMultitaskingSupported: .init(isMultitaskingSupported),
-        userInterfaceIdiom: .init(userInterfaceIdiom),
-        playInputClick: .init { playInputClick() }
-      )
-    }
   }
 
   extension Device {
     public nonisolated static var current: Device {
-      Device(
-        name: { UIDevice.current.name },
-        model: { UIDevice.current.model },
-        localizedModel: { UIDevice.current.localizedModel },
-        systemName: { UIDevice.current.systemName },
-        systemVersion: { UIDevice.current.systemVersion },
-        identifierForVendor: { UIDevice.current.identifierForVendor },
-        isProximityMonitoringEnabled: (
-          { UIDevice.current.isProximityMonitoringEnabled },
-          { UIDevice.current.isProximityMonitoringEnabled = $0 }
-        ),
-        proximityState: { UIDevice.current.proximityState },
-        isMultitaskingSupported: { UIDevice.current.isMultitaskingSupported },
-        userInterfaceIdiom: { UIDevice.current.userInterfaceIdiom },
-        playInputClick: { UIDevice.current.playInputClick() }
+      return Device(
+        _implementation: .init(
+          name: .init { UIDevice.current.name },
+          model: .init { UIDevice.current.model },
+          localizedModel: .init { UIDevice.current.localizedModel },
+          systemName: .init { UIDevice.current.systemName },
+          systemVersion: .init { UIDevice.current.systemVersion },
+          identifierForVendor: .init { UIDevice.current.identifierForVendor },
+          isProximityMonitoringEnabled: .init(
+            .init {
+              UIDevice.current.isProximityMonitoringEnabled
+            } set: {
+              UIDevice.current.isProximityMonitoringEnabled = $0
+            }),
+          proximityState: .init { UIDevice.current.proximityState },
+          isMultitaskingSupported: .init { UIDevice.current.isMultitaskingSupported },
+          userInterfaceIdiom: .init { UIDevice.current.userInterfaceIdiom },
+          playInputClick: .init {
+            UIDevice.current.playInputClick()
+          }
+        )
       )
     }
   }
@@ -160,31 +134,31 @@ import XCTestDynamicOverlay
       static var unimplemented: Device
     {
       Device(
-        name: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.name)"#),
-        model: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.model)"#),
-        localizedModel: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.localizedModel)"#),
-        systemName: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.systemName)"#),
-        systemVersion: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.systemVersion)"#),
-        identifierForVendor: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.identifierForVendor)"#, placeholder: nil),
-        isProximityMonitoringEnabled: (
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.device.isProximityMonitoringEnabled.get)"#),
-          { _ in () }
-        ),
-        proximityState: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.proximityState)"#),
-        isMultitaskingSupported: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.isMultitaskingSupported)"#),
-        userInterfaceIdiom: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.userInterfaceIdiom)"#, placeholder: .phone),
-        playInputClick: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.playInputClick)"#)
+        _implementation: .init(
+          name: .unimplemented(
+            #"@Dependency(\.device.name)"#),
+          model: .unimplemented(
+            #"@Dependency(\.device.model)"#),
+          localizedModel: .unimplemented(
+            #"@Dependency(\.device.localizedModel)"#),
+          systemName: .unimplemented(
+            #"@Dependency(\.device.systemName)"#),
+          systemVersion: .unimplemented(
+            #"@Dependency(\.device.systemVersion)"#),
+          identifierForVendor: .unimplemented(
+            #"@Dependency(\.device.identifierForVendor)"#, placeholder: nil),
+          isProximityMonitoringEnabled:
+            .unimplemented(
+              #"@Dependency(\.device.isProximityMonitoringEnabled.get)"#),
+          proximityState: .unimplemented(
+            #"@Dependency(\.device.proximityState)"#),
+          isMultitaskingSupported: .unimplemented(
+            #"@Dependency(\.device.isMultitaskingSupported)"#),
+          userInterfaceIdiom: .unimplemented(
+            #"@Dependency(\.device.userInterfaceIdiom)"#, placeholder: .phone),
+          playInputClick: .unimplemented(
+            #"@Dependency(\.device.playInputClick)"#)
+        )
       )
     }
   }

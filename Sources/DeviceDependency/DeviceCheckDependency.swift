@@ -72,8 +72,8 @@
           isSupported: .unimplemented(
             #"@Dependency(\.deviceCheck.isSupported)"#),
           generateToken: .unimplemented(
-            #"@Dependency(\.deviceCheck.generateToken)"#,
-            placeholder: { .init() }))
+            #"@Dependency(\.deviceCheck.generateToken)"#)
+        )
       )
     }
   }
