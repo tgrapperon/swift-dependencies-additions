@@ -109,17 +109,19 @@ extension ConfigurableProxy {
 public struct ReadWriteBinding<Value>: Sendable {
   let get: @Sendable () -> Value
   let set: @Sendable (Value) -> Void
+
   /// Initializes a ``ReadWriteProxy`` from a pair for `get` and `set` closures.
   public init(get: @escaping @Sendable () -> Value, set: @escaping @Sendable (Value) -> Void) {
     self.get = get
     self.set = set
   }
 
-  // This one will be deprecated soon
+  @available(*, deprecated, message: "Use the two-arguments `get:set:` variant.")
   @_spi(Internals) public init(_ getSet: (@Sendable () -> Value, @Sendable (Value) -> Void)) {
     self.get = getSet.0
     self.set = getSet.1
   }
+
   /// Initializes a ``ReadWriteProxy`` from a ``ProxyBindable`` value, like `LockIsolated`.
   public init<Bindable: ProxyBindable & Sendable>(_ bindable: Bindable)
   where Bindable.Value == Value {
@@ -210,7 +212,7 @@ public struct ReadWriteProxy<Value: Sendable>: Sendable {
 /// ```
 @propertyWrapper
 public struct ReadOnlyProxy<Value: Sendable>: Sendable {
-  public var _value: @Sendable () -> Value
+  var _value: @Sendable () -> Value
 
   public init(_ value: @autoclosure @escaping @Sendable () -> Value) {
     self._value = value
@@ -226,17 +228,6 @@ public struct ReadOnlyProxy<Value: Sendable>: Sendable {
   public var projectedValue: Self {
     get { self }
     set { self = newValue }
-  }
-}
-
-extension ReadOnlyProxy {
-  public static func unimplemented(_ description: String) -> Self {
-    ReadOnlyProxy(XCTestDynamicOverlay.unimplemented(description))
-  }
-  public static func unimplemented(
-    _ description: String, placeholder: @autoclosure @escaping @Sendable () -> Value
-  ) -> Self {
-    ReadOnlyProxy({ XCTestDynamicOverlay.unimplemented(description, placeholder: placeholder)() })
   }
 }
 
@@ -260,10 +251,14 @@ extension ReadOnlyProxy {
 /// ```
 @propertyWrapper
 public struct FunctionProxy<Value: Sendable>: Sendable {
-  public var _value: @Sendable () -> Value
+  var _value: @Sendable () -> Value
 
   public init(_ value: @escaping @Sendable () -> Value) {
     self._value = value
+  }
+
+  public init(_ value: Value) {
+    self._value = { value }
   }
 
   @_spi(Internals)
@@ -273,17 +268,6 @@ public struct FunctionProxy<Value: Sendable>: Sendable {
   public var projectedValue: Self {
     get { self }
     set { self = newValue }
-  }
-}
-
-extension FunctionProxy {
-  public static func unimplemented(_ description: String) -> Self {
-    FunctionProxy(XCTestDynamicOverlay.unimplemented(description))
-  }
-  public static func unimplemented(
-    _ description: String, placeholder: @autoclosure @escaping @Sendable () -> Value
-  ) -> Self {
-    FunctionProxy({ XCTestDynamicOverlay.unimplemented(description, placeholder: placeholder)() })
   }
 }
 
@@ -302,6 +286,7 @@ extension FunctionProxy {
 public struct MainActorReadWriteBinding<Value>: Sendable {
   let get: @Sendable @MainActor () -> Value
   let set: @Sendable @MainActor (Value) -> Void
+
   public init(
     get: @escaping @MainActor @Sendable () -> Value,
     set: @escaping @MainActor @Sendable (Value) -> Void
@@ -309,6 +294,8 @@ public struct MainActorReadWriteBinding<Value>: Sendable {
     self.get = get
     self.set = set
   }
+
+  @available(*, deprecated, message: "Use the two-argument `get:set:` variant.")
   public init(
     get: @autoclosure @escaping @MainActor @Sendable () -> Value,
     set: @escaping @MainActor @Sendable (Value) -> Void
@@ -317,6 +304,7 @@ public struct MainActorReadWriteBinding<Value>: Sendable {
     self.set = set
   }
 
+  @available(*, deprecated, message: "Use the two-arguments `get:set:` variant.")
   public init(_ getSet: (@MainActor @Sendable () -> Value, @MainActor @Sendable (Value) -> Void)) {
     self.get = getSet.0
     self.set = getSet.1
@@ -337,7 +325,7 @@ public struct MainActorReadWriteBinding<Value>: Sendable {
   public static func constant(_ value: @autoclosure @escaping @Sendable () -> Value)
     -> MainActorReadWriteBinding<Value>
   {
-    .init(get: value()) { _ in () }
+    .init(get: value, set: { _ in })
   }
 }
 
@@ -417,7 +405,7 @@ public struct MainActorReadWriteProxy<Value: Sendable>: Sendable {
 /// ```
 @propertyWrapper
 public struct MainActorReadOnlyProxy<Value: Sendable>: Sendable {
-  public var _value: @Sendable @MainActor () -> Value
+  var _value: @Sendable @MainActor () -> Value
 
   public init(_ value: @autoclosure @escaping @MainActor @Sendable () -> Value) {
     self._value = value
@@ -492,18 +480,18 @@ extension LockIsolated: ProxyBindable {
 }
 
 // TODO: Reword and reinsert.
-private func warnIfLive<Value, Container>(
-  type: Value.Type, container: Container.Type, context: DependencyContext, readonly: Bool
-) {
-  if context == .live {
-    runtimeWarn(
-      """
-      Trying to set a \(Value.self) using the projected value of a `\(Container.self)` in a live \
-      context.
-
-      This projected value should only be used to override values during testing or in SwiftUI \
-      Previews.\( readonly ? " In a live context, this value is assumed to be read-only." : "")
-      """
-    )
-  }
-}
+//private func warnIfLive<Value, Container>(
+//  type: Value.Type, container: Container.Type, context: DependencyContext, readonly: Bool
+//) {
+//  if context == .live {
+//    runtimeWarn(
+//      """
+//      Trying to set a \(Value.self) using the projected value of a `\(Container.self)` in a live \
+//      context.
+//
+//      This projected value should only be used to override values during testing or in SwiftUI \
+//      Previews.\( readonly ? " In a live context, this value is assumed to be read-only." : "")
+//      """
+//    )
+//  }
+//}

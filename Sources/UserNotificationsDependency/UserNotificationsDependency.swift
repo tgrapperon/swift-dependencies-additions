@@ -2,7 +2,6 @@
   import Dependencies
   @_spi(Internals) import DependenciesAdditionsBasics
   @preconcurrency import UserNotifications
-  import XCTestDynamicOverlay
 
   extension DependencyValues {
     /// An abstraction of `UNUserNotificationCenter`, the central object for managing
@@ -22,7 +21,10 @@
   public struct UserNotificationCenter: Sendable, ConfigurableProxy {
     public struct Implementation: Sendable {
       @FunctionProxy public var notificationSettings: @Sendable () async -> UNNotificationSettings
-      @FunctionProxy public var setBadgeCount: @Sendable (Int) async throws -> Void
+      // Keeping this unexposed proxy around on watchOS crashes the compiler for some reason
+      #if !os(watchOS)
+        @FunctionProxy public var setBadgeCount: @Sendable (Int) async throws -> Void
+      #endif
       @FunctionProxy public var requestAuthorization:
         @Sendable (UNAuthorizationOptions) async throws -> Bool
       @ReadWriteProxy public var delegate: (UNUserNotificationCenterDelegate & Sendable)?
@@ -67,7 +69,9 @@
     @available(iOS 16.0, macOS 13, *)
     @available(watchOS, unavailable)
     public func setBadgeCount(_ newBadgeCount: Int) async throws {
-      try await self._implementation.setBadgeCount(newBadgeCount)
+      #if !os(watchOS)
+        try await self._implementation.setBadgeCount(newBadgeCount)
+      #endif
     }
 
     /// Schedules the delivery of a local notification.
@@ -114,132 +118,190 @@
     public func notificationCategories() async -> Set<UNNotificationCategory> {
       await self._implementation.notificationCategories()
     }
-
-    init(
-      notificationSettings: @escaping @Sendable () async -> UNNotificationSettings,
-      setBadgeCount: @escaping @Sendable (Int) async throws -> Void,
-      requestAuthorization: @escaping @Sendable (UNAuthorizationOptions) async throws -> Bool,
-      delegate: (
-        @Sendable () -> (UNUserNotificationCenterDelegate & Sendable)?,
-        @Sendable ((UNUserNotificationCenterDelegate & Sendable)?) -> Void
-      ),
-      supportsContentExtensions: @Sendable @escaping @autoclosure () -> Bool,
-      add: @escaping @Sendable (UNNotificationRequest) async throws -> Void,
-      pendingNotificationRequests: @escaping @Sendable () async -> [UNNotificationRequest],
-      removePendingNotificationRequests: @escaping @Sendable ([String]) -> Void,
-      removeAllPendingNotificationRequests: @escaping @Sendable () -> Void,
-      deliveredNotifications: @escaping @Sendable () async -> [UNNotification],
-      removeDeliveredNotifications: @escaping @Sendable ([String]) -> Void,
-      removeAllDeliveredNotifications: @escaping @Sendable () -> Void,
-      setNotificationCategories: @escaping @Sendable (Set<UNNotificationCategory>) -> Void,
-      notificationCategories: @escaping @Sendable () async -> Set<UNNotificationCategory>
-    ) {
-      self._implementation = .init(
-        notificationSettings: .init { notificationSettings },
-        setBadgeCount: .init { setBadgeCount },
-        requestAuthorization: .init { requestAuthorization },
-        delegate: .init(.init(delegate)),
-        supportsContentExtensions: .init(supportsContentExtensions),
-        add: .init { add },
-        pendingNotificationRequests: .init { pendingNotificationRequests },
-        removePendingNotificationRequests: .init { removePendingNotificationRequests },
-        removeAllPendingNotificationRequests: .init { removeAllPendingNotificationRequests },
-        deliveredNotifications: .init { deliveredNotifications },
-        removeDeliveredNotifications: .init { removeDeliveredNotifications },
-        removeAllDeliveredNotifications: .init { removeAllDeliveredNotifications },
-        setNotificationCategories: .init { setNotificationCategories },
-        notificationCategories: .init { notificationCategories }
-      )
-    }
   }
 
   extension UserNotificationCenter {
     static var system: Self {
-      .init(
-        notificationSettings: {
-          await UNUserNotificationCenter.current().notificationSettings()
-        },
-        setBadgeCount: { count in
-          if #available(iOS 16.0, tvOS 16.0, macOS 13.0, *) {
-            #if !os(watchOS)
-              try await UNUserNotificationCenter.current().setBadgeCount(count)
-            #endif
-          } else {
-            fatalError()
-          }
-        },
-        requestAuthorization: {
-          try await UNUserNotificationCenter.current().requestAuthorization(options: $0)
-        },
-        delegate: (
-          { UNUserNotificationCenter.current().delegate },
-          { UNUserNotificationCenter.current().delegate = $0 }
-        ),
-        supportsContentExtensions: UNUserNotificationCenter.current().supportsContentExtensions,
-        add: {
-          try await UNUserNotificationCenter.current().add($0)
-        },
-        pendingNotificationRequests: {
-          await UNUserNotificationCenter.current().pendingNotificationRequests()
-        },
-        removePendingNotificationRequests: {
-          UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: $0)
-        },
-        removeAllPendingNotificationRequests: {
-          UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        },
-        deliveredNotifications: {
-          await UNUserNotificationCenter.current().deliveredNotifications()
-        },
-        removeDeliveredNotifications: {
-          UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: $0)
-        },
-        removeAllDeliveredNotifications: {
-          UNUserNotificationCenter.current().removeAllDeliveredNotifications()
-        },
-        setNotificationCategories: {
-          UNUserNotificationCenter.current().setNotificationCategories($0)
-        },
-        notificationCategories: {
-          await UNUserNotificationCenter.current().notificationCategories()
-        })
+      // Since we needed to remove the setBadge proxy to work around a compiler crash, we now need
+      // a dedicated initializer.
+      #if os(watchOS)
+        return .init(
+          _implementation: .init(
+            notificationSettings: .init {
+              await UNUserNotificationCenter.current().notificationSettings()
+            },
+            requestAuthorization: .init {
+              try await UNUserNotificationCenter.current().requestAuthorization(options: $0)
+            },
+            delegate: .init(
+              .init(
+                get: { UNUserNotificationCenter.current().delegate },
+                set: { UNUserNotificationCenter.current().delegate = $0 }
+              )),
+            supportsContentExtensions: .init(
+              UNUserNotificationCenter.current().supportsContentExtensions),
+            add: .init {
+              try await UNUserNotificationCenter.current().add($0)
+            },
+            pendingNotificationRequests: .init {
+              await UNUserNotificationCenter.current().pendingNotificationRequests()
+            },
+            removePendingNotificationRequests: .init {
+              UNUserNotificationCenter.current().removePendingNotificationRequests(
+                withIdentifiers: $0)
+            },
+            removeAllPendingNotificationRequests: .init {
+              UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+            },
+            deliveredNotifications: .init {
+              await UNUserNotificationCenter.current().deliveredNotifications()
+            },
+            removeDeliveredNotifications: .init {
+              UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: $0)
+            },
+            removeAllDeliveredNotifications: .init {
+              UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+            },
+            setNotificationCategories: .init {
+              UNUserNotificationCenter.current().setNotificationCategories($0)
+            },
+            notificationCategories: .init {
+              await UNUserNotificationCenter.current().notificationCategories()
+            }
+          )
+        )
+      #else
+        return .init(
+          _implementation: .init(
+            notificationSettings: .init {
+              await UNUserNotificationCenter.current().notificationSettings()
+            },
+            setBadgeCount: .init { count in
+              if #available(iOS 16.0, tvOS 16.0, macOS 13.0, *) {
+                #if !os(watchOS)
+                  try await UNUserNotificationCenter.current().setBadgeCount(count)
+                #endif
+              } else {
+                fatalError()
+              }
+            },
+            requestAuthorization: .init {
+              try await UNUserNotificationCenter.current().requestAuthorization(options: $0)
+            },
+            delegate: .init(
+              .init(
+                get: { UNUserNotificationCenter.current().delegate },
+                set: { UNUserNotificationCenter.current().delegate = $0 }
+              )),
+            supportsContentExtensions: .init(
+              UNUserNotificationCenter.current().supportsContentExtensions),
+            add: .init {
+              try await UNUserNotificationCenter.current().add($0)
+            },
+            pendingNotificationRequests: .init {
+              await UNUserNotificationCenter.current().pendingNotificationRequests()
+            },
+            removePendingNotificationRequests: .init {
+              UNUserNotificationCenter.current().removePendingNotificationRequests(
+                withIdentifiers: $0)
+            },
+            removeAllPendingNotificationRequests: .init {
+              UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+            },
+            deliveredNotifications: .init {
+              await UNUserNotificationCenter.current().deliveredNotifications()
+            },
+            removeDeliveredNotifications: .init {
+              UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: $0)
+            },
+            removeAllDeliveredNotifications: .init {
+              UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+            },
+            setNotificationCategories: .init {
+              UNUserNotificationCenter.current().setNotificationCategories($0)
+            },
+            notificationCategories: .init {
+              await UNUserNotificationCenter.current().notificationCategories()
+            }
+          )
+        )
+      #endif
     }
   }
 
   extension UserNotificationCenter {
     static var unimplemented: UserNotificationCenter {
-      UserNotificationCenter(
-        notificationSettings: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.userNotificationCenter.notificationSettings)"#),
-        setBadgeCount: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.userNotificationCenter.setBadgeCount)"#),
-        requestAuthorization: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.userNotificationCenter.requestAuthorization)"#),
-        delegate: (
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.userNotificationCenter.delegate.get)"#, placeholder: nil),
-          { _ in () }
-        ),
-        supportsContentExtensions: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.userNotificationCenter.supportsContentExtensions)"#),
-        add: XCTestDynamicOverlay.unimplemented(#"@Dependency(\.userNotificationCenter.add)"#),
-        pendingNotificationRequests: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.userNotificationCenter.pendingNotificationRequests)"#),
-        removePendingNotificationRequests: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.userNotificationCenter.removePendingNotificationRequests)"#),
-        removeAllPendingNotificationRequests: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.userNotificationCenter.removeAllPendingNotificationRequests)"#),
-        deliveredNotifications: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\,.userNotificationCenter.deliveredNotifications)"#),
-        removeDeliveredNotifications: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.userNotificationCenter.removeDeliveredNotifications)"#),
-        removeAllDeliveredNotifications: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.userNotificationCenter.removeAllDeliveredNotifications)"#),
-        setNotificationCategories: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\,.userNotificationCenter.setNotificationCategories)"#),
-        notificationCategories: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\,.userNotificationCenter.notificationCategories)"#))
+      #if os(watchOS)
+        UserNotificationCenter(
+          _implementation: .init(
+            notificationSettings: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.notificationSettings)"#,
+              placeholder: { fatalError() }),
+            requestAuthorization: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.requestAuthorization)"#),
+            delegate: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.delegate.get)"#,
+              placeholder: nil
+            ),
+            supportsContentExtensions: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.supportsContentExtensions)"#),
+            add: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.add)"#),
+            pendingNotificationRequests: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.pendingNotificationRequests)"#),
+            removePendingNotificationRequests: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removePendingNotificationRequests)"#),
+            removeAllPendingNotificationRequests: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removeAllPendingNotificationRequests)"#),
+            deliveredNotifications: .unimplemented(
+              #"@Dependency(\,.userNotificationCenter.deliveredNotifications)"#),
+            removeDeliveredNotifications: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removeDeliveredNotifications)"#),
+            removeAllDeliveredNotifications: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removeAllDeliveredNotifications)"#),
+            setNotificationCategories: .unimplemented(
+              #"@Dependency(\,.userNotificationCenter.setNotificationCategories)"#),
+            notificationCategories: .unimplemented(
+              #"@Dependency(\,.userNotificationCenter.notificationCategories)"#)
+          )
+        )
+      #else
+        UserNotificationCenter(
+          _implementation: .init(
+            notificationSettings: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.notificationSettings)"#,
+              placeholder: { fatalError() }),
+            setBadgeCount: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.setBadgeCount)"#),
+            requestAuthorization: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.requestAuthorization)"#),
+            delegate: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.delegate.get)"#,
+              placeholder: nil
+            ),
+            supportsContentExtensions: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.supportsContentExtensions)"#),
+            add: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.add)"#),
+            pendingNotificationRequests: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.pendingNotificationRequests)"#),
+            removePendingNotificationRequests: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removePendingNotificationRequests)"#),
+            removeAllPendingNotificationRequests: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removeAllPendingNotificationRequests)"#),
+            deliveredNotifications: .unimplemented(
+              #"@Dependency(\,.userNotificationCenter.deliveredNotifications)"#),
+            removeDeliveredNotifications: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removeDeliveredNotifications)"#),
+            removeAllDeliveredNotifications: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removeAllDeliveredNotifications)"#),
+            setNotificationCategories: .unimplemented(
+              #"@Dependency(\,.userNotificationCenter.setNotificationCategories)"#),
+            notificationCategories: .unimplemented(
+              #"@Dependency(\,.userNotificationCenter.notificationCategories)"#)
+          )
+        )
+      #endif
     }
   }
-
 #endif

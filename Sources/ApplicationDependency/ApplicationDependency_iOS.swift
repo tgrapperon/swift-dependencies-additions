@@ -318,93 +318,6 @@ import XCTestDynamicOverlay
       @FunctionProxy public var completeStateRestoration: @MainActor @Sendable () -> Void
       @FunctionProxy public var ignoreSnapshotOnNextApplicationLaunch:
         @MainActor @Sendable () -> Void
-      init(
-        delegate: MainActorReadWriteProxy<UIApplicationDelegate?>,
-        isIdleTimerDisabled: MainActorReadWriteProxy<Bool>,
-        canOpenURL: FunctionProxy<@MainActor @Sendable (URL) -> Bool>,
-        open: FunctionProxy<
-          @MainActor @Sendable (URL, [UIApplication.OpenExternalURLOptionsKey: Any]) async -> Bool
-        >,
-        sendEvent: FunctionProxy<@MainActor @Sendable (UIEvent) -> Void>,
-        sendAction: FunctionProxy<@MainActor @Sendable (Selector, Any?, Any?, UIEvent?) -> Bool>,
-        supportedInterfaceOrientations: FunctionProxy<
-          @MainActor @Sendable (UIWindow?) -> UIInterfaceOrientationMask
-        >,
-        applicationIconBadgeNumber: MainActorReadWriteProxy<Int>,
-        applicationSupportsShakeToEdit: MainActorReadWriteProxy<Bool>,
-        applicationState: MainActorReadOnlyProxy<UIApplication.State>,
-        backgroundTimeRemaining: MainActorReadOnlyProxy<TimeInterval>,
-        beginBackgroundTask: FunctionProxy<
-          @Sendable @MainActor (String?, (() -> Void)?) -> UIBackgroundTaskIdentifier
-        >,
-        endBackgroundTask: FunctionProxy<@Sendable @MainActor (UIBackgroundTaskIdentifier) -> Void>,
-        backgroundRefreshStatus: MainActorReadOnlyProxy<UIBackgroundRefreshStatus>,
-        isProtectedDataAvailable: MainActorReadOnlyProxy<Bool>,
-        userInterfaceLayoutDirection: MainActorReadOnlyProxy<UIUserInterfaceLayoutDirection>,
-        preferredContentSizeCategory: MainActorReadOnlyProxy<UIContentSizeCategory>,
-        connectedScenes: MainActorReadOnlyProxy<Set<UIScene>>,
-        openSessions: MainActorReadOnlyProxy<Set<UISceneSession>>,
-        supportsMultipleScenes: MainActorReadOnlyProxy<Bool>,
-        requestSceneSessionActivation: FunctionProxy<
-          @Sendable @MainActor (
-            UISceneSession?, NSUserActivity?, UIScene.ActivationRequestOptions?, ((Error) -> Void)?
-          ) -> Void
-        >,
-        requestSceneSessionDestruction: FunctionProxy<
-          @Sendable @MainActor (
-            UISceneSession, UISceneDestructionRequestOptions?, ((Error) -> Void)?
-          ) -> Void
-        >,
-        requestSceneSessionRefresh: FunctionProxy<@Sendable @MainActor (UISceneSession) -> Void>,
-        registerForRemoteNotifications: FunctionProxy<@Sendable @MainActor () -> Void>,
-        unregisterForRemoteNotifications: FunctionProxy<@Sendable @MainActor () -> Void>,
-        isRegisteredForRemoteNotifications: MainActorReadOnlyProxy<Bool>,
-        beginReceivingRemoteControlEvents: FunctionProxy<@Sendable @MainActor () -> Void>,
-        endReceivingRemoteControlEvents: FunctionProxy<@Sendable @MainActor () -> Void>,
-        shortcutItems: MainActorReadWriteProxy<[UncheckedSendable<UIApplicationShortcutItem>]?>,
-        supportsAlternateIcons: MainActorReadOnlyProxy<Bool>,
-        setAlternateIconName: FunctionProxy<@Sendable @MainActor (String?) async throws -> Void>,
-        alternateIconName: MainActorReadOnlyProxy<String?>,
-        extendStateRestoration: FunctionProxy<@Sendable @MainActor () -> Void>,
-        completeStateRestoration: FunctionProxy<@Sendable @MainActor () -> Void>,
-        ignoreSnapshotOnNextApplicationLaunch: FunctionProxy<@Sendable @MainActor () -> Void>
-      ) {
-        self._delegate = delegate
-        self._isIdleTimerDisabled = isIdleTimerDisabled
-        self._canOpenURL = canOpenURL
-        self._open = open
-        self._sendEvent = sendEvent
-        self._sendAction = sendAction
-        self._supportedInterfaceOrientations = supportedInterfaceOrientations
-        self._applicationIconBadgeNumber = applicationIconBadgeNumber
-        self._applicationSupportsShakeToEdit = applicationSupportsShakeToEdit
-        self._applicationState = applicationState
-        self._backgroundTimeRemaining = backgroundTimeRemaining
-        self._beginBackgroundTask = beginBackgroundTask
-        self._endBackgroundTask = endBackgroundTask
-        self._backgroundRefreshStatus = backgroundRefreshStatus
-        self._isProtectedDataAvailable = isProtectedDataAvailable
-        self._userInterfaceLayoutDirection = userInterfaceLayoutDirection
-        self._preferredContentSizeCategory = preferredContentSizeCategory
-        self._connectedScenes = connectedScenes
-        self._openSessions = openSessions
-        self._supportsMultipleScenes = supportsMultipleScenes
-        self._requestSceneSessionActivation = requestSceneSessionActivation
-        self._requestSceneSessionDestruction = requestSceneSessionDestruction
-        self._requestSceneSessionRefresh = requestSceneSessionRefresh
-        self._registerForRemoteNotifications = registerForRemoteNotifications
-        self._unregisterForRemoteNotifications = unregisterForRemoteNotifications
-        self._isRegisteredForRemoteNotifications = isRegisteredForRemoteNotifications
-        self._beginReceivingRemoteControlEvents = beginReceivingRemoteControlEvents
-        self._endReceivingRemoteControlEvents = endReceivingRemoteControlEvents
-        self._shortcutItems = shortcutItems
-        self._supportsAlternateIcons = supportsAlternateIcons
-        self._setAlternateIconName = setAlternateIconName
-        self._alternateIconName = alternateIconName
-        self._extendStateRestoration = extendStateRestoration
-        self._completeStateRestoration = completeStateRestoration
-        self._ignoreSnapshotOnNextApplicationLaunch = ignoreSnapshotOnNextApplicationLaunch
-      }
     }
   }
 
@@ -414,36 +327,37 @@ import XCTestDynamicOverlay
       let _implementation = Implementation(
         delegate: .init(
           .init(
-            ({ UIApplication.shared.delegate }, { UIApplication.shared.delegate = $0 }))),
+            get: { UIApplication.shared.delegate },
+            set: { UIApplication.shared.delegate = $0 }
+          )),
         isIdleTimerDisabled: .init(
           .init(
-            get: {
-              UIApplication.shared.isIdleTimerDisabled
-            },
-            set: {
-              UIApplication.shared.isIdleTimerDisabled = $0
-            })),
-        canOpenURL: .init { { UIApplication.shared.canOpenURL($0) } },
-        open: .init { { await UIApplication.shared.open($0, options: $1) } },
-        sendEvent: .init { { UIApplication.shared.sendEvent($0) } },
-        sendAction: .init { { UIApplication.shared.sendAction($0, to: $1, from: $2, for: $3) } },
+            get: { UIApplication.shared.isIdleTimerDisabled },
+            set: { UIApplication.shared.isIdleTimerDisabled = $0 }
+          )),
+        canOpenURL: .init { UIApplication.shared.canOpenURL($0) },
+        open: .init { await UIApplication.shared.open($0, options: $1) },
+        sendEvent: .init { UIApplication.shared.sendEvent($0) },
+        sendAction: .init { UIApplication.shared.sendAction($0, to: $1, from: $2, for: $3) },
         supportedInterfaceOrientations: .init {
-          { UIApplication.shared.supportedInterfaceOrientations(for: $0) }
+          UIApplication.shared.supportedInterfaceOrientations(for: $0)
         },
         applicationIconBadgeNumber: .init(
           .init(
             get: { UIApplication.shared.applicationIconBadgeNumber },
-            set: { UIApplication.shared.applicationIconBadgeNumber = $0 })),
+            set: { UIApplication.shared.applicationIconBadgeNumber = $0 }
+          )),
         applicationSupportsShakeToEdit: .init(
           .init(
             get: { UIApplication.shared.applicationSupportsShakeToEdit },
-            set: { UIApplication.shared.applicationSupportsShakeToEdit = $0 })),
+            set: { UIApplication.shared.applicationSupportsShakeToEdit = $0 }
+          )),
         applicationState: .init { UIApplication.shared.applicationState },
         backgroundTimeRemaining: .init { UIApplication.shared.backgroundTimeRemaining },
         beginBackgroundTask: .init {
-          { UIApplication.shared.beginBackgroundTask(withName: $0, expirationHandler: $1) }
+          UIApplication.shared.beginBackgroundTask(withName: $0, expirationHandler: $1)
         },
-        endBackgroundTask: .init { { UIApplication.shared.endBackgroundTask($0) } },
+        endBackgroundTask: .init { UIApplication.shared.endBackgroundTask($0) },
         backgroundRefreshStatus: .init { UIApplication.shared.backgroundRefreshStatus },
         isProtectedDataAvailable: .init { UIApplication.shared.isProtectedDataAvailable },
         userInterfaceLayoutDirection: .init { UIApplication.shared.userInterfaceLayoutDirection },
@@ -452,31 +366,29 @@ import XCTestDynamicOverlay
         openSessions: .init { UIApplication.shared.openSessions },
         supportsMultipleScenes: .init { UIApplication.shared.supportsMultipleScenes },
         requestSceneSessionActivation: .init {
-          {
-            UIApplication.shared.requestSceneSessionActivation(
-              $0, userActivity: $1, options: $2, errorHandler: $3)
-          }
+          UIApplication.shared.requestSceneSessionActivation(
+            $0, userActivity: $1, options: $2, errorHandler: $3)
         },
         requestSceneSessionDestruction: .init {
-          { UIApplication.shared.requestSceneSessionDestruction($0, options: $1, errorHandler: $2) }
+          UIApplication.shared.requestSceneSessionDestruction($0, options: $1, errorHandler: $2)
         },
         requestSceneSessionRefresh: .init {
-          { UIApplication.shared.requestSceneSessionRefresh($0) }
+          UIApplication.shared.requestSceneSessionRefresh($0)
         },
         registerForRemoteNotifications: .init {
-          { UIApplication.shared.registerForRemoteNotifications() }
+          UIApplication.shared.registerForRemoteNotifications()
         },
         unregisterForRemoteNotifications: .init {
-          { UIApplication.shared.unregisterForRemoteNotifications() }
+          UIApplication.shared.unregisterForRemoteNotifications()
         },
         isRegisteredForRemoteNotifications: .init {
           UIApplication.shared.isRegisteredForRemoteNotifications
         },
         beginReceivingRemoteControlEvents: .init {
-          { UIApplication.shared.beginReceivingRemoteControlEvents() }
+          UIApplication.shared.beginReceivingRemoteControlEvents()
         },
         endReceivingRemoteControlEvents: .init {
-          { UIApplication.shared.endReceivingRemoteControlEvents() }
+          UIApplication.shared.endReceivingRemoteControlEvents()
         },
         shortcutItems: .init(
           .init(
@@ -485,16 +397,18 @@ import XCTestDynamicOverlay
             },
             set: {
               UIApplication.shared.shortcutItems = $0?.map(\.wrappedValue)
-            })),
+            }
+          )),
         supportsAlternateIcons: .init { UIApplication.shared.supportsAlternateIcons },
-        setAlternateIconName: .init({ { try await UIApplication.shared.setAlternateIconName($0) } }
+        setAlternateIconName: .init({ try await UIApplication.shared.setAlternateIconName($0) }
         ),
         alternateIconName: .init { UIApplication.shared.alternateIconName },
-        extendStateRestoration: .init { { UIApplication.shared.extendStateRestoration() } },
-        completeStateRestoration: .init { { UIApplication.shared.completeStateRestoration() } },
+        extendStateRestoration: .init { UIApplication.shared.extendStateRestoration() },
+        completeStateRestoration: .init { UIApplication.shared.completeStateRestoration() },
         ignoreSnapshotOnNextApplicationLaunch: .init {
-          { UIApplication.shared.ignoreSnapshotOnNextApplicationLaunch() }
-        })
+          UIApplication.shared.ignoreSnapshotOnNextApplicationLaunch()
+        }
+      )
       return Application(_implementation: _implementation)
     }
   }
@@ -502,141 +416,86 @@ import XCTestDynamicOverlay
   extension Application {
     public static var unimplemented: Application {
       let _implementation = Implementation(
-        delegate: .init(
-          .init(
-            get: XCTestDynamicOverlay.unimplemented(
-              #"@Dependency(\.application.delegate.get)"#, placeholder: nil),
-            set: { _ in () })),
-        isIdleTimerDisabled: .init(
-          .init(
-            get: XCTestDynamicOverlay.unimplemented(
-              #"@Dependency(\.application.isIdleTimerDisabled.get)"#),
-            set: { _ in () })),
-        canOpenURL: .init {
-          XCTestDynamicOverlay.unimplemented(#"@Dependency(\.application.canOpenURL)"#)
-        },
-        open: .init { XCTestDynamicOverlay.unimplemented(#"@Dependency(\.application.open)"#) },
-        sendEvent: .init {
-          XCTestDynamicOverlay.unimplemented(#"@Dependency(\.application.sendEvent)"#)
-        },
-        sendAction: .init {
-          XCTestDynamicOverlay.unimplemented(#"@Dependency(\.application.sendAction)"#)
-        },
-        supportedInterfaceOrientations: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.supportedInterfaceOrientations)"#,
-            placeholder: UIInterfaceOrientationMask())
-        },
-        applicationIconBadgeNumber: .init(
-          .init(
-            get: XCTestDynamicOverlay.unimplemented(
-              #"@Dependency(\.application.applicationIconBadgeNumber.get)"#),
-            set: { _ in () })),
-        applicationSupportsShakeToEdit: .init(
-          .init(
-            get: XCTestDynamicOverlay.unimplemented(
-              #"@Dependency(\.application.applicationSupportsShakeToEdit.get)"#),
-            set: { _ in () })),
-        applicationState: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.applicationState)"#,
-            placeholder: UIApplication.State.inactive)
-        },
-        backgroundTimeRemaining: .init {
-          XCTestDynamicOverlay.unimplemented(#"@Dependency(\.application.backgroundTimeRemaining)"#)
-        },
-        beginBackgroundTask: .init {
-          XCTestDynamicOverlay.unimplemented(#"@Dependency(\.application.beginBackgroundTask)"#)
-        },
-        endBackgroundTask: .init {
-          XCTestDynamicOverlay.unimplemented(#"@Dependency(\.application.endBackgroundTask)"#)
-        },
-        backgroundRefreshStatus: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.backgroundRefreshStatus)"#,
-            placeholder: UIBackgroundRefreshStatus.denied)
-        },
-        isProtectedDataAvailable: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.isProtectedDataAvailable)"#)
-        },
-        userInterfaceLayoutDirection: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.userInterfaceLayoutDirection)"#,
-            placeholder: UIUserInterfaceLayoutDirection.leftToRight)
-        },
-        preferredContentSizeCategory: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.preferredContentSizeCategory)"#,
-            placeholder: UIContentSizeCategory.unspecified)
-        },
-        connectedScenes: .init {
-          XCTestDynamicOverlay.unimplemented(#"@Dependency(\.application.connectedScenes)"#)
-        },
-        openSessions: .init {
-          XCTestDynamicOverlay.unimplemented(#"@Dependency(\.application.openSessions)"#)
-        },
-        supportsMultipleScenes: .init {
-          XCTestDynamicOverlay.unimplemented(#"@Dependency(\.application.supportsMultipleScenes)"#)
-        },
-        requestSceneSessionActivation: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.requestSceneSessionActivation)"#)
-        },
-        requestSceneSessionDestruction: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.requestSceneSessionDestruction)"#)
-        },
-        requestSceneSessionRefresh: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.requestSceneSessionRefresh)"#)
-        },
-        registerForRemoteNotifications: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.registerForRemoteNotifications)"#)
-        },
-        unregisterForRemoteNotifications: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.unregisterForRemoteNotifications)"#)
-        },
-        isRegisteredForRemoteNotifications: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.isRegisteredForRemoteNotifications)"#)
-        },
-        beginReceivingRemoteControlEvents: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.beginReceivingRemoteControlEvents)"#)
-        },
-        endReceivingRemoteControlEvents: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.endReceivingRemoteControlEvents)"#)
-        },
-        shortcutItems: .init(
-          .init(
-            get: XCTestDynamicOverlay.unimplemented(
-              #"@Dependency(\.application.shortcutItems.get)"#, placeholder: nil),
-            set: { _ in () })),
-        supportsAlternateIcons: .init {
-          XCTestDynamicOverlay.unimplemented(#"@Dependency(\.application.supportsAlternateIcons)"#)
-        },
-        setAlternateIconName: .init {
-          XCTestDynamicOverlay.unimplemented(#"@Dependency(\.application.setAlternateIconName)"#)
-        },
-        alternateIconName: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.alternateIconName)"#, placeholder: nil)
-        },
-        extendStateRestoration: .init {
-          XCTestDynamicOverlay.unimplemented(#"@Dependency(\.application.extendStateRestoration)"#)
-        },
-        completeStateRestoration: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.completeStateRestoration)"#)
-        },
-        ignoreSnapshotOnNextApplicationLaunch: .init {
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependency(\.application.ignoreSnapshotOnNextApplicationLaunch)"#)
-        })
+        delegate: .unimplemented(
+          #"@Dependency(\.application.delegate.get)"#,
+          placeholder: nil),
+        isIdleTimerDisabled: .unimplemented(
+          #"@Dependency(\.application.isIdleTimerDisabled.get)"#),
+        canOpenURL: .unimplemented(
+          #"@Dependency(\.application.canOpenURL)"#),
+        open: .unimplemented(
+          #"@Dependency(\.application.open)"#),
+        sendEvent: .unimplemented(
+          #"@Dependency(\.application.sendEvent)"#),
+        sendAction: .unimplemented(
+          #"@Dependency(\.application.sendAction)"#),
+        supportedInterfaceOrientations: .unimplemented(
+          #"@Dependency(\.application.supportedInterfaceOrientations)"#,
+          placeholder: { _ in UIInterfaceOrientationMask() }),
+        applicationIconBadgeNumber: .unimplemented(
+          #"@Dependency(\.application.applicationIconBadgeNumber.get)"#),
+        applicationSupportsShakeToEdit: .unimplemented(
+          #"@Dependency(\.application.applicationSupportsShakeToEdit.get)"#),
+        applicationState: .unimplemented(
+          #"@Dependency(\.application.applicationState)"#,
+          placeholder: UIApplication.State.inactive),
+        backgroundTimeRemaining: .unimplemented(
+          #"@Dependency(\.application.backgroundTimeRemaining)"#),
+        beginBackgroundTask: .unimplemented(
+          #"@Dependency(\.application.beginBackgroundTask)"#,
+          placeholder: { _, _ in .invalid }),
+        endBackgroundTask: .unimplemented(
+          #"@Dependency(\.application.endBackgroundTask)"#),
+        backgroundRefreshStatus: .unimplemented(
+          #"@Dependency(\.application.backgroundRefreshStatus)"#,
+          placeholder: UIBackgroundRefreshStatus.denied),
+        isProtectedDataAvailable: .unimplemented(
+          #"@Dependency(\.application.isProtectedDataAvailable)"#),
+        userInterfaceLayoutDirection: .unimplemented(
+          #"@Dependency(\.application.userInterfaceLayoutDirection)"#,
+          placeholder: UIUserInterfaceLayoutDirection.leftToRight),
+        preferredContentSizeCategory: .unimplemented(
+          #"@Dependency(\.application.preferredContentSizeCategory)"#,
+          placeholder: UIContentSizeCategory.unspecified),
+        connectedScenes: .unimplemented(
+          #"@Dependency(\.application.connectedScenes)"#),
+        openSessions: .unimplemented(
+          #"@Dependency(\.application.openSessions)"#),
+        supportsMultipleScenes: .unimplemented(
+          #"@Dependency(\.application.supportsMultipleScenes)"#),
+        requestSceneSessionActivation: .unimplemented(
+          #"@Dependency(\.application.requestSceneSessionActivation)"#),
+        requestSceneSessionDestruction: .unimplemented(
+          #"@Dependency(\.application.requestSceneSessionDestruction)"#),
+        requestSceneSessionRefresh: .unimplemented(
+          #"@Dependency(\.application.requestSceneSessionRefresh)"#),
+        registerForRemoteNotifications: .unimplemented(
+          #"@Dependency(\.application.registerForRemoteNotifications)"#),
+        unregisterForRemoteNotifications: .unimplemented(
+          #"@Dependency(\.application.unregisterForRemoteNotifications)"#),
+        isRegisteredForRemoteNotifications: .unimplemented(
+          #"@Dependency(\.application.isRegisteredForRemoteNotifications)"#),
+        beginReceivingRemoteControlEvents: .unimplemented(
+          #"@Dependency(\.application.beginReceivingRemoteControlEvents)"#),
+        endReceivingRemoteControlEvents: .unimplemented(
+          #"@Dependency(\.application.endReceivingRemoteControlEvents)"#),
+        shortcutItems: .unimplemented(
+          #"@Dependency(\.application.shortcutItems.get)"#,
+          placeholder: nil),
+        supportsAlternateIcons: .unimplemented(
+          #"@Dependency(\.application.supportsAlternateIcons)"#),
+        setAlternateIconName:
+          .unimplemented(#"@Dependency(\.application.setAlternateIconName)"#),
+        alternateIconName: .unimplemented(
+          #"@Dependency(\.application.alternateIconName)"#,
+          placeholder: nil),
+        extendStateRestoration: .unimplemented(
+          #"@Dependency(\.application.extendStateRestoration)"#),
+        completeStateRestoration: .unimplemented(
+          #"@Dependency(\.application.completeStateRestoration)"#),
+        ignoreSnapshotOnNextApplicationLaunch: .unimplemented(
+          #"@Dependency(\.application.ignoreSnapshotOnNextApplicationLaunch)"#)
+      )
       return Application(_implementation: _implementation)
     }
   }

@@ -64,33 +64,41 @@ import XCTest
       }
     }
 
-    @MainActor
-    func testFailingTestApplicationIOS_sendAction() {
-      XCTExpectFailure {
-        let _ = application.sendAction(
-          #selector(UIApplication.supportedInterfaceOrientations(for:)), to: nil, from: nil,
-          for: nil)
+    #if os(iOS)
+      @MainActor
+      func testFailingTestApplicationIOS_sendAction() {
+        XCTExpectFailure {
+          let _ = application.sendAction(
+            #selector(UIApplication.supportedInterfaceOrientations(for:)), to: nil, from: nil,
+            for: nil)
+        }
       }
-    }
+    #endif
 
-    @MainActor
-    func testFailingTestApplicationIOS_supportedInterfaceOrientations() {
-      XCTExpectFailure {
-        let _ = application.supportedInterfaceOrientations(for: nil)
+    #if os(iOS)
+      @MainActor
+      func testFailingTestApplicationIOS_supportedInterfaceOrientations() {
+        XCTExpectFailure {
+          let _ = application.supportedInterfaceOrientations(for: nil)
+        }
       }
-    }
+    #endif
+
     @MainActor
     func testFailingTestApplicationIOS_applicationIconBadgeNumber() {
       XCTExpectFailure {
         let _ = application.applicationIconBadgeNumber
       }
     }
-    @MainActor
-    func testFailingTestApplicationIOS_applicationSupportsShakeToEdit() {
-      XCTExpectFailure {
-        let _ = application.applicationSupportsShakeToEdit
+
+    #if os(iOS)
+      @MainActor
+      func testFailingTestApplicationIOS_applicationSupportsShakeToEdit() {
+        XCTExpectFailure {
+          let _ = application.applicationSupportsShakeToEdit
+        }
       }
-    }
+    #endif
     @MainActor
     func testFailingTestApplicationIOS_applicationState() {
       XCTExpectFailure {
@@ -205,12 +213,16 @@ import XCTest
         let _ = application.endReceivingRemoteControlEvents()
       }
     }
-    @MainActor
-    func testFailingTestApplicationIOS_shortcutItems() {
-      XCTExpectFailure {
-        let _ = application.shortcutItems
+    
+    #if os(iOS)
+      @MainActor
+      func testFailingTestApplicationIOS_shortcutItems() {
+        XCTExpectFailure {
+          let _ = application.shortcutItems
+        }
       }
-    }
+    #endif
+    
     @MainActor
     func testFailingTestApplicationIOS_supportsAlternateIcons() {
       XCTExpectFailure {

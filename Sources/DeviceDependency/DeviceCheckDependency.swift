@@ -24,16 +24,6 @@
     }
     @_spi(Internals) public var _implementation: Implementation
 
-    public init(
-      isSupported: @autoclosure @escaping @Sendable () -> Bool,
-      generateToken: @escaping @Sendable () async throws -> Data
-    ) {
-      self._implementation = .init(
-        isSupported: .init(isSupported),
-        generateToken: .init({ generateToken })
-      )
-    }
-
     /// A Boolean value that indicates whether the device supports the DeviceCheck API.
     @available(iOS 11.0, macOS 10.15, tvOS 11.0, watchOS 9.0, *)
     public var isSupported: Bool {
@@ -47,30 +37,43 @@
   }
 
   extension DeviceCheckDevice {
+    public init(
+      isSupported: @autoclosure @escaping @Sendable () -> Bool,
+      generateToken: @escaping @Sendable () async throws -> Data
+    ) {
+      self._implementation = .init(
+        isSupported: .init(isSupported),
+        generateToken: .init(generateToken)
+      )
+    }
+  }
+  extension DeviceCheckDevice {
     public static var current: DeviceCheckDevice {
-      .init(
-        isSupported: {
-          if #available(iOS 11.0, macOS 10.15, tvOS 11.0, watchOS 9.0, *) {
-            return DCDevice.current.isSupported
+      return .init(
+        _implementation: .init(
+          isSupported: .init {
+            if #available(iOS 11.0, macOS 10.15, tvOS 11.0, watchOS 9.0, *) {
+              return DCDevice.current.isSupported
+            }
+            fatalError()
+          },
+          generateToken: .init {
+            if #available(iOS 11.0, macOS 10.15, tvOS 11.0, watchOS 9.0, *) {
+              return try await DCDevice.current.generateToken()
+            }
+            fatalError()
           }
-          fatalError()
-        }()
-      ) {
-        if #available(iOS 11.0, macOS 10.15, tvOS 11.0, watchOS 9.0, *) {
-          return try await DCDevice.current.generateToken()
-        }
-        fatalError()
-      }
+        ))
     }
 
     public static var unimplemented: DeviceCheckDevice {
       .init(
-        isSupported:
-          XCTestDynamicOverlay
-          .unimplemented(#"@Dependency(\.deviceCheck.isSupported)"#),
-        generateToken:
-          XCTestDynamicOverlay
-          .unimplemented(#"@Dependency(\.deviceCheck.generateToken)"#)
+        _implementation: .init(
+          isSupported: .unimplemented(
+            #"@Dependency(\.deviceCheck.isSupported)"#),
+          generateToken: .unimplemented(
+            #"@Dependency(\.deviceCheck.generateToken)"#)
+        )
       )
     }
   }
