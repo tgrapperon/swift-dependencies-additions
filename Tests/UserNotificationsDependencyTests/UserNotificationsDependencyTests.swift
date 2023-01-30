@@ -4,8 +4,8 @@ import UserNotificationsDependency
 import XCTest
 
 final class UserNotificationsDependencyTests: XCTestCase {
-  @Dependency(\.userNotificationCenter) var notifications
   #if (os(iOS) || os(macOS) || os(tvOS) || os(watchOS)) && DEBUG
+  @Dependency(\.userNotificationCenter) var notifications
     // This one `fatalError`'s, as we can't build a placeholder.
     //  func testUnimplmentedNotificationSettings() async {
     //    XCTExpectFailure {
