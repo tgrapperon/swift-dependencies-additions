@@ -21,7 +21,10 @@
   public struct UserNotificationCenter: Sendable, ConfigurableProxy {
     public struct Implementation: Sendable {
       @FunctionProxy public var notificationSettings: @Sendable () async -> UNNotificationSettings
-      @FunctionProxy public var setBadgeCount: @Sendable (Int) async throws -> Void
+      // Keeping this unexposed proxy around on watchOS crashes the compiler for some reason
+      #if !os(watchOS)
+        @FunctionProxy public var setBadgeCount: @Sendable (Int) async throws -> Void
+      #endif
       @FunctionProxy public var requestAuthorization:
         @Sendable (UNAuthorizationOptions) async throws -> Bool
       @ReadWriteProxy public var delegate: (UNUserNotificationCenterDelegate & Sendable)?
@@ -66,7 +69,9 @@
     @available(iOS 16.0, macOS 13, *)
     @available(watchOS, unavailable)
     public func setBadgeCount(_ newBadgeCount: Int) async throws {
-      try await self._implementation.setBadgeCount(newBadgeCount)
+      #if !os(watchOS)
+        try await self._implementation.setBadgeCount(newBadgeCount)
+      #endif
     }
 
     /// Schedules the delivery of a local notification.
@@ -117,98 +122,182 @@
 
   extension UserNotificationCenter {
     static var system: Self {
-      return .init(
-        _implementation: .init(
-          notificationSettings: .init {
-            await UNUserNotificationCenter.current().notificationSettings()
-          },
-          setBadgeCount: .init { count in
-            if #available(iOS 16.0, tvOS 16.0, macOS 13.0, *) {
-              #if !os(watchOS)
-                try await UNUserNotificationCenter.current().setBadgeCount(count)
-              #endif
-            } else {
-              fatalError()
+      // Since we needed to remove the setBadge proxy to work around a compiler crash, we now need
+      // a dedicated initializer.
+      #if os(watchOS)
+        return .init(
+          _implementation: .init(
+            notificationSettings: .init {
+              await UNUserNotificationCenter.current().notificationSettings()
+            },
+            requestAuthorization: .init {
+              try await UNUserNotificationCenter.current().requestAuthorization(options: $0)
+            },
+            delegate: .init(
+              .init(
+                get: { UNUserNotificationCenter.current().delegate },
+                set: { UNUserNotificationCenter.current().delegate = $0 }
+              )),
+            supportsContentExtensions: .init(
+              UNUserNotificationCenter.current().supportsContentExtensions),
+            add: .init {
+              try await UNUserNotificationCenter.current().add($0)
+            },
+            pendingNotificationRequests: .init {
+              await UNUserNotificationCenter.current().pendingNotificationRequests()
+            },
+            removePendingNotificationRequests: .init {
+              UNUserNotificationCenter.current().removePendingNotificationRequests(
+                withIdentifiers: $0)
+            },
+            removeAllPendingNotificationRequests: .init {
+              UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+            },
+            deliveredNotifications: .init {
+              await UNUserNotificationCenter.current().deliveredNotifications()
+            },
+            removeDeliveredNotifications: .init {
+              UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: $0)
+            },
+            removeAllDeliveredNotifications: .init {
+              UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+            },
+            setNotificationCategories: .init {
+              UNUserNotificationCenter.current().setNotificationCategories($0)
+            },
+            notificationCategories: .init {
+              await UNUserNotificationCenter.current().notificationCategories()
             }
-          },
-          requestAuthorization: .init {
-            try await UNUserNotificationCenter.current().requestAuthorization(options: $0)
-          },
-          delegate: .init(
-            .init(
-              get: { UNUserNotificationCenter.current().delegate },
-              set: { UNUserNotificationCenter.current().delegate = $0 }
-            )),
-          supportsContentExtensions: .init(
-            UNUserNotificationCenter.current().supportsContentExtensions),
-          add: .init {
-            try await UNUserNotificationCenter.current().add($0)
-          },
-          pendingNotificationRequests: .init {
-            await UNUserNotificationCenter.current().pendingNotificationRequests()
-          },
-          removePendingNotificationRequests: .init {
-            UNUserNotificationCenter.current().removePendingNotificationRequests(
-              withIdentifiers: $0)
-          },
-          removeAllPendingNotificationRequests: .init {
-            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-          },
-          deliveredNotifications: .init {
-            await UNUserNotificationCenter.current().deliveredNotifications()
-          },
-          removeDeliveredNotifications: .init {
-            UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: $0)
-          },
-          removeAllDeliveredNotifications: .init {
-            UNUserNotificationCenter.current().removeAllDeliveredNotifications()
-          },
-          setNotificationCategories: .init {
-            UNUserNotificationCenter.current().setNotificationCategories($0)
-          },
-          notificationCategories: .init {
-            await UNUserNotificationCenter.current().notificationCategories()
-          }
+          )
         )
-      )
+      #else
+        return .init(
+          _implementation: .init(
+            notificationSettings: .init {
+              await UNUserNotificationCenter.current().notificationSettings()
+            },
+            setBadgeCount: .init { count in
+              if #available(iOS 16.0, tvOS 16.0, macOS 13.0, *) {
+                #if !os(watchOS)
+                  try await UNUserNotificationCenter.current().setBadgeCount(count)
+                #endif
+              } else {
+                fatalError()
+              }
+            },
+            requestAuthorization: .init {
+              try await UNUserNotificationCenter.current().requestAuthorization(options: $0)
+            },
+            delegate: .init(
+              .init(
+                get: { UNUserNotificationCenter.current().delegate },
+                set: { UNUserNotificationCenter.current().delegate = $0 }
+              )),
+            supportsContentExtensions: .init(
+              UNUserNotificationCenter.current().supportsContentExtensions),
+            add: .init {
+              try await UNUserNotificationCenter.current().add($0)
+            },
+            pendingNotificationRequests: .init {
+              await UNUserNotificationCenter.current().pendingNotificationRequests()
+            },
+            removePendingNotificationRequests: .init {
+              UNUserNotificationCenter.current().removePendingNotificationRequests(
+                withIdentifiers: $0)
+            },
+            removeAllPendingNotificationRequests: .init {
+              UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+            },
+            deliveredNotifications: .init {
+              await UNUserNotificationCenter.current().deliveredNotifications()
+            },
+            removeDeliveredNotifications: .init {
+              UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: $0)
+            },
+            removeAllDeliveredNotifications: .init {
+              UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+            },
+            setNotificationCategories: .init {
+              UNUserNotificationCenter.current().setNotificationCategories($0)
+            },
+            notificationCategories: .init {
+              await UNUserNotificationCenter.current().notificationCategories()
+            }
+          )
+        )
+      #endif
     }
   }
 
   extension UserNotificationCenter {
     static var unimplemented: UserNotificationCenter {
-      UserNotificationCenter(
-        _implementation: .init(
-          notificationSettings: .unimplemented(
-            #"@Dependency(\.userNotificationCenter.notificationSettings)"#,
-            placeholder: { fatalError() }),
-          setBadgeCount: .unimplemented(
-              #"@Dependency(\.userNotificationCenter.setBadgeCount)"#),
-          requestAuthorization: .unimplemented(
-            #"@Dependency(\.userNotificationCenter.requestAuthorization)"#),
-          delegate: .unimplemented(
-            #"@Dependency(\.userNotificationCenter.delegate.get)"#),
-          supportsContentExtensions: .unimplemented(
-            #"@Dependency(\.userNotificationCenter.supportsContentExtensions)"#),
-          add: .unimplemented(
+      #if os(watchOS)
+        UserNotificationCenter(
+          _implementation: .init(
+            notificationSettings: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.notificationSettings)"#,
+              placeholder: { fatalError() }),
+            requestAuthorization: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.requestAuthorization)"#),
+            delegate: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.delegate.get)"#),
+            supportsContentExtensions: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.supportsContentExtensions)"#),
+            add: .unimplemented(
               #"@Dependency(\.userNotificationCenter.add)"#),
-          pendingNotificationRequests: .unimplemented(
-            #"@Dependency(\.userNotificationCenter.pendingNotificationRequests)"#),
-          removePendingNotificationRequests: .unimplemented(
-            #"@Dependency(\.userNotificationCenter.removePendingNotificationRequests)"#),
-          removeAllPendingNotificationRequests: .unimplemented(
-            #"@Dependency(\.userNotificationCenter.removeAllPendingNotificationRequests)"#),
-          deliveredNotifications: .unimplemented(
+            pendingNotificationRequests: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.pendingNotificationRequests)"#),
+            removePendingNotificationRequests: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removePendingNotificationRequests)"#),
+            removeAllPendingNotificationRequests: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removeAllPendingNotificationRequests)"#),
+            deliveredNotifications: .unimplemented(
               #"@Dependency(\,.userNotificationCenter.deliveredNotifications)"#),
-          removeDeliveredNotifications: .unimplemented(
-            #"@Dependency(\.userNotificationCenter.removeDeliveredNotifications)"#),
-          removeAllDeliveredNotifications: .unimplemented(
-            #"@Dependency(\.userNotificationCenter.removeAllDeliveredNotifications)"#),
-          setNotificationCategories: .unimplemented(
-            #"@Dependency(\,.userNotificationCenter.setNotificationCategories)"#),
-          notificationCategories: .unimplemented(
+            removeDeliveredNotifications: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removeDeliveredNotifications)"#),
+            removeAllDeliveredNotifications: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removeAllDeliveredNotifications)"#),
+            setNotificationCategories: .unimplemented(
+              #"@Dependency(\,.userNotificationCenter.setNotificationCategories)"#),
+            notificationCategories: .unimplemented(
               #"@Dependency(\,.userNotificationCenter.notificationCategories)"#)
+          )
         )
-      )
+      #else
+        UserNotificationCenter(
+          _implementation: .init(
+            notificationSettings: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.notificationSettings)"#,
+              placeholder: { fatalError() }),
+            setBadgeCount: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.setBadgeCount)"#),
+            requestAuthorization: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.requestAuthorization)"#),
+            delegate: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.delegate.get)"#),
+            supportsContentExtensions: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.supportsContentExtensions)"#),
+            add: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.add)"#),
+            pendingNotificationRequests: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.pendingNotificationRequests)"#),
+            removePendingNotificationRequests: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removePendingNotificationRequests)"#),
+            removeAllPendingNotificationRequests: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removeAllPendingNotificationRequests)"#),
+            deliveredNotifications: .unimplemented(
+              #"@Dependency(\,.userNotificationCenter.deliveredNotifications)"#),
+            removeDeliveredNotifications: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removeDeliveredNotifications)"#),
+            removeAllDeliveredNotifications: .unimplemented(
+              #"@Dependency(\.userNotificationCenter.removeAllDeliveredNotifications)"#),
+            setNotificationCategories: .unimplemented(
+              #"@Dependency(\,.userNotificationCenter.setNotificationCategories)"#),
+            notificationCategories: .unimplemented(
+              #"@Dependency(\,.userNotificationCenter.notificationCategories)"#)
+          )
+        )
+      #endif
     }
   }
 #endif
