@@ -213,7 +213,7 @@ import XCTest
         let _ = application.endReceivingRemoteControlEvents()
       }
     }
-    
+
     #if os(iOS)
       @MainActor
       func testFailingTestApplicationIOS_shortcutItems() {
@@ -222,7 +222,7 @@ import XCTest
         }
       }
     #endif
-    
+
     @MainActor
     func testFailingTestApplicationIOS_supportsAlternateIcons() {
       XCTExpectFailure {

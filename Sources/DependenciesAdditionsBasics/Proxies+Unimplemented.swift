@@ -219,7 +219,6 @@ extension MainActorReadOnlyProxy {
   }
 }
 
-
 extension FunctionProxy {
   public static func unimplemented<Result>(
     _ description: String = "",
@@ -570,7 +569,6 @@ extension FunctionProxy {
     })
   }
 }
-
 
 extension FunctionProxy {
   public static func unimplemented<Result>(
