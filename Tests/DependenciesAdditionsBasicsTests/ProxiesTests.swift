@@ -48,9 +48,8 @@ final class ProxiesTests: XCTestCase {
     unimplemented.$value = { "Hello! \($0)" }
     XCTAssertEqual("Hello! 3", unimplemented.value(index: 3))
   }
-  
-  @MainActor
-  func testMainActorReadWriteProxy() {
+
+  func testMainActorReadWriteProxy() async {
     struct Foo: ConfigurableProxy {
       struct Implementation {
         @MainActorReadWriteProxy var value: String
@@ -62,13 +61,14 @@ final class ProxiesTests: XCTestCase {
         nonmutating set { _implementation.value = newValue }
       }
     }
-    let unimplemented = Foo(_implementation: .init(value: .unimplemented()))
-    unimplemented.value = "Hello!"
-    XCTAssertEqual("Hello!", unimplemented.value)
+    await MainActor.run {
+      let unimplemented = Foo(_implementation: .init(value: .unimplemented()))
+      unimplemented.value = "Hello!"
+      XCTAssertEqual("Hello!", unimplemented.value)
+    }
   }
-  
-@MainActor
-  func testMainActorReadOnlyProxy() {
+
+  func testMainActorReadOnlyProxy() async {
     struct Foo: ConfigurableProxy {
       struct Implementation {
         @MainActorReadOnlyProxy var value: String
@@ -79,9 +79,11 @@ final class ProxiesTests: XCTestCase {
         _implementation.value
       }
     }
-    var unimplemented = Foo(_implementation: .init(value: .unimplemented()))
-    unimplemented.$value = "Hello!"
-    XCTAssertEqual("Hello!", unimplemented.value)
+    await MainActor.run {
+      var unimplemented = Foo(_implementation: .init(value: .unimplemented()))
+      unimplemented.$value = "Hello!"
+      XCTAssertEqual("Hello!", unimplemented.value)
+    }
   }
 
   #if (os(iOS) || os(macOS) || os(tvOS) || os(watchOS)) && DEBUG
@@ -135,43 +137,45 @@ final class ProxiesTests: XCTestCase {
         let _ = unimplemented.value(index: 4)
       }
     }
-  
-  @MainActor
-  func testUnimplementedMainActorReadWriteProxy() {
-    struct Foo: ConfigurableProxy {
-      struct Implementation {
-        @MainActorReadWriteProxy var value: String
-      }
-      var _implementation: Implementation
-      @MainActor
-      var value: String {
-        get { _implementation.value }
-        nonmutating set { _implementation.value = newValue }
-      }
-    }
-    let unimplemented = Foo(_implementation: .init(value: .unimplemented()))
-    XCTExpectFailure {
-      let _ = unimplemented.value
-    }
-    unimplemented.value = "Hello!"  // This shouldn't trip .unimplemented
-  }
 
-  @MainActor
-  func testUnimplementedMainActorReadOnlyProxy() {
-    struct Foo: ConfigurableProxy {
-      struct Implementation {
-        @MainActorReadOnlyProxy var value: String
+    func testUnimplementedMainActorReadWriteProxy() async {
+      struct Foo: ConfigurableProxy {
+        struct Implementation {
+          @MainActorReadWriteProxy var value: String
+        }
+        var _implementation: Implementation
+        @MainActor
+        var value: String {
+          get { _implementation.value }
+          nonmutating set { _implementation.value = newValue }
+        }
       }
-      var _implementation: Implementation
-      @MainActor
-      var value: String {
-        _implementation.value
+      await MainActor.run {
+        let unimplemented = Foo(_implementation: .init(value: .unimplemented()))
+        XCTExpectFailure {
+          let _ = unimplemented.value
+        }
+        unimplemented.value = "Hello!"  // This shouldn't trip .unimplemented
       }
     }
-    let unimplemented = Foo(_implementation: .init(value: .unimplemented()))
-    XCTExpectFailure {
-      let _ = unimplemented.value
+
+    func testUnimplementedMainActorReadOnlyProxy() async {
+      struct Foo: ConfigurableProxy {
+        struct Implementation {
+          @MainActorReadOnlyProxy var value: String
+        }
+        var _implementation: Implementation
+        @MainActor
+        var value: String {
+          _implementation.value
+        }
+      }
+      await MainActor.run {
+        let unimplemented = Foo(_implementation: .init(value: .unimplemented()))
+        XCTExpectFailure {
+          let _ = unimplemented.value
+        }
+      }
     }
-  }
   #endif
 }
