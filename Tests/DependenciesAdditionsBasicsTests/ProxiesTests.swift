@@ -84,7 +84,7 @@ final class ProxiesTests: XCTestCase {
     XCTAssertEqual("Hello!", unimplemented.value)
   }
 
-  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
+  #if (os(iOS) || os(macOS) || os(tvOS) || os(watchOS)) && DEBUG
     func testUnimplementedReadWriteProxy() {
       struct Foo: ConfigurableProxy {
         struct Implementation {
