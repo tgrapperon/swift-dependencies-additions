@@ -116,7 +116,7 @@ public struct ReadWriteBinding<Value>: Sendable {
     self.set = set
   }
 
-  @available(*, deprecated, message: "Use the two-arguments get:set: variant.")
+  @available(*, deprecated, message: "Use the two-arguments `get:set:` variant.")
   @_spi(Internals) public init(_ getSet: (@Sendable () -> Value, @Sendable (Value) -> Void)) {
     self.get = getSet.0
     self.set = getSet.1
@@ -295,7 +295,7 @@ public struct MainActorReadWriteBinding<Value>: Sendable {
     self.set = set
   }
 
-  @available(*, deprecated, message: "Use the two-argument get:set: variant.")
+  @available(*, deprecated, message: "Use the two-argument `get:set:` variant.")
   public init(
     get: @autoclosure @escaping @MainActor @Sendable () -> Value,
     set: @escaping @MainActor @Sendable (Value) -> Void
@@ -304,7 +304,7 @@ public struct MainActorReadWriteBinding<Value>: Sendable {
     self.set = set
   }
 
-  @available(*, deprecated, message: "Use the two-arguments get:set: variant.")
+  @available(*, deprecated, message: "Use the two-arguments `get:set:` variant.")
   public init(_ getSet: (@MainActor @Sendable () -> Value, @MainActor @Sendable (Value) -> Void)) {
     self.get = getSet.0
     self.set = getSet.1
