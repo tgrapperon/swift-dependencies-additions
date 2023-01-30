@@ -240,7 +240,9 @@
             requestAuthorization: .unimplemented(
               #"@Dependency(\.userNotificationCenter.requestAuthorization)"#),
             delegate: .unimplemented(
-              #"@Dependency(\.userNotificationCenter.delegate.get)"#),
+              #"@Dependency(\.userNotificationCenter.delegate.get)"#,
+              placeholder: nil
+            ),
             supportsContentExtensions: .unimplemented(
               #"@Dependency(\.userNotificationCenter.supportsContentExtensions)"#),
             add: .unimplemented(
@@ -274,7 +276,9 @@
             requestAuthorization: .unimplemented(
               #"@Dependency(\.userNotificationCenter.requestAuthorization)"#),
             delegate: .unimplemented(
-              #"@Dependency(\.userNotificationCenter.delegate.get)"#),
+              #"@Dependency(\.userNotificationCenter.delegate.get)"#,
+              placeholder: nil
+            ),
             supportsContentExtensions: .unimplemented(
               #"@Dependency(\.userNotificationCenter.supportsContentExtensions)"#),
             add: .unimplemented(
