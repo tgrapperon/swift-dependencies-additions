@@ -109,17 +109,19 @@ extension ConfigurableProxy {
 public struct ReadWriteBinding<Value>: Sendable {
   let get: @Sendable () -> Value
   let set: @Sendable (Value) -> Void
+
   /// Initializes a ``ReadWriteProxy`` from a pair for `get` and `set` closures.
   public init(get: @escaping @Sendable () -> Value, set: @escaping @Sendable (Value) -> Void) {
     self.get = get
     self.set = set
   }
 
-  // This one will be deprecated soon
+  @available(*, deprecated, message: "Use the two-arguments get:set: variant")
   @_spi(Internals) public init(_ getSet: (@Sendable () -> Value, @Sendable (Value) -> Void)) {
     self.get = getSet.0
     self.set = getSet.1
   }
+
   /// Initializes a ``ReadWriteProxy`` from a ``ProxyBindable`` value, like `LockIsolated`.
   public init<Bindable: ProxyBindable & Sendable>(_ bindable: Bindable)
   where Bindable.Value == Value {
@@ -254,7 +256,7 @@ public struct FunctionProxy<Value: Sendable>: Sendable {
   public init(_ value: @escaping @Sendable () -> Value) {
     self._value = value
   }
-  
+
   public init(_ value: Value) {
     self._value = { value }
   }
@@ -268,7 +270,6 @@ public struct FunctionProxy<Value: Sendable>: Sendable {
     set { self = newValue }
   }
 }
-
 
 /// A value that describe a bidirectional binding on `MainActor`.
 ///
@@ -285,6 +286,7 @@ public struct FunctionProxy<Value: Sendable>: Sendable {
 public struct MainActorReadWriteBinding<Value>: Sendable {
   let get: @Sendable @MainActor () -> Value
   let set: @Sendable @MainActor (Value) -> Void
+
   public init(
     get: @escaping @MainActor @Sendable () -> Value,
     set: @escaping @MainActor @Sendable (Value) -> Void
@@ -292,6 +294,8 @@ public struct MainActorReadWriteBinding<Value>: Sendable {
     self.get = get
     self.set = set
   }
+
+  @available(*, deprecated, message: "Use the two-argument get:set: variant")
   public init(
     get: @autoclosure @escaping @MainActor @Sendable () -> Value,
     set: @escaping @MainActor @Sendable (Value) -> Void
@@ -300,6 +304,7 @@ public struct MainActorReadWriteBinding<Value>: Sendable {
     self.set = set
   }
 
+  @available(*, deprecated, message: "Use the two-arguments get:set: variant")
   public init(_ getSet: (@MainActor @Sendable () -> Value, @MainActor @Sendable (Value) -> Void)) {
     self.get = getSet.0
     self.set = getSet.1
@@ -320,7 +325,7 @@ public struct MainActorReadWriteBinding<Value>: Sendable {
   public static func constant(_ value: @autoclosure @escaping @Sendable () -> Value)
     -> MainActorReadWriteBinding<Value>
   {
-    .init(get: value()) { _ in () }
+    .init(get: value, set: { _ in })
   }
 }
 
@@ -418,7 +423,6 @@ public struct MainActorReadOnlyProxy<Value: Sendable>: Sendable {
     set { self = newValue }
   }
 }
-
 
 /// A protocol that describe values that can support other values in "`Proxy`" property
 /// wrappers like ``ReadWriteProxy`` and ``MainActorReadOnlyProxy``.

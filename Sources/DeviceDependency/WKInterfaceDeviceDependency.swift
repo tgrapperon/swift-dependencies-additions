@@ -133,104 +133,64 @@ import XCTestDynamicOverlay
     public func enableWaterLock() {
       self._implementation.enableWaterLock()
     }
-
-    init(
-      name: @escaping @Sendable @autoclosure () -> String,
-      model: @escaping @Sendable @autoclosure () -> String,
-      localizedModel: @escaping @Sendable @autoclosure () -> String,
-      systemName: @escaping @Sendable @autoclosure () -> String,
-      systemVersion: @escaping @Sendable @autoclosure () -> String,
-      identifierForVendor: @escaping @Sendable @autoclosure () -> UUID?,
-      screenBounds: @escaping @Sendable @autoclosure () -> CGRect,
-      screenScale: @escaping @Sendable @autoclosure () -> CGFloat,
-      preferredContentSizeCategory: @escaping @Sendable @autoclosure () -> String,
-      layoutDirection: @escaping @Sendable @autoclosure () -> WKInterfaceLayoutDirection,
-      wristLocation: @escaping @Sendable @autoclosure () -> WKInterfaceDeviceWristLocation,
-      crownOrientation: @escaping @Sendable @autoclosure () -> WKInterfaceDeviceCrownOrientation,
-      isBatteryMonitoringEnabled: (get: @Sendable () -> Bool, set: @Sendable (Bool) -> Void),
-      batteryState: @escaping @Sendable @autoclosure () -> WKInterfaceDeviceBatteryState,
-      batteryLevel: @escaping @Sendable @autoclosure () -> Float,
-      waterResistanceRating: @escaping @Sendable @autoclosure () -> WKWaterResistanceRating,
-      isWaterLockEnabled: @escaping @Sendable @autoclosure () -> Bool,
-      supportsAudioStreaming: @escaping @Sendable @autoclosure () -> Bool,
-      play: @escaping @Sendable (WKHapticType) -> Void,
-      enableWaterLock: @escaping @Sendable () -> Void
-    ) {
-      self._implementation = .init(
-        name: .init(name),
-        model: .init(model),
-        localizedModel: .init(localizedModel),
-        systemName: .init(systemName),
-        systemVersion: .init(systemVersion),
-        identifierForVendor: .init(identifierForVendor),
-        screenBounds: .init(screenBounds),
-        screenScale: .init(screenScale),
-        preferredContentSizeCategory: .init(preferredContentSizeCategory),
-        layoutDirection: .init(layoutDirection),
-        wristLocation: .init(wristLocation),
-        crownOrientation: .init(crownOrientation),
-        isBatteryMonitoringEnabled: .init(.init(isBatteryMonitoringEnabled)),
-        batteryState: .init(batteryState),
-        batteryLevel: .init(batteryLevel),
-        waterResistanceRating: .init(waterResistanceRating),
-        isWaterLockEnabled: .init(isWaterLockEnabled),
-        supportsAudioStreaming: .init(supportsAudioStreaming),
-        play: .init({ play }),
-        enableWaterLock: .init({ enableWaterLock })
-      )
-    }
   }
 
   extension Device {
     public static var current: Device {
       .init(
-        name: WKInterfaceDevice.current().name,
-        model: WKInterfaceDevice.current().model,
-        localizedModel: WKInterfaceDevice.current().localizedModel,
-        systemName: WKInterfaceDevice.current().systemName,
-        systemVersion: WKInterfaceDevice.current().systemVersion,
-        identifierForVendor: {
-          if #available(watchOS 6.2, *) {
-            return WKInterfaceDevice.current().identifierForVendor
-          } else {
-            // TODO: Add warning
-            return nil
-          }
-        }(),
-        screenBounds: WKInterfaceDevice.current().screenBounds,
-        screenScale: WKInterfaceDevice.current().screenScale,
-        preferredContentSizeCategory: WKInterfaceDevice.current().preferredContentSizeCategory,
-        layoutDirection: WKInterfaceDevice.current().layoutDirection,
-        wristLocation: WKInterfaceDevice.current().wristLocation,
-        crownOrientation: WKInterfaceDevice.current().crownOrientation,
-        isBatteryMonitoringEnabled: (
-          {
-            WKInterfaceDevice.current().isBatteryMonitoringEnabled
+        _implementation: .init(
+          name: .init(WKInterfaceDevice.current().name),
+          model: .init(WKInterfaceDevice.current().model),
+          localizedModel: .init(WKInterfaceDevice.current().localizedModel),
+          systemName: .init(WKInterfaceDevice.current().systemName),
+          systemVersion: .init(WKInterfaceDevice.current().systemVersion),
+          identifierForVendor: .init {
+            if #available(watchOS 6.2, *) {
+              return WKInterfaceDevice.current().identifierForVendor
+            } else {
+              // TODO: Add warning
+              return nil
+            }
           },
-          {
-            WKInterfaceDevice.current().isBatteryMonitoringEnabled = $0
+          screenBounds: .init(WKInterfaceDevice.current().screenBounds),
+          screenScale: .init(WKInterfaceDevice.current().screenScale),
+          preferredContentSizeCategory: .init(
+            WKInterfaceDevice.current().preferredContentSizeCategory),
+          layoutDirection: .init(WKInterfaceDevice.current().layoutDirection),
+          wristLocation: .init(WKInterfaceDevice.current().wristLocation),
+          crownOrientation: .init(WKInterfaceDevice.current().crownOrientation),
+          isBatteryMonitoringEnabled: .init(
+            .init(
+              get: {
+                WKInterfaceDevice.current().isBatteryMonitoringEnabled
+              },
+              set: {
+                WKInterfaceDevice.current().isBatteryMonitoringEnabled = $0
+              }
+            )),
+          batteryState: .init(WKInterfaceDevice.current().batteryState),
+          batteryLevel: .init(WKInterfaceDevice.current().batteryLevel),
+          waterResistanceRating: .init(WKInterfaceDevice.current().waterResistanceRating),
+          isWaterLockEnabled: .init {
+            if #available(watchOS 6.1, *) {
+              return WKInterfaceDevice.current().isWaterLockEnabled
+            } else {
+              // TODO: Add warning
+              return false
+            }
+          },
+          supportsAudioStreaming: .init(WKInterfaceDevice.current().supportsAudioStreaming),
+          play: .init { WKInterfaceDevice.current().play($0) },
+          enableWaterLock: .init {
+            {
+              if #available(watchOS 6.1, *) {
+                WKInterfaceDevice.current().enableWaterLock()
+              } else {
+                // TODO: Add warning
+              }
+            }
           }
-        ),
-        batteryState: WKInterfaceDevice.current().batteryState,
-        batteryLevel: WKInterfaceDevice.current().batteryLevel,
-        waterResistanceRating: WKInterfaceDevice.current().waterResistanceRating,
-        isWaterLockEnabled: {
-          if #available(watchOS 6.1, *) {
-            return WKInterfaceDevice.current().isWaterLockEnabled
-          } else {
-            // TODO: Add warning
-            return false
-          }
-        }(),
-        supportsAudioStreaming: WKInterfaceDevice.current().supportsAudioStreaming,
-        play: { WKInterfaceDevice.current().play($0) },
-        enableWaterLock: {
-          if #available(watchOS 6.1, *) {
-            WKInterfaceDevice.current().enableWaterLock()
-          } else {
-            // TODO: Add warning
-          }
-        }
+        )
       )
     }
   }
@@ -238,42 +198,35 @@ import XCTestDynamicOverlay
   extension Device {
     public static var unimplemented: Device {
       .init(
-        name: XCTestDynamicOverlay.unimplemented(#"@Dependency(\.device.name)"#),
-        model: XCTestDynamicOverlay.unimplemented(#"@Dependency(\.device.model)"#),
-        localizedModel: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.localizedModel)"#),
-        systemName: XCTestDynamicOverlay.unimplemented(#"@Dependency(\.device.systemName)"#),
-        systemVersion: XCTestDynamicOverlay.unimplemented(#"@Dependency(\.device.systemVersion)"#),
-        identifierForVendor: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.identifierForVendor)"#, placeholder: nil),
-        screenBounds: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.screenBounds)"#, placeholder: .zero),
-        screenScale: XCTestDynamicOverlay.unimplemented(#"@Dependency(\.device.screenScale)"#),
-        preferredContentSizeCategory: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.preferredContentSizeCategory)"#),
-        layoutDirection: XCTestDynamicOverlay.unimplemented(
-          #"@Dependnency(\.device.layoutDirection)"#, placeholder: .leftToRight),
-        wristLocation: XCTestDynamicOverlay.unimplemented(
-          #"@Dependnency(\.device.wristLocation)"#, placeholder: .right),
-        crownOrientation: XCTestDynamicOverlay.unimplemented(
-          #"@Dependnency(\.device.crownOrientation)"#, placeholder: .left),
-        isBatteryMonitoringEnabled: (
-          XCTestDynamicOverlay.unimplemented(
-            #"@Dependnency(\.device.isBatteryMonitoringEnabled.get)"#),
-          { _ in () }
-        ),
-        batteryState: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.batteryState)"#, placeholder: .unknown),
-        batteryLevel: XCTestDynamicOverlay.unimplemented(#"@Dependency(\.device.batteryLevel)"#),
-        waterResistanceRating: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.waterResistanceRating)"#, placeholder: .ipx7),
-        isWaterLockEnabled: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.isWaterLockEnabled)"#),
-        supportsAudioStreaming: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.supportsAudioStreaming)"#),
-        play: XCTestDynamicOverlay.unimplemented(#"@Dependency(\.device.play)"#),
-        enableWaterLock: XCTestDynamicOverlay.unimplemented(
-          #"@Dependency(\.device.enableWaterLock)"#)
+        _implementation: .init(
+          name: .unimplemented(#"Dependency(\.device.name)"#),
+          model: .unimplemented(#"Dependency(\.device.model)"#),
+          localizedModel: .unimplemented(#"Dependency(\.device.localizedModel)"#),
+          systemName: .unimplemented(#"Dependency(\.device.systemName)"#),
+          systemVersion: .unimplemented(#"Dependency(\.device.systemVersion)"#),
+          identifierForVendor: .unimplemented(
+            #"Dependency(\.device.identifierForVendor)"#, placeholder: .init()),
+          screenBounds: .unimplemented(#"Dependency(\.device.screenBounds)"#, placeholder: .zero),
+          screenScale: .unimplemented(#"Dependency(\.device.screenScale)"#),
+          preferredContentSizeCategory: .unimplemented(
+            #"Dependency(\.device.preferredContentSizeCategory)"#),
+          layoutDirection: .unimplemented(
+            #"Dependency(\.device.layoutDirection)"#, placeholder: .leftToRight),
+          wristLocation: .unimplemented(#"Dependency(\.device.wristLocation)"#, placeholder: .left),
+          crownOrientation: .unimplemented(
+            #"Dependency(\.device.crownOrientation)"#, placeholder: .right),
+          isBatteryMonitoringEnabled: .unimplemented(
+            #"Dependency(\.device.isBatteryMonitoringEnabled.get)"#),
+          batteryState: .unimplemented(
+            #"Dependency(\.device.batteryState)"#, placeholder: .unknown),
+          batteryLevel: .unimplemented(#"Dependency(\.device.batteryLevel)"#),
+          waterResistanceRating: .unimplemented(
+            #"Dependency(\.device.waterResistanceRating)"#, placeholder: .ipx7),
+          isWaterLockEnabled: .unimplemented(#"Dependency(\.device.isWaterLockEnabled)"#),
+          supportsAudioStreaming: .unimplemented(#"Dependency(\.device.supportsAudioStreaming)"#),
+          play: .unimplemented(#"Dependency(\.device.play)"#),
+          enableWaterLock: .unimplemented(#"Dependency(\.device.enableWaterLock)"#)
+        )
       )
     }
   }
