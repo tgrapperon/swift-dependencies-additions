@@ -1,44 +1,97 @@
 import Dependencies
 
+/// A protocol that allows a type to parametrize the implementation of its properties and methods.
+///
+/// This contruct uses the ``ReadWriteProxy``, ``ReadOnlyProxy``, ``FunctionProxy`` property
+/// wrappers (as well as their `MainActor` counterparts: ``MainActorReadWriteProxy`` and
+/// ``MainActorReadOnlyProxy``) to:
+///
+/// - Defer the live implementation of your dependency to an external value
+/// - Scope the possible overrides behind their projected property to make clear that a given
+/// property or method is not meant to be overridden in live contexts.
+/// - Gather all the implementations into a standalone type and re-expose them as functions with
+/// labelled arguments.
+///
+/// To sum up, your ``ConfigurableProxy`` dependendency looks like a plain struct, with properties
+/// and methods with arguments, but you can override the implementation of any method/property using
+/// the `$` prefix if you're using the same names for the properties/methods and their
+/// implementation:
+///
+/// ```swift
+/// public struct Manager: ConfigurableProxy, Sendable {
+///   public struct Implementation {
+///     @ReadOnlyProxy var maxLimit: Int
+///     @FunctionProxy var fetchValues: (UUID) async -> [Value]
+///   }
+///
+///   @_spi(Hidden) public var _implementation: Implementation
+///
+///   // Re-expose implemented properties and methods:
+///   public var maxLimit: Int {
+///     self._implementation.maxLimit
+///   }
+///   public func fetchValues(for id: UUID) async -> [Value] {
+///     await self._implementation.fetchValues(id)
+///   }
+/// }
+/// // And then:
+/// withDependencies {
+///   $0.manager.$maxLimit = 4
+///   $0.manager.$fetchValues = { _ in [] }
+/// } operation: {
+///   …
+/// }
+/// ```
 @dynamicMemberLookup
 public protocol ConfigurableProxy {
   associatedtype Implementation
+  /// If you annotate this property with some `@_spi(SomeArbitraryLabel)`, the value may be hidden
+  /// from external modules while still be visible by the compiler to fulfil the protocol
+  /// requirements. This allows to hide this requirement from Xcode autocompletion most of the
+  /// time.
   var _implementation: Implementation { get set }
-
+  /// A default implementation is provided.
   subscript<Value>(dynamicMember keyPath: WritableKeyPath<Implementation, ReadWriteProxy<Value>>)
     -> ReadWriteBinding<Value>
   { get set }
 
+  /// A default implementation is provided.
   subscript<Value>(dynamicMember keyPath: WritableKeyPath<Implementation, ReadOnlyProxy<Value>>)
     -> @Sendable () -> Value
   { get set }
 
+  /// A default implementation is provided.
   subscript<Value>(dynamicMember keyPath: WritableKeyPath<Implementation, ReadOnlyProxy<Value>>)
     -> Value
   { get set }
 
+  /// A default implementation is provided.
   subscript<Value>(dynamicMember keyPath: WritableKeyPath<Implementation, FunctionProxy<Value>>)
     -> Value
   { get set }
 
+  /// A default implementation is provided.
   subscript<Value>(
     dynamicMember keyPath: WritableKeyPath<Implementation, MainActorReadWriteProxy<Value>>
   )
     -> MainActorReadWriteBinding<Value>
   { get set }
 
+  /// A default implementation is provided.
   subscript<Value>(
     dynamicMember keyPath: WritableKeyPath<Implementation, MainActorReadOnlyProxy<Value>>
   )
     -> @MainActor @Sendable () -> Value
   { get set }
 
+  /// A default implementation is provided.
   subscript<Value>(
     dynamicMember keyPath: WritableKeyPath<Implementation, MainActorReadOnlyProxy<Value>>
   )
     -> Value
   { @MainActor get set }
 }
+
 extension ConfigurableProxy {
   public subscript<Value>(
     dynamicMember keyPath: WritableKeyPath<Implementation, ReadWriteProxy<Value>>
@@ -102,7 +155,7 @@ extension ConfigurableProxy {
 /// let isBatteryMonitoringEnabled = LockIsolated(false)
 /// withDependencies {
 ///   $0.device.$isBatteryMonitoringEnabled = ReadWriteBinding(isBatteryMonitoringEnabled)
-/// } operation {…}
+/// } operation { … }
 /// ```
 /// This allows to inspect and control dependencies exposing writable properties.
 /// See ``MainActorReadWriteBinding`` for a version adapted to `MainActor` dependencies.
@@ -150,7 +203,7 @@ public struct ReadWriteBinding<Value>: Sendable {
 
 /// A property wrapper that characterizes a value that can be read and written synchronously.
 ///
-/// You directly access the value in `live` context. In other context, you can assign a
+/// You directly access the value in `live` context. In other contexts, you can assign a
 /// ``ReadWriteBinding`` to the projected value to control this property during tests and SwiftUI
 /// previews:
 ///
@@ -193,7 +246,7 @@ public struct ReadWriteProxy<Value: Sendable>: Sendable {
 
 /// A property wrapper that characterizes a value that can be read synchronously.
 ///
-/// You directly access the value in `live` context. In other context, you can assign a constant or
+/// You directly access the value in `live` context. In other contexts, you can assign a constant or
 /// a function that generates this value to the projected value to control this property during
 /// tests and SwiftUI previews:
 ///
@@ -233,7 +286,7 @@ public struct ReadOnlyProxy<Value: Sendable>: Sendable {
 
 /// A property wrapper that characterizes a function that is backed by another type.
 ///
-/// You directly access the value in `live` context. In other context, you can assign another
+/// You directly access the value in `live` context. In other contexts, you can assign another
 /// a function to the projected value to control this property during tests and SwiftUI previews:
 ///
 /// ```swift
@@ -279,7 +332,7 @@ public struct FunctionProxy<Value: Sendable>: Sendable {
 /// let isBatteryMonitoringEnabled = LockIsolated(false)
 /// withDependencies {
 ///   $0.device.$isBatteryMonitoringEnabled = MainActorReadWriteBinding(isBatteryMonitoringEnabled)
-/// } operation {…}
+/// } operation { … }
 /// ```
 /// This allows to inspect and control dependencies exposing writable properties.
 /// See ``ReadWriteBinding`` for a version that is not actor-isolated.
@@ -332,7 +385,7 @@ public struct MainActorReadWriteBinding<Value>: Sendable {
 /// A property wrapper that characterizes a value that can be read and written synchronously
 /// on the `MainActor`.
 ///
-/// You directly access the value in `live` context. In other context, you can assign a
+/// You directly access the value in `live` context. In other contexts, you can assign a
 /// ``MainActorReadWriteBinding`` to the projected value to control this property during tests and SwiftUI
 /// previews:
 ///
@@ -386,7 +439,7 @@ public struct MainActorReadWriteProxy<Value: Sendable>: Sendable {
 /// A property wrapper that characterizes a value that can be read synchronously on the
 /// `MainActor`
 ///
-/// You directly access the value in `live` context. In other context, you can assign a constant or
+/// You directly access the value in `live` context. In other contexts, you can assign a constant or
 /// a function that generates this value to the projected value to control this property during
 /// tests and SwiftUI previews:
 ///
