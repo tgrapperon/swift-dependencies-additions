@@ -263,11 +263,16 @@ extension UserDefaults.Dependency: TestDependencyKey {
   /// Please note that the behavior can be sligtly different when storing/reading `URL`s, as
   /// `UserDefaults` normalizes `URL` values before storing them (you can check the documentation of
   /// `UserDefaults.set(:URL?:String)` for more information).
-  public static func ephemeral() -> UserDefaults.Dependency {
+  /// - Parameter initialValues: A closure where you can update the ephemeral storage with initial
+  /// preferences values.
+  /// - Returns: A ``UserDefaults.Dependency`` that reads from and writes to memory only.
+  public static func ephemeral(
+    initialValues: (inout Self) -> Void = { _ in }
+  ) -> UserDefaults.Dependency {
     let storage = LockIsolated([String: any Sendable]())
     let continuations = LockIsolated([String: [UUID: AsyncStream<(any Sendable)?>.Continuation]]())
 
-    return UserDefaults.Dependency { key, _ in
+    var userDefaults = UserDefaults.Dependency { key, _ in
       storage.value[key]
     } set: { value, key in
       storage.withValue {
@@ -286,6 +291,12 @@ extension UserDefaults.Dependency: TestDependencyKey {
       defer { continuations.value[key]?[id]?.yield(storage.value[key]) }
       return stream
     }
+    withDependencies {
+      $0.userDefaults = userDefaults
+    } operation: {
+      initialValues(&userDefaults)
+    }
+    return userDefaults
   }
 }
 
