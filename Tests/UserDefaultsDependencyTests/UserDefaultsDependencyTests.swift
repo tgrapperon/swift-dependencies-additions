@@ -7,144 +7,153 @@ final class UserDefaultsDependencyTests: XCTestCase {
   func testEphemeralDefaultsDate() {
     let ephemeral = UserDefaults.Dependency.ephemeral()
     let date = Date(timeIntervalSince1970: 1000)
+    let key = #function
     withDependencies {
       $0.userDefaults = ephemeral
     } operation: {
-      self.userDefaults.set(date, forKey: "date")
+      self.userDefaults.set(date, forKey: key)
     }
     withDependencies {
       $0.userDefaults = ephemeral
     } operation: {
-      XCTAssertEqual(self.userDefaults.date(forKey: "date"), date)
+      XCTAssertEqual(self.userDefaults.date(forKey: key), date)
     }
   }
 
   func testLiveUserDefaultsBool() {
     let bool = true
-    UserDefaults.standard.removeObject(forKey: "bool")
+    let key = #function
+    UserDefaults.standard.removeObject(forKey: key)
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(bool, forKey: "bool")
+      self.userDefaults.set(bool, forKey: key)
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.bool(forKey: "bool"), bool)
+      XCTAssertEqual(self.userDefaults.bool(forKey: key), bool)
     }
-    UserDefaults.standard.removeObject(forKey: "double")
+    UserDefaults.standard.removeObject(forKey: key)
   }
 
   func testLiveUserDefaultsData() {
     let data = "123".data(using: .utf8)!
-    UserDefaults.standard.removeObject(forKey: "data")
+    let key = #function
+    UserDefaults.standard.removeObject(forKey: key)
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(data, forKey: "data")
+      self.userDefaults.set(data, forKey: key)
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.data(forKey: "data"), data)
+      XCTAssertEqual(self.userDefaults.data(forKey: key), data)
     }
-    UserDefaults.standard.removeObject(forKey: "data")
+    UserDefaults.standard.removeObject(forKey: key)
   }
 
   func testLiveUserDefaultsDate() {
     let date = Date(timeIntervalSince1970: 1000)
-    UserDefaults.standard.removeObject(forKey: "date")
+    let key = #function
+    UserDefaults.standard.removeObject(forKey: key)
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(date, forKey: "date")
+      self.userDefaults.set(date, forKey: key)
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.date(forKey: "date"), date)
+      XCTAssertEqual(self.userDefaults.date(forKey: key), date)
     }
-    UserDefaults.standard.removeObject(forKey: "date")
+    UserDefaults.standard.removeObject(forKey: key)
   }
 
   func testLiveUserDefaultsDouble() {
     let double = 123.4
-    UserDefaults.standard.removeObject(forKey: "double")
+    let key = #function
+    UserDefaults.standard.removeObject(forKey: key)
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(double, forKey: "double")
+      self.userDefaults.set(double, forKey: key)
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.double(forKey: "double"), double)
+      XCTAssertEqual(self.userDefaults.double(forKey: key), double)
     }
-    UserDefaults.standard.removeObject(forKey: "double")
+    UserDefaults.standard.removeObject(forKey: key)
   }
 
   func testLiveUserDefaultsInt() {
     let int = 123
-    UserDefaults.standard.removeObject(forKey: "int")
+    let key = #function
+    UserDefaults.standard.removeObject(forKey: key)
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(int, forKey: "int")
+      self.userDefaults.set(int, forKey: key)
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.integer(forKey: "int"), int)
+      XCTAssertEqual(self.userDefaults.integer(forKey: key), int)
     }
-    UserDefaults.standard.removeObject(forKey: "int")
+    UserDefaults.standard.removeObject(forKey: key)
   }
 
   func testLiveUserDefaultsString() {
     let string = "Hello!"
-    UserDefaults.standard.removeObject(forKey: "string")
+    let key = #function
+    UserDefaults.standard.removeObject(forKey: key)
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(string, forKey: "string")
+      self.userDefaults.set(string, forKey: key)
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.string(forKey: "string"), string)
+      XCTAssertEqual(self.userDefaults.string(forKey: key), string)
     }
-    UserDefaults.standard.removeObject(forKey: "string")
+    UserDefaults.standard.removeObject(forKey: key)
   }
   #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
     func testLiveUserDefaultsURL() {
       let url = URL(string: "https://github.com/tgrapperon/swift-dependencies-additions")
-      UserDefaults.standard.removeObject(forKey: "url")
+      let key = #function
+      UserDefaults.standard.removeObject(forKey: key)
       withDependencies {
         $0.userDefaults = .standard
       } operation: {
-        self.userDefaults.set(url, forKey: "url")
+        self.userDefaults.set(url, forKey: key)
       }
       withDependencies {
         $0.userDefaults = .standard
       } operation: {
-        XCTAssertEqual(self.userDefaults.url(forKey: "url"), url)
+        XCTAssertEqual(self.userDefaults.url(forKey: key), url)
       }
-      UserDefaults.standard.removeObject(forKey: "url")
+      UserDefaults.standard.removeObject(forKey: key)
     }
 
     func testLiveUserDefaultsFileURL() {
       let url = FileManager.default.temporaryDirectory.appendingPathComponent("Tests")
-      UserDefaults.standard.removeObject(forKey: "url")
+      let key = #function
+      UserDefaults.standard.removeObject(forKey: key)
       withDependencies {
         $0.userDefaults = .standard
       } operation: {
-        self.userDefaults.set(url, forKey: "url")
+        self.userDefaults.set(url, forKey: key)
       }
       withDependencies {
         $0.userDefaults = .standard
       } operation: {
-        XCTAssertEqual(self.userDefaults.url(forKey: "url"), url)
+        XCTAssertEqual(self.userDefaults.url(forKey: key), url)
       }
-      UserDefaults.standard.removeObject(forKey: "url")
+      UserDefaults.standard.removeObject(forKey: key)
     }
   #endif
   func testLiveUserDefaultsStringRawRepresentable() {
@@ -153,18 +162,19 @@ final class UserDefaultsDependencyTests: XCTestCase {
       case two
     }
     let raw = Value.two
-    UserDefaults.standard.removeObject(forKey: "raw")
+    let key = #function
+    UserDefaults.standard.removeObject(forKey: key)
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(raw, forKey: "raw")
+      self.userDefaults.set(raw, forKey: key)
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.rawRepresentable(forKey: "raw"), raw)
+      XCTAssertEqual(self.userDefaults.rawRepresentable(forKey: key), raw)
     }
-    UserDefaults.standard.removeObject(forKey: "raw")
+    UserDefaults.standard.removeObject(forKey: key)
   }
 
   func testLiveUserDefaultsIntRawRepresentable() {
@@ -173,18 +183,19 @@ final class UserDefaultsDependencyTests: XCTestCase {
       case two
     }
     let raw = Value.two
-    UserDefaults.standard.removeObject(forKey: "raw")
+    let key = #function
+    UserDefaults.standard.removeObject(forKey: key)
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(raw, forKey: "raw")
+      self.userDefaults.set(raw, forKey: key)
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.rawRepresentable(forKey: "raw"), raw)
+      XCTAssertEqual(self.userDefaults.rawRepresentable(forKey: key), raw)
     }
-    UserDefaults.standard.removeObject(forKey: "raw")
+    UserDefaults.standard.removeObject(forKey: key)
   }
 
 }
