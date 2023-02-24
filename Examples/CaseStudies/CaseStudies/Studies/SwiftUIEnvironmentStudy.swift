@@ -8,6 +8,9 @@ final class SwiftUIEnvironmentStudy: ObservableObject {
   @Dependency.Environment(\.colorScheme) var swiftUIColorScheme
   @Published var modelColorScheme: ColorScheme?
   @Dependency(\.logger["SwiftUIEnvironmentStudy"]) var logger
+  
+  @Dependency.Environment(\.installedViewController) var viewController
+  
   var cancellables = Set<AnyCancellableTask>()
   init() {
     Task { [weak self] in
@@ -17,6 +20,10 @@ final class SwiftUIEnvironmentStudy: ObservableObject {
         logger.info("User did select \(colorScheme.localizedDescription, privacy: .public)")
       }
     }.store(in: &cancellables)
+  }
+  
+  func writeMessageButtonTapped() {
+    print(viewController)
   }
 }
 
@@ -41,7 +48,14 @@ struct SwiftUIEnvironmentStudyView: View {
       } label: {
         Text("Toggle color scheme")
       }
+      Button {
+        model.writeMessageButtonTapped()
+      } label: {
+        Text("Write a message")
+      }
+
     }
+    .extractViewControllerAsDependency()
     .preferredColorScheme(preferredColorScheme)
     .navigationTitle("SwiftUI Environment")
   }

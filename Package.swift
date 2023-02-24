@@ -370,6 +370,9 @@ let package = Package(
 // define("KeyChainDependency")
 // define("Version")?
 
+define("MailComposeDependency", dependencies: "DependenciesAdditionsBasics")
+
+
 // define("Dependency", dependencies: "Base", testingDependencies: "TestSupport")
 func define(_ target: String, dependencies: String..., testingDependencies: String...) {
   var targetDependencies: [Target.Dependency] = [

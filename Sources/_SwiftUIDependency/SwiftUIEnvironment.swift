@@ -70,7 +70,7 @@
 
     @_spi(Internals) public static let shared = SwiftUIEnvironment()
 
-    @Published private var dependencies = [Key: Any]()
+    @Published fileprivate var dependencies = [Key: Any]()
 
     init() {}
 
