@@ -6,24 +6,34 @@
   extension StateObject {
     /// A property wrapper type that instantiates an observable object.
     ///
-    // TODO: Explain why
+    /// SwiftUI's `StateObject` uses an autoclosure in its initializer. This function is evaluated
+    /// privately (and only once during the lifetime of the `View`). As a result, dependencies
+    /// surrounding this property wrapper's initializer (or the initializer of the `View` that
+    /// contains it) are reset to their defaults by the time the closure is evaluted.
+    ///
+    /// This property wrapper fixes this issue while preserving SwiftUI's `StateObject` behavior.
+    /// You use it in the same fashion you would use SwiftUI's `StateObject`.
+    ///
+    /// ```swift
+    /// struct MyView: View {
+    ///   @StateObject.Dependency var model: Model
+    ///   var body: some View {
+    ///     …
+    ///   }
+    /// }
+    /// ```
     @propertyWrapper
     public struct Dependency: DynamicProperty {
       @StateObject var object: ObjectType
       /// Creates a new state object with an initial wrapped value.
       public init(wrappedValue: @escaping @autoclosure () -> ObjectType) {
-        // We capture the current dependencies in the escaping autoclosure.
-        // We can't use withEscapedDependencies because it would require to capture
-        // `self` in its block before `self` is initialized.
-        @Dependencies.Dependency(\.self) var dependencies
-        self._object = .init(
-          wrappedValue: {
-            withDependencies {
-              $0 = dependencies
-            } operation: {
-              wrappedValue()
-            }
-          }())
+        self._object = withEscapedDependencies { continuation in
+            StateObject(wrappedValue: {
+              continuation.yield {
+                wrappedValue()
+              }
+            }())
+        }
       }
       /// The underlying value referenced by the state object.
       public var wrappedValue: ObjectType {
