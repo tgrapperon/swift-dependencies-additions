@@ -39,11 +39,10 @@
     /// logger.log("Paid with bank account \(accountNumber)")
     /// ```
     public subscript(subsystem subsystem: String, category category: String) -> Logger {
-      return Logger(subsystem: subsystem, category: category)
+      Logger(subsystem: subsystem, category: category)
     }
     /// Creates a `Logger` value where messages are categorized by the provided argument.
-    /// The `Logger`'s subsystem is the bundle identifier, extracted from the ``BundleInfo``
-    /// dependency.
+    /// The `Logger`'s subsystem is the bundle identifier.
     ///
     /// You can use this subscript on the `\.logger` dependency:
     /// ```swift
@@ -52,8 +51,7 @@
     /// logger.log("Paid with bank account \(accountNumber)")
     /// ```
     public subscript(category: String) -> Logger {
-      @Dependency(\.bundleInfo) var bundleInfo
-      return Logger(subsystem: bundleInfo.bundleIdentifier, category: category)
+      Logger(subsystem: Bundle.main.bundleIdentifier ?? "", category: category)
     }
   }
 #endif
