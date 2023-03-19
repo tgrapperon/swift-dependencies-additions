@@ -32,7 +32,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
     } operation: {
       XCTAssertEqual(self.userDefaults.bool(forKey: "bool"), bool)
     }
-    UserDefaults.standard.removeObject(forKey: "double")
+    UserDefaults.standard.removeObject(forKey: "bool")
   }
 
   func testLiveUserDefaultsData() {
