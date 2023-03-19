@@ -28,11 +28,7 @@
       /// Creates a new state object with an initial wrapped value.
       public init(wrappedValue: @escaping @autoclosure () -> ObjectType) {
         self._object = withEscapedDependencies { continuation in
-          StateObject(wrappedValue: {
-            continuation.yield {
-              wrappedValue()
-            }
-          }())
+          StateObject(wrappedValue: continuation.yield { wrappedValue() })
         }
       }
       /// The underlying value referenced by the state object.
