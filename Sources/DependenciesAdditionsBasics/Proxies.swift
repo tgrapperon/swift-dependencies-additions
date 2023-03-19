@@ -7,7 +7,7 @@ import Dependencies
 /// ``MainActorReadOnlyProxy``) to:
 ///
 /// - Defer the live implementation of your dependency to an external value
-/// - Scope the possible overrides behind their projected property to make clear that a given
+/// - Scope the possible overrides behind their projected value to make clear that a given
 /// property or method is not meant to be overridden in live contexts.
 /// - Gather all the implementations into a standalone type and re-expose them as functions with
 /// labelled arguments.
@@ -147,7 +147,7 @@ extension ConfigurableProxy {
   }
 }
 
-/// A value that describe a bidirectional binding.
+/// A value that describes a bidirectional binding.
 ///
 /// You use this type to mock the storage of ``ReadWriteProxy`` properties:
 ///
@@ -203,7 +203,7 @@ public struct ReadWriteBinding<Value>: Sendable {
 
 /// A property wrapper that characterizes a value that can be read and written synchronously.
 ///
-/// You directly access the value in `live` context. In other contexts, you can assign a
+/// You directly access the value in `live` contexts. In other contexts, you can assign a
 /// ``ReadWriteBinding`` to the projected value to control this property during tests and SwiftUI
 /// previews:
 ///
@@ -246,8 +246,8 @@ public struct ReadWriteProxy<Value: Sendable>: Sendable {
 
 /// A property wrapper that characterizes a value that can be read synchronously.
 ///
-/// You directly access the value in `live` context. In other contexts, you can assign a constant or
-/// a function that generates this value to the projected value to control this property during
+/// You directly access the value in `live` contexts. In other contexts, you can assign a constant
+/// or a function that generates this value to the projected value to control this property during
 /// tests and SwiftUI previews:
 ///
 /// ```swift
@@ -284,10 +284,10 @@ public struct ReadOnlyProxy<Value: Sendable>: Sendable {
   }
 }
 
-/// A property wrapper that characterizes a function that is backed by another type.
+/// A property wrapper that characterizes a function that is backed by another value.
 ///
-/// You directly access the value in `live` context. In other contexts, you can assign another
-/// a function to the projected value to control this property during tests and SwiftUI previews:
+/// You directly access the value in `live` contexts. In other contexts, you can assign another
+/// function to the projected value to control this property during tests and SwiftUI previews:
 ///
 /// ```swift
 /// let isClicked = expectation(description: "An input click is played")
@@ -324,7 +324,7 @@ public struct FunctionProxy<Value: Sendable>: Sendable {
   }
 }
 
-/// A value that describe a bidirectional binding on `MainActor`.
+/// A value that describes a bidirectional binding on `MainActor`.
 ///
 /// You use this type to mock the storage of ``MainActorReadWriteProxy`` properties:
 ///
@@ -385,9 +385,9 @@ public struct MainActorReadWriteBinding<Value>: Sendable {
 /// A property wrapper that characterizes a value that can be read and written synchronously
 /// on the `MainActor`.
 ///
-/// You directly access the value in `live` context. In other contexts, you can assign a
-/// ``MainActorReadWriteBinding`` to the projected value to control this property during tests and SwiftUI
-/// previews:
+/// You directly access the value in `live` contexts. In other contexts, you can assign a
+/// ``MainActorReadWriteBinding`` to the projected value to control this property during tests and
+/// SwiftUI previews:
 ///
 /// ```swift
 /// let isBatteryMonitoringEnabled = LockIsolated(false)
@@ -439,8 +439,8 @@ public struct MainActorReadWriteProxy<Value: Sendable>: Sendable {
 /// A property wrapper that characterizes a value that can be read synchronously on the
 /// `MainActor`
 ///
-/// You directly access the value in `live` context. In other contexts, you can assign a constant or
-/// a function that generates this value to the projected value to control this property during
+/// You directly access the value in `live` contexts. In other contexts, you can assign a constant
+/// or a function that generates this value to the projected value to control this property during
 /// tests and SwiftUI previews:
 ///
 /// ```swift
@@ -477,13 +477,13 @@ public struct MainActorReadOnlyProxy<Value: Sendable>: Sendable {
   }
 }
 
-/// A protocol that describe values that can support other values in "`Proxy`" property
-/// wrappers like ``ReadWriteProxy`` and ``MainActorReadOnlyProxy``.
+/// A protocol that describes values that can support other values in "`Proxy`" property wrappers
+/// like ``ReadWriteProxy`` and ``MainActorReadOnlyProxy``.
 ///
-/// Type conforming to this protocol can be simply bound to dependencies values. You then
-/// act on this type and the the values will propagate to the dependencies you bound them
-/// to. Reciprocally, their state should be able to reflect the current state of the bound
-/// dependencies if it was modified by your model itself for example.
+/// Type conforming to this protocol can be simply bound to dependencies values. You then act on
+/// this type and the values will propagate to the dependencies you bind them to. Reciprocally,
+/// their state should be able to reflect the current state of the bound dependencies, if they were
+/// modified by your model itself for example.
 ///
 /// `LockIsolated` is conforming to this protocol, so you can use `LockIsolated` values
 /// to control writable dependencies properties during tests and SwiftUI previews.
@@ -508,8 +508,7 @@ public protocol ProxyBindable {
 
 /// An erased ``ProxyBindable`` property.
 ///
-/// You usually obtain this type by drilling into `ProxyBindable` instance writable
-/// properties.
+/// You usually obtain this type by drilling into `ProxyBindable` instance writable properties.
 ///
 /// For example, `LockIsolated(["a", "b", "c"]).count` returns an ``AnyProxyBindable<Int>``
 /// that you can bind to a writable dependency.
