@@ -74,13 +74,26 @@
 
     public init(_ persistentContainer: NSPersistentContainer) {
       let persistentContainer = UncheckedSendable(persistentContainer)
-      self._viewContext = { persistentContainer.viewContext }
+      let isViewContextConfigured = LockIsolated(false)
+      
+      let viewContext = { @Sendable in
+        let context = persistentContainer.viewContext
+        isViewContextConfigured.withValue { isConfigured in
+          if !isConfigured {
+            context.automaticallyMergesChangesFromParent = true
+            isConfigured = true
+          }
+        }
+        return context
+      }
+      
+      self._viewContext = viewContext
       self._newBackgroundContext = {
         persistentContainer.wrappedValue.newBackgroundContext()
       }
       self._newChildViewContext = {
         let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        context.parent = persistentContainer.viewContext
+        context.parent = viewContext()
         return context
       }
     }
