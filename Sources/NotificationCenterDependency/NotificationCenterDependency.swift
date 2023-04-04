@@ -46,12 +46,12 @@
     /// A type that abstracts a `NotificationCenter`.
     public struct Dependency: Sendable {
       let _post:
-        @Sendable (NSNotification.Name, AnyObject?, [AnyHashable: Any]?, StaticString, UInt) -> Void
+        @Sendable (NSNotification.Name, Any?, [AnyHashable: Any]?, StaticString, UInt) -> Void
       let _addObserver:
-        @Sendable (AnyObject, Selector, NSNotification.Name?, AnyObject?, StaticString, UInt) ->
+        @Sendable (Any, Selector, NSNotification.Name?, Any?, StaticString, UInt) ->
           Void
       let _removeObserver:
-        @Sendable (AnyObject, NSNotification.Name?, AnyObject?, StaticString, UInt) -> Void
+        @Sendable (Any, NSNotification.Name?, Any?, StaticString, UInt) -> Void
       let _publisher:
         @Sendable (Notification.Name, AnyObject?, StaticString, UInt) -> AnyPublisher<
           Notification, Never
@@ -59,13 +59,13 @@
 
       init(
         @_inheritActorContext post: @escaping @Sendable (
-          NSNotification.Name, AnyObject?, [AnyHashable: Any]?, StaticString, UInt
+          NSNotification.Name, Any?, [AnyHashable: Any]?, StaticString, UInt
         ) -> Void,
         @_inheritActorContext addObserver: @escaping @Sendable (
-          AnyObject, Selector, NSNotification.Name?, AnyObject?, StaticString, UInt
+          Any, Selector, NSNotification.Name?, Any?, StaticString, UInt
         ) -> Void,
         @_inheritActorContext removeObserver: @escaping @Sendable (
-          AnyObject, NSNotification.Name?, AnyObject?, StaticString, UInt
+          Any, NSNotification.Name?, Any?, StaticString, UInt
         ) -> Void,
         @_inheritActorContext publisher: @escaping @Sendable (
           Notification.Name, AnyObject?, StaticString, UInt
@@ -81,7 +81,7 @@
       /// notification center.
       public func post(
         name: NSNotification.Name,
-        object: AnyObject? = nil,
+        object: Any? = nil,
         userInfo: [AnyHashable: Any]? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -92,10 +92,10 @@
       /// Adds an entry to the notification center to call the provided selector with the
       /// notification.
       public func addObserver(
-        _ observer: AnyObject,
+        _ observer: Any,
         selector: Selector,
         name: NSNotification.Name?,
-        object: AnyObject?,
+        object: Any?,
         file: StaticString = #filePath,
         line: UInt = #line
       ) {
@@ -103,9 +103,9 @@
       }
       /// Removes matching entries from the notification center's dispatch table.
       public func removeObserver(
-        _ observer: AnyObject,
+        _ observer: Any,
         name: NSNotification.Name? = nil,
-        object: AnyObject? = nil,
+        object: Any? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
       ) {
@@ -130,7 +130,7 @@
     /// notification name and optional source object.
     public func notifications(
       named name: Notification.Name,
-      object: AnyObject? = nil,
+      object: Any? = nil,
       file: StaticString = #filePath,
       line: UInt = #line
     ) -> AsyncStream<Notification> {
