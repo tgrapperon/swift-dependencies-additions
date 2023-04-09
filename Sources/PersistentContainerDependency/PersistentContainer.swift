@@ -74,7 +74,7 @@
     public init(_ persistentContainer: NSPersistentContainer) {
       let persistentContainer = UncheckedSendable(persistentContainer)
       let isViewContextConfigured = LockIsolated(false)
-      
+
       let viewContext = { @Sendable in
         let context = persistentContainer.viewContext
         isViewContextConfigured.withValue { isConfigured in
@@ -85,7 +85,7 @@
         }
         return context
       }
-      
+
       self._viewContext = viewContext
       self._newBackgroundContext = {
         persistentContainer.wrappedValue.newBackgroundContext()
