@@ -61,7 +61,6 @@
           print("Failed to load PesistentStore: \(error)")
         }
       })
-      persistentContainer.viewContext.automaticallyMergesChangesFromParent = true
       return .init(persistentContainer)
     }
   }
