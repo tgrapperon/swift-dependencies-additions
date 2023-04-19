@@ -6,101 +6,53 @@
   @_spi(Internals)@_exported import PersistentContainerDependency
 
   extension NSFetchRequestResult where Self: NSManagedObject {
-    public typealias Fetched = _CoreDataDependency.Fetched<Self>
-    public typealias FetchedResults = PersistentContainer.FetchRequest.Results<Self>
-    public typealias SectionedFetchedResults<SectionIdentifier: Hashable> = PersistentContainer
-      .FetchRequest.SectionedResults<SectionIdentifier, Self>
-  }
-
-  extension PersistentContainer {
-    @MainActor
-    public func insert<ManagedObject: NSManagedObject>(
-      _ type: ManagedObject.Type,
-      configure: (ManagedObject) -> Void = { _ in () }
-    ) throws
-      -> Fetched<
-        ManagedObject
-      >
-    {
-      let context = self.viewContext
-      let object = ManagedObject(context: context)
-      try context.obtainPermanentIDs(for: [object])
-      configure(object)
-      return Fetched<ManagedObject>(
-        id: object.objectID,
-        context: context,
-        viewContext: context
-      )
-    }
-
-    public func insert<ManagedObject: NSManagedObject>(
-      _ type: ManagedObject.Type,
-      into context: NSManagedObjectContext?,
-      configure: (ManagedObject) -> Void
-    ) throws -> Fetched<ManagedObject> {
-      let context = context ?? newBackgroundContext()
-      let object = ManagedObject(context: context)
-      try context.obtainPermanentIDs(for: [object])
-      configure(object)
-      return Fetched<ManagedObject>(
-        id: object.objectID,
-        context: context,
-        viewContext: self._viewContext()
-      )
-    }
+    public typealias Fetched = _CoreDataDependency.AnyFetched<Self>
+    public typealias MainFetchedResults = PersistentContainer
+      .FetchRequest._Results<Self, MainActorManagedObjectContext>
+    public typealias FetchedResults<Context: ManagedObjectContext> = PersistentContainer
+      .FetchRequest._Results<Self, Context>
+    public typealias MainSectionedFetchedResults<
+      SectionIdentifier: Hashable
+    > = PersistentContainer
+      .FetchRequest._SectionedResults<SectionIdentifier, Self, MainActorManagedObjectContext>
+    public typealias SectionedFetchedResults<
+      SectionIdentifier: Hashable, Context: ManagedObjectContext
+    > = PersistentContainer
+      .FetchRequest._SectionedResults<SectionIdentifier, Self, Context>
   }
 
   @dynamicMemberLookup
-  public struct Fetched<ManagedObject: NSManagedObject>: Identifiable, Sendable, Hashable {
+  public struct _AnyFetched<ManagedObject: NSManagedObject, Context: ManagedObjectContext>:
+    Identifiable, Sendable, Hashable
+  {
     public let id: NSManagedObjectID
-    // This can be approximatively retrieved by users using `managedObjectContext`'s from dynamic
-    // lookup.
-    let context: NSManagedObjectContext
-    let viewContext: NSManagedObjectContext
-    var object: ManagedObject { self.context.object(with: self.id) as! ManagedObject }
+    public let context: Context
     var token: UUID?
-    init(
-      id: NSManagedObjectID,
-      context: NSManagedObjectContext,
-      viewContext: NSManagedObjectContext,
-      token: UUID? = nil
-    ) {
-      self.id = id
-      self.context = context
-      self.viewContext = viewContext
+  }
+
+  public typealias MainFetched<ManagedObject: NSManagedObject> = _AnyFetched<
+    ManagedObject, MainActorManagedObjectContext
+  >
+  public typealias AnyFetched<ManagedObject: NSManagedObject> = _AnyFetched<
+    ManagedObject, AnyManagedObjectContext
+  >
+
+  extension _AnyFetched where Context == MainActorManagedObjectContext {
+    @MainActor
+    var mainActorContext: NSManagedObjectContext {
+      self.context._managedObjectContext.wrappedValue
     }
-    // This can go wrong very easily. We need a generic to make the distinction between main actor
-    // context managed objects and bg ones.
+    @MainActor
+    var object: ManagedObject {
+      self.mainActorContext.object(with: self.id) as! ManagedObject
+    }
     @MainActor
     public subscript<Value>(dynamicMember keyPath: KeyPath<ManagedObject, Value>) -> Value {
-      (self.viewContext.object(with: self.id) as! ManagedObject)[keyPath: keyPath]
+      self.object[keyPath: keyPath]
     }
   }
 
-  extension Fetched {
-    //  public var view: View {
-    //    get { .init(fetched: self) }
-    //    set { self = newValue.fetched }
-    //  }
-    //
-    //  @dynamicMemberLookup
-    //  public struct View {
-    //    var fetched: Fetched
-    //
-    //    public var editor: Editor {
-    //      get { .init(fetched: self.fetched) }
-    //      set { self.fetched = newValue.fetched }
-    //    }
-    //
-    //    var context: NSManagedObjectContext { fetched.viewContext }
-    //
-    //    @MainActor
-    //    public subscript<Value>(dynamicMember keyPath: WritableKeyPath<ManagedObject, Value>) -> Value {
-    //      get { (self.fetched.viewContext.object(with: self.fetched.id) as! ManagedObject)[keyPath: keyPath] }
-    //      set { }
-    //    }
-    //  }
-
+  extension _AnyFetched where Context == MainActorManagedObjectContext {
     public var editor: Editor {
       get { .init(fetched: self) }
       set { self = newValue.fetched }
@@ -108,169 +60,141 @@
 
     @dynamicMemberLookup
     public struct Editor {
-      var fetched: Fetched
+      var fetched: MainFetched<ManagedObject>
 
-      var context: NSManagedObjectContext { fetched.viewContext }
       @MainActor
       public subscript<Value>(dynamicMember keyPath: WritableKeyPath<ManagedObject, Value>) -> Value
       {
         get {
-          (self.fetched.viewContext.object(with: self.fetched.id) as! ManagedObject)[
-            keyPath: keyPath]
+          self.fetched.object[keyPath: keyPath]
         }
         set {
-          var object = (self.fetched.viewContext.object(with: self.fetched.id) as! ManagedObject)
+          var object = self.fetched.object
           object[keyPath: keyPath] = newValue
           self.fetched.token = .init()
-          self.fetched.viewContext.processPendingChanges()
+          self.fetched.mainActorContext.processPendingChanges()
         }
       }
     }
   }
 
-  public enum ScheduledTaskType {
-    case immediate
-    case enqueued
-  }
-
-  extension Fetched {
+  extension _AnyFetched where Context == MainActorManagedObjectContext {
+    @MainActor
     @discardableResult
-    public func withManagedObject<T>(perform: (ManagedObject) -> T) -> T {
-      var result: Swift.Result<T, Never>?
-      self.context.performAndWait {
-        result = .success(perform(self.object))
-      }
-      switch result! {
-      case let .success(value):
-        return value
-      }
-    }
-
-    @discardableResult
-    public func withManagedObject<T>(perform: (ManagedObject) throws -> T) throws -> T {
-      var result: Swift.Result<T, Error>?
-      self.context.performAndWait {
-        result = .init(catching: { try perform(self.object) })
-      }
-      return try result!.get()
-    }
-
-    @discardableResult
-    public func withManagedObject<T>(
-      schedule: ScheduledTaskType = .immediate, perform: @escaping (ManagedObject) -> T
-    ) async -> T {
-      await withCheckedContinuation { continuation in
-        switch schedule {
-        case .immediate:
-          continuation.resume(returning: self.withManagedObject(perform: perform))
-        case .enqueued:
-          withEscapedDependencies { dependencies in
-            self.context.perform {
-              dependencies.yield {
-                continuation.resume(returning: perform(self.object))
-              }
-            }
-          }
-        }
-      }
-    }
-
-    @discardableResult
-    public func withManagedObject<T>(
-      schedule: ScheduledTaskType = .immediate, perform: @escaping (ManagedObject) throws -> T
-    ) async throws -> T {
-      return try await withCheckedThrowingContinuation { continuation in
-        switch schedule {
-        case .immediate:
-          continuation.resume(
-            with: .init {
-              try self.withManagedObject(perform: perform)
-            })
-        case .enqueued:
-          withEscapedDependencies { dependencies in
-            self.context.perform {
-              dependencies.yield {
-                continuation.resume(
-                  with: .init {
-                    try perform(self.object)
-                  }
-                )
-              }
-            }
-          }
-        }
-      }
-    }
-
-    @discardableResult
-    public func withManagedObjectContext<T>(perform: (NSManagedObjectContext) -> T) -> T {
-      var result: Swift.Result<T, Never>?
-      self.context.performAndWait {
-        result = .success(perform(self.context))
-      }
-      switch result! {
-      case let .success(value):
-        return value
-      }
-    }
-
-    @discardableResult
-    public func withManagedObjectContext<T>(perform: (NSManagedObjectContext) throws -> T) throws
-      -> T
+    public func withManagedObject<T>(perform operation: @MainActor (ManagedObject) throws -> T)
+      rethrows -> T
     {
-      var result: Swift.Result<T, Error>?
-      self.context.performAndWait {
-        result = .init(catching: { try perform(self.context) })
+      try operation(self.object)
+    }
+
+    @MainActor
+    @discardableResult
+    public func withManagedObjectContext<T>(
+      perform operation: @MainActor (NSManagedObjectContext) throws -> T
+    )
+      rethrows -> T
+    {
+      try operation(self.context._managedObjectContext.wrappedValue)
+    }
+  }
+
+  extension _AnyFetched where Context == AnyManagedObjectContext {
+    var unsafeContext: NSManagedObjectContext {
+      self.context._managedObjectContext.wrappedValue
+    }
+    var object: ManagedObject {
+      self.unsafeContext.object(with: self.id) as! ManagedObject
+    }
+  }
+
+  extension _AnyFetched where Context == AnyManagedObjectContext {
+    @available(*, unavailable, message: "Use `withManagedObject { object in … }`")
+    public subscript<Value>(dynamicMember keyPath: KeyPath<ManagedObject, Value>) -> Value {
+      self.object[keyPath: keyPath]
+    }
+    
+    @discardableResult
+    public func withManagedObject<T: Sendable>(perform operation: (ManagedObject) throws -> T)
+      async throws -> T
+    {
+      try await self.context.perform {
+        try operation(self.object)
       }
-      return try result!.get()
     }
 
     @discardableResult
-    public func withManagedObjectContext<T>(
-      schedule: ScheduledTaskType = .immediate, perform: @escaping (NSManagedObjectContext) -> T
-    ) async -> T {
-      return await withCheckedContinuation { continuation in
-        switch schedule {
-        case .immediate:
-          continuation.resume(returning: self.withManagedObjectContext(perform: perform))
-        case .enqueued:
-          withEscapedDependencies { dependencies in
-            self.context.perform {
-              dependencies.yield {
-                continuation.resume(returning: perform(self.context))
-              }
-            }
-          }
-        }
+    public func withManagedObject<T: Sendable>(perform operation: (ManagedObject) -> T)
+      async -> T
+    {
+      await self.context.perform {
+        operation(self.object)
       }
     }
 
     @discardableResult
-    public func withManagedObjectContext<T>(
-      schedule: ScheduledTaskType = .immediate,
-      perform: @escaping (NSManagedObjectContext) throws -> T
-    ) async throws -> T {
-      return try await withCheckedThrowingContinuation { continuation in
-        switch schedule {
-        case .immediate:
-          continuation.resume(
-            with: .init {
-              try self.withManagedObjectContext(perform: perform)
-            })
-        case .enqueued:
-          withEscapedDependencies { dependencies in
-            self.context.perform {
-              dependencies.yield {
-                continuation.resume(
-                  with: .init {
-                    try perform(self.context)
-                  }
-                )
-              }
-            }
+    public func withManagedObjectContext<T: Sendable>(
+      perform operation: (NSManagedObjectContext) throws -> T
+    )
+      async throws -> T
+    {
+      try await self.context.perform {
+        try operation(self.context._managedObjectContext.wrappedValue)
+      }
+    }
+
+    @discardableResult
+    public func withManagedObjectContext<T: Sendable>(
+      perform operation: (NSManagedObjectContext) -> T
+    )
+      async -> T
+    {
+      await self.context.perform {
+        operation(self.context._managedObjectContext.wrappedValue)
+      }
+    }
+  }
+
+  extension ManagedObjectContext {
+    @_disfavoredOverload
+    public func perform<T: Sendable>(operation: () -> T)
+      async -> T
+    {
+      await withUnsafeContinuation { continuation in
+        let result = LockIsolated(T?.none)
+        self._managedObjectContext.wrappedValue.performAndWait {
+          result.withValue {
+            $0 = operation()
           }
         }
+        continuation.resume(returning: result.value!)
       }
+    }
+    @_disfavoredOverload
+    public func perform<T: Sendable>(operation: () throws -> T)
+      async throws -> T
+    {
+      try await withUnsafeThrowingContinuation { continuation in
+        let result = LockIsolated(Result<T, Error>?.none)
+        self._managedObjectContext.wrappedValue.performAndWait {
+          result.withValue {
+            $0 = Result<T, Error> { try operation() }
+          }
+        }
+        continuation.resume(with: result.value!)
+      }
+    }
+  }
+
+  extension MainActorManagedObjectContext {
+    public func perform<T: Sendable>(operation: @MainActor @Sendable () throws -> T)
+      async rethrows -> T
+    {
+      try await MainActor.run(resultType: T.self, body: operation)
+    }
+
+    @MainActor
+    public func perform<T>(operation: @MainActor () throws -> T) rethrows -> T {
+      try operation()
     }
   }
 
@@ -284,15 +208,34 @@
     }
   }
 
+  extension PersistentContainer {
+    public var isolated: IsolatedManagedObjectContext {
+      IsolatedManagedObjectContext(persistentContainer: self)
+    }
+    public struct IsolatedManagedObjectContext {
+      let persistentContainer: PersistentContainer
+      public var viewContext: MainActorManagedObjectContext {
+        MainActorManagedObjectContext(self.persistentContainer.viewContext)
+      }
+      public func newChildViewContext() -> MainActorManagedObjectContext {
+        MainActorManagedObjectContext(self.persistentContainer.newChildViewContext())
+      }
+      public func newBackgroundContext() -> AnyManagedObjectContext {
+        AnyManagedObjectContext(self.persistentContainer.newBackgroundContext())
+      }
+    }
+  }
+
   extension PersistentContainer.FetchRequest {
-    @MainActor
-    public func callAsFunction<ManagedObject: NSManagedObject>(
+    public func callAsFunction<
+      ManagedObject: NSManagedObject,
+      Context: ManagedObjectContext
+    >(
       _ type: ManagedObject.Type,
       predicate: NSPredicate? = nil,
       sortDescriptors: [NSSortDescriptor] = [],
-      context: NSManagedObjectContext? = nil
-    ) -> AsyncThrowingStream<Results<ManagedObject>, Error> {
-      let context = context ?? persistentContainer.viewContext
+      context: Context
+    ) -> AsyncThrowingStream<_Results<ManagedObject, Context>, Error> {
       let fetchRequest = NSFetchRequest<ManagedObject>(
         entityName: String(describing: ManagedObject.self))
       fetchRequest.predicate = predicate
@@ -304,20 +247,44 @@
       }
       return stream(
         fetchRequest: fetchRequest,
-        context: context,
-        viewContext: persistentContainer.viewContext
+        context: context
       )
     }
 
-    @MainActor
-    public func callAsFunction<SectionIdentifier: Hashable, ManagedObject: NSManagedObject>(
+    public func callAsFunction<ManagedObject: NSManagedObject>(
+      _ type: ManagedObject.Type,
+      predicate: NSPredicate? = nil,
+      sortDescriptors: [NSSortDescriptor] = []
+    ) -> AsyncThrowingStream<_Results<ManagedObject, MainActorManagedObjectContext>, Error> {
+      let context = persistentContainer.isolated.viewContext
+      let fetchRequest = NSFetchRequest<ManagedObject>(
+        entityName: String(describing: ManagedObject.self))
+      fetchRequest.predicate = predicate
+      fetchRequest.sortDescriptors = sortDescriptors
+      if fetchRequest.sortDescriptors!.isEmpty {
+        fetchRequest.sortDescriptors?.append(
+          .init(key: "objectID", ascending: true)
+        )
+      }
+      return stream(
+        fetchRequest: fetchRequest,
+        context: context
+      )
+    }
+
+    public func callAsFunction<
+      SectionIdentifier: Hashable,
+      ManagedObject: NSManagedObject,
+      Context: ManagedObjectContext
+    >(
       _ type: ManagedObject.Type,
       predicate: NSPredicate? = nil,
       sortDescriptors: [NSSortDescriptor] = [],
       sectionIdentifier: KeyPath<ManagedObject, SectionIdentifier>,
-      context: NSManagedObjectContext? = nil
-    ) -> AsyncThrowingStream<SectionedResults<SectionIdentifier, ManagedObject>, Error> {
-      let context = context ?? persistentContainer.viewContext
+      context: Context
+    ) -> AsyncThrowingStream<
+      _SectionedResults<SectionIdentifier, ManagedObject, Context>, Error
+    > {
       let fetchRequest = NSFetchRequest<ManagedObject>(
         entityName: String(describing: ManagedObject.self))
       fetchRequest.predicate = predicate
@@ -332,8 +299,37 @@
       return stream(
         fetchRequest: fetchRequest,
         sectionIdentifier: sectionIdentifier,
-        context: context,
-        viewContext: persistentContainer.viewContext
+        context: context
+      )
+    }
+
+    public func callAsFunction<
+      SectionIdentifier: Hashable,
+      ManagedObject: NSManagedObject
+    >(
+      _ type: ManagedObject.Type,
+      predicate: NSPredicate? = nil,
+      sortDescriptors: [NSSortDescriptor] = [],
+      sectionIdentifier: KeyPath<ManagedObject, SectionIdentifier>
+    ) -> AsyncThrowingStream<
+      _SectionedResults<SectionIdentifier, ManagedObject, MainActorManagedObjectContext>, Error
+    > {
+      let context = self.persistentContainer.isolated.viewContext
+      let fetchRequest = NSFetchRequest<ManagedObject>(
+        entityName: String(describing: ManagedObject.self))
+      fetchRequest.predicate = predicate
+      fetchRequest.sortDescriptors = sortDescriptors
+
+      if fetchRequest.sortDescriptors!.first?.keyPath != sectionIdentifier {
+        fetchRequest.sortDescriptors?.insert(
+          .init(keyPath: sectionIdentifier, ascending: true), at: 0
+        )
+      }
+
+      return stream(
+        fetchRequest: fetchRequest,
+        sectionIdentifier: sectionIdentifier,
+        context: context
       )
     }
   }
@@ -348,14 +344,16 @@
   }
 
   extension PersistentContainer.FetchRequest {
-    public struct SectionedResults<
-      SectionIdentifier: Hashable & Sendable, ManagedObject: NSManagedObject
+    public struct _SectionedResults<
+      SectionIdentifier: Hashable & Sendable,
+      ManagedObject: NSManagedObject,
+      Context: ManagedObjectContext
     >:
       Sendable, Hashable
     {
       public struct Section: Hashable, Identifiable, Sendable {
         public let id: SectionIdentifier
-        let fetchedObjects: Results<ManagedObject>
+        let fetchedObjects: _Results<ManagedObject, Context>
       }
 
       let sections: [Section]
@@ -371,23 +369,24 @@
   }
 
   extension PersistentContainer.FetchRequest {
-    public struct Results<ManagedObject: NSManagedObject>: Hashable, Sendable {
-      let fetchedObjects: [Fetched<ManagedObject>]
-      init(fetchedObjects: [Fetched<ManagedObject>] = []) {
+    public struct _Results<ManagedObject: NSManagedObject, Context: ManagedObjectContext>: Hashable,
+      Sendable
+    {
+      let fetchedObjects: [_AnyFetched<ManagedObject, Context>]
+      init(fetchedObjects: [_AnyFetched<ManagedObject, Context>] = []) {
         self.fetchedObjects = fetchedObjects
       }
-
       public static var empty: Self {
         .init()
       }
     }
   }
 
-  extension PersistentContainer.FetchRequest.Results: RandomAccessCollection {
+  extension PersistentContainer.FetchRequest._Results: RandomAccessCollection {
     public var startIndex: Int { fetchedObjects.startIndex }
     public var endIndex: Int { fetchedObjects.endIndex }
 
-    public subscript(position: Int) -> Fetched<ManagedObject> {
+    public subscript(position: Int) -> _AnyFetched<ManagedObject, Context> {
       fetchedObjects[position]
     }
 
@@ -400,7 +399,7 @@
     }
   }
 
-  extension PersistentContainer.FetchRequest.SectionedResults: RandomAccessCollection {
+  extension PersistentContainer.FetchRequest._SectionedResults: RandomAccessCollection {
     public var startIndex: Int { sections.startIndex }
     public var endIndex: Int { sections.endIndex }
 
@@ -417,11 +416,11 @@
     }
   }
 
-  extension PersistentContainer.FetchRequest.SectionedResults.Section: RandomAccessCollection {
+  extension PersistentContainer.FetchRequest._SectionedResults.Section: RandomAccessCollection {
     public var startIndex: Int { fetchedObjects.startIndex }
     public var endIndex: Int { fetchedObjects.endIndex }
 
-    public subscript(position: Int) -> Fetched<ManagedObject> {
+    public subscript(position: Int) -> _AnyFetched<ManagedObject, Context> {
       fetchedObjects[position]
     }
 
@@ -435,18 +434,16 @@
   }
 
   extension PersistentContainer.FetchRequest {
-    func stream<T: NSManagedObject>(
+    func stream<T: NSManagedObject, Context: ManagedObjectContext>(
       fetchRequest: NSFetchRequest<T>,
-      context: NSManagedObjectContext,
-      viewContext: NSManagedObjectContext
-    ) -> AsyncThrowingStream<Results<T>, Error> {
-      AsyncThrowingStream<Results<T>, Error> { continuation in
-        let context = UncheckedSendable(context)
+      context: Context
+    ) -> AsyncThrowingStream<_Results<T, Context>, Error> {
+      AsyncThrowingStream<_Results<T, Context>, Error> { continuation in
         let fetchRequest = UncheckedSendable(fetchRequest.copy() as! NSFetchRequest<T>)
-        let currentValue = LockIsolated(Results<T>(fetchedObjects: []))
+        let currentValue = LockIsolated(_Results<T, Context>(fetchedObjects: []))
         @Sendable
         func fetchResults(updated: Set<NSManagedObjectID> = []) {
-          context.wrappedValue.perform {
+          context._managedObjectContext.wrappedValue.perform {
             do {
               try currentValue.withValue { currentValue in
                 var tokens = [NSManagedObjectID: UUID]()
@@ -455,14 +452,14 @@
                 }
                 tokens = tokens.filter { !updated.contains($0.key) }
 
-                let results = try context.wrappedValue.fetch(fetchRequest.wrappedValue)
+                let results = try context._managedObjectContext.wrappedValue.fetch(
+                  fetchRequest.wrappedValue)
                 currentValue = .init(
                   fetchedObjects:
                     results.map {
-                      Fetched(
+                      _AnyFetched(
                         id: $0.objectID,
-                        context: context.wrappedValue,
-                        viewContext: viewContext,
+                        context: context,
                         token: tokens[$0.objectID]
                       )
                     }
@@ -476,7 +473,7 @@
         }
 
         let observer = ManagedObjectUpdatesObserver(
-          context: context.wrappedValue,
+          context: context._managedObjectContext.wrappedValue,
           objectsDidChange: fetchResults(updated:)
         )
 
@@ -492,20 +489,23 @@
       }
     }
 
-    func stream<SectionIdentifier: Hashable & Sendable, T: NSManagedObject>(
+    func stream<
+      SectionIdentifier: Hashable & Sendable,
+      T: NSManagedObject,
+      Context: ManagedObjectContext
+    >(
       fetchRequest: NSFetchRequest<T>,
       sectionIdentifier: KeyPath<T, SectionIdentifier>,
-      context: NSManagedObjectContext,
-      viewContext: NSManagedObjectContext
-    ) -> AsyncThrowingStream<SectionedResults<SectionIdentifier, T>, Error> {
-      AsyncThrowingStream<SectionedResults<SectionIdentifier, T>, Error> { continuation in
-        let context = UncheckedSendable(context)
+      context: Context
+    ) -> AsyncThrowingStream<_SectionedResults<SectionIdentifier, T, Context>, Error> {
+      AsyncThrowingStream<_SectionedResults<SectionIdentifier, T, Context>, Error> { continuation in
         let fetchRequest = UncheckedSendable(fetchRequest.copy() as! NSFetchRequest<T>)
-        let currentValue = LockIsolated(SectionedResults<SectionIdentifier, T>(sections: []))
+        let currentValue = LockIsolated(
+          _SectionedResults<SectionIdentifier, T, Context>(sections: []))
         let sectionIdentifier = UncheckedSendable(sectionIdentifier)
         @Sendable
         func fetchResults(updated: Set<NSManagedObjectID> = []) {
-          context.wrappedValue.perform {
+          context._managedObjectContext.wrappedValue.perform {
             do {
               try currentValue.withValue { currentValue in
                 var tokens = [NSManagedObjectID: UUID]()
@@ -516,22 +516,22 @@
                 }
                 tokens = tokens.filter { !updated.contains($0.key) }
 
-                let results = try context.wrappedValue.fetch(fetchRequest.wrappedValue)
+                let results = try context._managedObjectContext.wrappedValue.fetch(
+                  fetchRequest.wrappedValue)
 
-                currentValue = SectionedResults<SectionIdentifier, T>(
+                currentValue = _SectionedResults<SectionIdentifier, T, Context>(
                   sections:
                     results
                     .chunkedOn(keyPath: sectionIdentifier.wrappedValue)
                     .map {
-                      SectionedResults<SectionIdentifier, T>.Section(
+                      _SectionedResults<SectionIdentifier, T, Context>.Section(
                         id: $0.0,
                         fetchedObjects: .init(
                           fetchedObjects:
                             $0.1.map {
-                              Fetched(
+                              _AnyFetched(
                                 id: $0.objectID,
-                                context: context.wrappedValue,
-                                viewContext: viewContext,
+                                context: context,
                                 token: tokens[$0.objectID, default: UUID()]
                               )
                             }
@@ -549,7 +549,7 @@
         }
 
         let observer = ManagedObjectUpdatesObserver(
-          context: context.wrappedValue,
+          context: context._managedObjectContext.wrappedValue,
           objectsDidChange: fetchResults(updated:)
         )
 
@@ -565,7 +565,7 @@
       }
     }
 
-    fileprivate final class ManagedObjectUpdatesObserver: NSObject, Sendable {
+    final class ManagedObjectUpdatesObserver: NSObject, Sendable {
       let objectsDidChange: @Sendable (_ updated: Set<NSManagedObjectID>) -> Void
       init(
         context: NSManagedObjectContext,

@@ -13,8 +13,8 @@ final class CoreDataStudy: ObservableObject {
   @Dependency(\.logger["CoreDataStudy"]) var logger
   @Dependency(\.uuid) var uuid
 
-  @Published var composers: Composer.FetchedResults = .empty
-  @Published var songsByYear: Song.SectionedFetchedResults<Int64> = .empty
+  @Published var composers: Composer.MainFetchedResults = .empty
+  @Published var songsByYear: Song.MainSectionedFetchedResults<Int64> = .empty
 
   @Published var isLoadingComposers: Bool = false
   @Published var isLoadingSongs: Bool = false
@@ -78,7 +78,7 @@ final class CoreDataStudy: ObservableObject {
     )
   }
 
-  func userDidSwipeDeleteSongRow(song: Fetched<Song>) {
+  func userDidSwipeDeleteSongRow(song: MainFetched<Song>) {
     do {
       try song.withManagedObject { song in
         let context = song.managedObjectContext
@@ -202,9 +202,9 @@ final class AddSongModel: ObservableObject {
   // .observeEnvironmentAsDependency(\.dismiss, id: AddSongModel)
   @Dependency.Environment(\.dismiss, id: AddSongModel.self) var dismiss
 
-  @Published var song: Fetched<Song>
+  @Published var song: MainFetched<Song>
 
-  init(song: Fetched<Song>) {
+  init(song: MainFetched<Song>) {
     self.song = song
   }
 
