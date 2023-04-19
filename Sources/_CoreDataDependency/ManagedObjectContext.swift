@@ -5,7 +5,7 @@ public protocol ManagedObjectContext: Hashable & Sendable {
   @_spi(Internals) var _managedObjectContext: UncheckedSendable<NSManagedObjectContext> { get }
 }
 
-public struct MainActorManagedObjectContext: ManagedObjectContext {
+public struct ViewContext: ManagedObjectContext {
   @_spi(Internals) public var _managedObjectContext: UncheckedSendable<NSManagedObjectContext>
   @_spi(Internals) public init(_ managedObjectContext: NSManagedObjectContext) {
     assert(managedObjectContext.concurrencyType == .mainQueueConcurrencyType)
@@ -25,7 +25,7 @@ extension ManagedObjectContext {
     -> any ManagedObjectContext
   {
     if managedObjectContext.concurrencyType == .mainQueueConcurrencyType {
-      return MainActorManagedObjectContext(managedObjectContext)
+      return ViewContext(managedObjectContext)
     }
     return AnyManagedObjectContext(managedObjectContext)
   }

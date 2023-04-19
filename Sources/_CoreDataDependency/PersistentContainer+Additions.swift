@@ -13,11 +13,11 @@
     @MainActor
     public func withViewContext<ManagedObject>(
       perform: @MainActor (NSManagedObjectContext) throws -> ManagedObject
-    ) throws -> MainFetched<ManagedObject> {
+    ) throws -> Fetched<ManagedObject> {
       let context = self.viewContext
       let object = try perform(context)
       try context.obtainPermanentIDs(for: [object])
-      return MainFetched(
+      return Fetched(
         id: object.objectID,
         context: .init(context)
       )
@@ -27,11 +27,11 @@
     @MainActor
     public func withNewChildViewContext<ManagedObject>(
       perform: @MainActor (NSManagedObjectContext) throws -> ManagedObject
-    ) throws -> MainFetched<ManagedObject> {
+    ) throws -> Fetched<ManagedObject> {
       let context = self.newChildViewContext()
       let object = try perform(context)
       try context.obtainPermanentIDs(for: [object])
-      return MainFetched(
+      return Fetched(
         id: object.objectID,
         context: .init(context)
       )
@@ -41,14 +41,14 @@
     public func insert<ManagedObject: NSManagedObject>(
       _ type: ManagedObject.Type,
       configure: @MainActor (ManagedObject) -> Void = { _ in () }
-    ) throws -> MainFetched<ManagedObject> {
+    ) throws -> Fetched<ManagedObject> {
       let context = self.viewContext
       let object = ManagedObject(context: context)
       try context.obtainPermanentIDs(for: [object])
       configure(object)
-      return MainFetched<ManagedObject>(
+      return Fetched<ManagedObject>(
         id: object.objectID,
-        context: MainActorManagedObjectContext(context)
+        context: ViewContext(context)
       )
     }
   }
