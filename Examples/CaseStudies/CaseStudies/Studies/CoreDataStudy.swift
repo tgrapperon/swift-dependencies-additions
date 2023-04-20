@@ -233,8 +233,8 @@ struct AddSongView: View {
 
   var body: some View {
     Form {
-      TextField("Name", text: $model.song.editor.name.emptyIfNil())
-      Stepper(value: $model.song.editor.year, in: 1960 ... 1970) {
+      TextField("Name", text: $model.song.name.emptyIfNil())
+      Stepper(value: $model.song.year, in: 1960 ... 1970) {
         LabeledContent("Year", value: "\(model.song.year)")
       }
     }

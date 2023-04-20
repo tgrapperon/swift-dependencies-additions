@@ -1,28 +1,30 @@
 import CoreData
 import Dependencies
 
-public protocol ManagedObjectContext: Hashable & Sendable {
-  @_spi(Internals) var _managedObjectContext: UncheckedSendable<NSManagedObjectContext> { get }
-}
-
-public struct ViewContext: ManagedObjectContext {
-  @_spi(Internals) public var _managedObjectContext: UncheckedSendable<NSManagedObjectContext>
-  @_spi(Internals) public init(_ managedObjectContext: NSManagedObjectContext) {
+public final class ViewContext: AnyManagedObjectContext {
+  override init(_ managedObjectContext: NSManagedObjectContext) {
     assert(managedObjectContext.concurrencyType == .mainQueueConcurrencyType)
-    self._managedObjectContext = .init(wrappedValue: managedObjectContext)
+    super.init(managedObjectContext)
   }
 }
 
-public struct AnyManagedObjectContext: ManagedObjectContext {
-  @_spi(Internals) public var _managedObjectContext: UncheckedSendable<NSManagedObjectContext>
-  @_spi(Internals) public init(_ managedObjectContext: NSManagedObjectContext) {
+public class AnyManagedObjectContext: @unchecked Sendable, Hashable {
+  let _managedObjectContext: UncheckedSendable<NSManagedObjectContext>
+  init(_ managedObjectContext: NSManagedObjectContext) {
     self._managedObjectContext = .init(wrappedValue: managedObjectContext)
+  }
+
+  public static func == (lhs: AnyManagedObjectContext, rhs: AnyManagedObjectContext) -> Bool {
+    lhs._managedObjectContext == rhs._managedObjectContext
+  }
+  public func hash(into hasher: inout Hasher) {
+    _managedObjectContext.hash(into: &hasher)
   }
 }
 
-extension ManagedObjectContext {
+extension AnyManagedObjectContext {
   public static func managedObjectContext(_ managedObjectContext: NSManagedObjectContext)
-    -> any ManagedObjectContext
+    -> AnyManagedObjectContext
   {
     if managedObjectContext.concurrencyType == .mainQueueConcurrencyType {
       return ViewContext(managedObjectContext)
