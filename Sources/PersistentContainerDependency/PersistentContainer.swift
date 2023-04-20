@@ -123,41 +123,41 @@
   extension PersistentContainer {
     @MainActor
     public func withViewContext<R: Sendable>(
-      perform: @MainActor (NSManagedObjectContext) throws -> R
+      perform operation: @MainActor (NSManagedObjectContext) throws -> R
     ) rethrows -> R {
-      try perform(self.viewContext)
+      try operation(self.viewContext)
     }
 
     @MainActor
     public func withNewChildViewContext<R: Sendable>(
-      perform: @MainActor (NSManagedObjectContext) throws -> R
+      perform operation: @MainActor (NSManagedObjectContext) throws -> R
     ) rethrows -> R {
-      try perform(self.newChildViewContext())
+      try operation(self.newChildViewContext())
     }
 
     public func withNewBackgroundContext<R: Sendable>(
-      perform: (NSManagedObjectContext) throws -> R
+      perform operation: (NSManagedObjectContext) throws -> R
     ) async throws -> R {
-      try await self.withContext(self.newBackgroundContext(), perform: perform)
+      try await self.withContext(self.newBackgroundContext(), perform: operation)
     }
 
     // Rethrow's diagnostic doesn't work well, so we explicitly provide an overload for non-throwing
     // closures.
     public func withNewBackgroundContext<R: Sendable>(
-      perform: (NSManagedObjectContext) -> R
+      perform operation: (NSManagedObjectContext) -> R
     ) async -> R {
-      try! await self.withContext(self.newBackgroundContext(), perform: perform)
+      try! await self.withContext(self.newBackgroundContext(), perform: operation)
     }
 
     private func withContext<R: Sendable>(
       _ context: NSManagedObjectContext,
-      perform: (NSManagedObjectContext) throws -> R
+      perform operation: (NSManagedObjectContext) throws -> R
     ) async throws -> R {
       try await withCheckedThrowingContinuation { continuation in
         context.performAndWait {
           continuation.resume(
             with: Result {
-              try perform(context)
+              try operation(context)
             }
           )
         }
@@ -167,8 +167,8 @@
 
   extension PersistentContainer {
     /// Performs an synchronous operation on the `MainActor` context and then returns itself.
-    /// - Parameter operation: A operation to perform on the persistent container's `viewContext` that
-    /// is provided as argument.
+    /// - Parameter operation: A operation to perform on the persistent container's `viewContext`
+    /// that is provided as argument.
     ///
     /// This method can be useful to setup a persistent container for `SwiftUI` previews for example.
     /// If you need to perform business logic operations on the `viewContext`, you should preferably
