@@ -33,8 +33,9 @@ import _NotificationDependency
 
   final class NotificationDependencyTests: XCTestCase {
     func testLiveNotifications() async throws {
-      @Dependency.Notification(\.testNotificationWithBidirectionalTransform) var testNotification
-      let _ = __dummySeparator__
+      @Dependency.Notification(\.testNotificationWithBidirectionalTransform) var testNotification:
+        Notifications.StreamOf<Notifications.User, Int>
+
       await withDependencies {
         $0.context = .live
       } operation: {
@@ -65,8 +66,7 @@ import _NotificationDependency
     }
 
     //  func testNotificationCenterUnimplemented() {
-    //    @Dependency(\.notificationCenter) var notificationCenter
-    //    let _ = __dummySeparator__
+    //    @Dependency(\.notificationCenter) var notificationCenter: NotificationCenter.Dependency
     //    XCTExpectFailure {
     //      notificationCenter.post(name: notificationName)
     //    }

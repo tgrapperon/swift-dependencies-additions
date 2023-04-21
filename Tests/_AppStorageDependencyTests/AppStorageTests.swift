@@ -13,7 +13,7 @@ final class AppStorageTests: XCTestCase {
     @Dependency.AppStorage("SomeKey") var int = 42
     @Dependency.AppStorage("SomeKey") var sameInt: Int?
     @Dependency.AppStorage("RawRep") var rawRep: RawRep = .first
-    let _ = __dummySeparator__
+
     // This passes
     withDependencies {
       $0.userDefaults = .ephemeral()
@@ -34,7 +34,7 @@ final class AppStorageTests: XCTestCase {
 
     @Dependency.AppStorage("SomeKey") var int1 = 42
     @Dependency.AppStorage("SomeKey", store: userDefaults2) var int2 = 44
-    let _ = __dummySeparator__
+
     withDependencies {
       $0.userDefaults = userDefaults1
     } operation: {
@@ -103,8 +103,6 @@ final class AppStorageTests: XCTestCase {
 
       @Dependency.AppStorage("URL") var sameURL: URL?
       @Dependency.AppStorage("FileURL") var sameFileURL: URL?
-
-      let _ = __dummySeparator__
 
       withDependencies {
         $0.context = .live
