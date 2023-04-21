@@ -18,6 +18,14 @@ extension UserDefaults.Dependency {
     self._set(value, key)
   }
 
+  /// An `AsyncStream` of Boolean values for a given `key` as they change. The stream produces `nil` if
+  /// the value is removed or if no value exists for the given key.
+  /// - Parameter key: The key that references this user preference.
+  /// - Returns: An `AsyncStream` of `Bool?` values, including the initial value.
+  public func boolValues(forKey key: String) -> AsyncStream<Bool?> {
+    return self._values(key, Bool.self).map { $0 as? Bool }.eraseToStream()
+  }
+
   /// Returns the Data value associated with the specified key.
   /// - Parameter key: A key in the current user defaults store.
   /// - Returns: The Data value associated with the specified key, or `nil` if there is no value
@@ -33,6 +41,14 @@ extension UserDefaults.Dependency {
   ///   - key: The key with which to associate the value.
   public func set(_ value: Data?, forKey key: String) {
     self._set(value, key)
+  }
+
+  /// An `AsyncStream` of Data values for a given `key` as they change. The stream produces `nil` if
+  /// the value is removed or if no value exists for the given key.
+  /// - Parameter key: The key that references this user preference.
+  /// - Returns: An `AsyncStream` of `Data?` values, including the initial value.
+  public func dataValues(forKey key: String) -> AsyncStream<Data?> {
+    self._values(key, Data.self).map { $0 as? Data }.eraseToStream()
   }
 
   /// Returns the Double value associated with the specified key.
@@ -52,6 +68,14 @@ extension UserDefaults.Dependency {
     self._set(value, key)
   }
 
+  /// An `AsyncStream` of Double values for a given `key` as they change. The stream produces `nil` if
+  /// the value is removed or if no value exists for the given key.
+  /// - Parameter key: The key that references this user preference.
+  /// - Returns: An `AsyncStream` of `Double?` values, including the initial value.
+  public func doubleValues(forKey key: String) -> AsyncStream<Double?> {
+    return self._values(key, Double.self).map { $0 as? Double }.eraseToStream()
+  }
+
   /// Returns the Int value associated with the specified key.
   /// - Parameter key: A key in the current user defaults store.
   /// - Returns: The Int value associated with the specified key, or `nil` if there is no value
@@ -67,6 +91,14 @@ extension UserDefaults.Dependency {
   ///   - key: The key with which to associate the value.
   public func set(_ value: Int?, forKey key: String) {
     self._set(value, key)
+  }
+
+  /// An `AsyncStream` of Integer values for a given `key` as they change. The stream produces `nil` if
+  /// the value is removed or if no value exists for the given key.
+  /// - Parameter key: The key that references this user preference.
+  /// - Returns: An `AsyncStream` of `Int?` values, including the initial value.
+  public func integerValues(forKey key: String) -> AsyncStream<Int?> {
+    self._values(key, Int.self).map { $0 as? Int }.eraseToStream()
   }
 
   /// Returns the String value associated with the specified key.
@@ -86,6 +118,14 @@ extension UserDefaults.Dependency {
     self._set(value, key)
   }
 
+  /// An `AsyncStream` of String values for a given `key` as they change. The stream produces `nil` if
+  /// the value is removed or if no value exists for the given key.
+  /// - Parameter key: The key that references this user preference.
+  /// - Returns: An `AsyncStream` of `String?` values, including the initial value.
+  public func stringValues(forKey key: String) -> AsyncStream<String?> {
+    self._values(key, String.self).map { $0 as? String }.eraseToStream()
+  }
+
   #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
     /// Returns the URL value associated with the specified key.
     /// - Parameter key: A key in the current user defaults store.
@@ -103,6 +143,15 @@ extension UserDefaults.Dependency {
     public func set(_ value: URL?, forKey key: String) {
       self._set(value, key)
     }
+
+    /// An `AsyncStream` of URL values for a given `key` as they change. The stream produces `nil` if
+    /// the value is removed or if no value exists for the given key.
+    /// - Parameter key: The key that references this user preference.
+    /// - Returns: An `AsyncStream` of `URL?` values, including the initial value.
+    public func urlValues(forKey key: String) -> AsyncStream<URL?> {
+      self._values(key, URL.self).map { $0 as? URL }.eraseToStream()
+    }
+
   #else
     /// Returns the URL value associated with the specified key.
     /// - Parameter key: A key in the current user defaults store.
@@ -171,6 +220,56 @@ extension UserDefaults.Dependency {
   public func set<R: RawRepresentable>(_ value: R?, forKey key: String) where R.RawValue == Int {
     self._set(value?.rawValue, key)
   }
+
+  /// An `AsyncStream` of RawRepresentable values for a given `key` as they change. The stream produces `nil` if
+  /// the value is removed or if no value exists for the given key.
+  /// - Parameter key: The key that references this user preference.
+  /// - Returns: An `AsyncStream` of `RawRepresentable?` values, including the initial value, where `RawValue` is type `String`
+  ///
+  /// to infer the generic type R, which is the raw-representable type you want to store in UserDefaults, specify it in the for loop:
+  ///
+  /// ```swift
+  /// for await newValue: YourRawRepresentableType? in userDefaults
+  ///     .rawRepresentableStringValues(forKey: "key") {
+  ///     guard let newValue else {
+  ///         return
+  ///     }
+  ///     await send(.settingsChanged(newValue))
+  /// }
+  /// ```
+  public func rawRepresentableStringValues<R: RawRepresentable>(forKey key: String)
+    -> AsyncStream<R?> where R.RawValue == String
+  {
+    return self._values(key, String.self).map { $0 as? String }.map { value in
+    guard let value else { return nil } 
+      return R.init(rawValue: value)
+    }.eraseToStream()
+  }
+
+  /// An `AsyncStream` of RawRepresentable values for a given `key` as they change. The stream produces `nil` if
+  /// the value is removed or if no value exists for the given key.
+  /// - Parameter key: The key that references this user preference.
+  /// - Returns: An `AsyncStream` of `RawRepresentable?` values, including the initial value, where `RawValue` is type `Int`
+  ///
+  /// to infer the generic type R, which is the raw-representable type you want to store in UserDefaults, specify it in the for loop:
+  ///
+  /// ```swift
+  /// for await newValue: YourRawRepresentableType? in userDefaults
+  ///     .rawRepresentableIntValues(forKey: "key") {
+  ///     guard let newValue else {
+  ///         return
+  ///     }
+  ///     await send(.settingsChanged(newValue))
+  /// }
+  /// ```
+  public func rawRepresentableIntValues<R: RawRepresentable>(forKey key: String)
+    -> AsyncStream<R?> where R.RawValue == Int
+  {
+    return self._values(key, Int.self).map { $0 as? Int }.map { value in
+    guard let value else { return nil } 
+      return R.init(rawValue: value)
+    }.eraseToStream()
+  }
 }
 
 // NS Extensions
@@ -190,5 +289,13 @@ extension UserDefaults.Dependency {
   ///   - key: The key with which to associate the value.
   public func set(_ value: Date?, forKey key: String) {
     self._set(value, key)
+  }
+
+  /// An `AsyncStream` of Date values for a given `key` as they change. The stream produces `nil` if
+  /// the value is removed or if no value exists for the given key.
+  /// - Parameter key: The key that references this user preference.
+  /// - Returns: An `AsyncStream` of `Date?` values, including the initial value.
+  public func dateValues(forKey key: String) -> AsyncStream<Date?> {
+    self._values(key, Date.self).map { $0 as? Date }.eraseToStream()
   }
 }
