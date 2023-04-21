@@ -6,8 +6,8 @@ extension ReadWriteBinding {
     file: StaticString = #file,
     fileID: StaticString = #fileID,
     line: UInt = #line
-  ) -> Self {
-    let value = LockIsolated<() -> Value>(
+  ) -> Self where Value: Sendable {
+    let value = LockIsolated<@Sendable () -> Value>(
       XCTestDynamicOverlay.unimplemented(
         description,
         file: file,
@@ -28,8 +28,8 @@ extension ReadWriteBinding {
     placeholder: @autoclosure @escaping @Sendable () -> Value,
     fileID: StaticString = #fileID,
     line: UInt = #line
-  ) -> Self {
-    let value = LockIsolated<() -> Value>(
+  ) -> Self where Value: Sendable {
+    let value = LockIsolated<@Sendable () -> Value>(
       XCTestDynamicOverlay.unimplemented(
         description,
         placeholder: placeholder(),
@@ -112,8 +112,8 @@ extension MainActorReadWriteBinding {
     file: StaticString = #file,
     fileID: StaticString = #fileID,
     line: UInt = #line
-  ) -> Self {
-    let value = LockIsolated<() -> Value>(
+  ) -> Self where Value: Sendable {
+    let value = LockIsolated<@Sendable () -> Value>(
       XCTestDynamicOverlay.unimplemented(
         description,
         file: file,
@@ -134,8 +134,8 @@ extension MainActorReadWriteBinding {
     placeholder: @autoclosure @escaping @Sendable () -> Value,
     fileID: StaticString = #fileID,
     line: UInt = #line
-  ) -> Self {
-    let value = LockIsolated<() -> Value>(
+  ) -> Self where Value: Sendable {
+    let value = LockIsolated<@Sendable () -> Value>(
       XCTestDynamicOverlay.unimplemented(
         description,
         placeholder: placeholder(),
