@@ -37,7 +37,7 @@ final class ProxiesTests: XCTestCase {
   func testFunctionProxy() {
     struct Foo: ConfigurableProxy {
       struct Implementation {
-        @FunctionProxy var value: (Int) -> String
+        @FunctionProxy var value: @Sendable (Int) -> String
       }
       var _implementation: Implementation
       func value(index: Int) -> String {
@@ -45,7 +45,7 @@ final class ProxiesTests: XCTestCase {
       }
     }
     var unimplemented = Foo(_implementation: .init(value: .unimplemented(placeholder: { _ in "" })))
-    unimplemented.$value = { "Hello! \($0)" }
+    unimplemented.$value = { @Sendable in "Hello! \($0)" }
     XCTAssertEqual("Hello! 3", unimplemented.value(index: 3))
   }
 
@@ -124,7 +124,7 @@ final class ProxiesTests: XCTestCase {
     func testUnimplementedFunctionProxy() {
       struct Foo: ConfigurableProxy {
         struct Implementation {
-          @FunctionProxy var value: (Int) -> String
+          @FunctionProxy var value: @Sendable (Int) -> String
         }
         var _implementation: Implementation
         func value(index: Int) -> String {

@@ -180,10 +180,10 @@ public struct ReadWriteBinding<Value>: Sendable {
   where Bindable.Value == Value {
     self.init(
       get: {
-        bindable.getValue()
+        bindable.get()
       },
       set: {
-        bindable.setValue($0)
+        bindable.set($0)
       }
     )
   }
@@ -367,10 +367,10 @@ public struct MainActorReadWriteBinding<Value>: Sendable {
   where Bindable.Value == Value {
     self.init(
       get: {
-        bindable.getValue()
+        bindable.get()
       },
       set: {
-        bindable.setValue($0)
+        bindable.set($0)
       }
     )
   }
@@ -489,9 +489,23 @@ public struct MainActorReadOnlyProxy<Value: Sendable>: Sendable {
 /// to control writable dependencies properties during tests and SwiftUI previews.
 //@dynamicMemberLookup
 public protocol ProxyBindable {
-  associatedtype Value: Sendable
+  associatedtype Value
+  @available(*, deprecated, message: "Implement `get()` instead")
   var getValue: @Sendable () -> Value { get }
+  @available(*, deprecated, message: "Implement `set()` instead")
   var setValue: @Sendable (Value) -> Void { get }
+
+  func get() -> Value
+  func set(_ value: Value)
+}
+
+extension ProxyBindable where Self: Sendable {
+  public var getValue: @Sendable () -> Value {
+    { self.get() }
+  }
+  public var setValue: @Sendable (Value) -> Void {
+    { self.set($0) }
+  }
 }
 
 // Removed for now until a proper way to handle the non-sendable capture is found
@@ -515,18 +529,22 @@ public protocol ProxyBindable {
 public struct AnyProxyBindable<Value: Sendable>: ProxyBindable {
   public var getValue: @Sendable () -> Value
   public var setValue: @Sendable (Value) -> Void
+  public func get() -> Value {
+    self.getValue()
+  }
+  public func set(_ value: Value) {
+    self.setValue(value)
+  }
 }
 
 extension LockIsolated: ProxyBindable {
-  public var getValue: @Sendable () -> Value {
-    { self.value }
+  public func get() -> Value where Value: Sendable {
+    self.value
   }
-
-  public var setValue: @Sendable (Value) -> Void {
-    { value in
-      self.withValue { inner in
-        inner = value
-      }
+  
+  public func set(_ value: Value) where Value: Sendable {
+    self.withValue {
+      $0 = value
     }
   }
 }
