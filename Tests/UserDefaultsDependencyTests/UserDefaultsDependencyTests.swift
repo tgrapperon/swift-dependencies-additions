@@ -19,6 +19,29 @@ final class UserDefaultsDependencyTests: XCTestCase {
     }
   }
 
+  func testEphemeralDefaultsDateValues() {
+    let ephemeral = UserDefaults.Dependency.ephemeral()
+    let date = Date(timeIntervalSince1970: 1000)
+    let dateNext = Date(timeIntervalSince1970: 2000)
+    withDependencies {
+      $0.userDefaults = ephemeral
+    } operation: {
+      self.userDefaults.set(date, forKey: "date")
+      self.userDefaults.set(dateNext, forKey: "date")
+    }
+    withDependencies {
+      $0.userDefaults = ephemeral
+    } operation: {
+      Task {
+        var receivedDates = [Date?]()
+        for await savedDate in self.userDefaults.dateValues(forKey: "date") {
+          receivedDates.append(savedDate)
+        }
+        XCTAssertEqual(receivedDates, [date, dateNext])
+      }
+    }
+  }
+
   func testLiveUserDefaultsBool() {
     let bool = true
     UserDefaults.standard.removeObject(forKey: "bool")
@@ -114,6 +137,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
     }
     UserDefaults.standard.removeObject(forKey: "string")
   }
+
   #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
     func testLiveUserDefaultsURL() {
       let url = URL(string: "https://github.com/tgrapperon/swift-dependencies-additions")
