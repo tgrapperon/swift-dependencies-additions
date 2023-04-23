@@ -12,7 +12,9 @@ A companion library to Point-Free's [`swift-dependencies`](https://github.com/po
 "Dependencies Additions" intends to extend these core dependencies, and provide coherent and testable implementations to many additional dependencies that are commonly needed when developing on Apple's platforms.
 
 The library currently proposes a few low-level dependencies to interface with:
+- `Accessibility`, on iOS and tvOS;
 - `Application`, an abstraction over `UIApplication.shared`;
+- `AssertionDependency`, to abstract `assert(…)` calls and promote them to failures when testing;
 - `BundleInfo`, an abstraction over the app's `info.plist`;
 - `Codable`, to encode/decode `Codable` types to `Data`;
 - `Compression`, to compress/decompress `Data` using the `Compression framework;
