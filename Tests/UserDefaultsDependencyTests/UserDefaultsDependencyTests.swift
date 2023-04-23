@@ -1,4 +1,5 @@
 import Dependencies
+@_spi(Internals) import DependenciesAdditionsBasics
 import UserDefaultsDependency
 import XCTest
 
@@ -16,29 +17,6 @@ final class UserDefaultsDependencyTests: XCTestCase {
       $0.userDefaults = ephemeral
     } operation: {
       XCTAssertEqual(self.userDefaults.date(forKey: "date"), date)
-    }
-  }
-
-  func testEphemeralDefaultsDateValues() {
-    let ephemeral = UserDefaults.Dependency.ephemeral()
-    let date = Date(timeIntervalSince1970: 1000)
-    let dateNext = Date(timeIntervalSince1970: 2000)
-    withDependencies {
-      $0.userDefaults = ephemeral
-    } operation: {
-      self.userDefaults.set(date, forKey: "date")
-      self.userDefaults.set(dateNext, forKey: "date")
-    }
-    withDependencies {
-      $0.userDefaults = ephemeral
-    } operation: {
-      Task {
-        var receivedDates = [Date?]()
-        for await savedDate in self.userDefaults.dateValues(forKey: "date") {
-          receivedDates.append(savedDate)
-        }
-        XCTAssertEqual(receivedDates, [date, dateNext])
-      }
     }
   }
 
@@ -211,4 +189,163 @@ final class UserDefaultsDependencyTests: XCTestCase {
     UserDefaults.standard.removeObject(forKey: "raw")
   }
 
+  func testLiveUserDefaultsIntValues() async throws {
+    UserDefaults.standard.removeObject(forKey: "int")
+    await withDependencies {
+      $0.userDefaults = .liveValue
+    } operation: {
+      await withTimeout { group in
+        group.addTask {
+          var expectations: ArraySlice<Int?> = [nil, 1, 4, 7][...]
+          for await int in self.userDefaults.integerValues(forKey: "int") {
+            XCTAssertEqual(int, expectations.first)
+            expectations = expectations.dropFirst()
+            if expectations.isEmpty { break }
+          }
+        }
+        group.addTask {
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(1, forKey: "int")
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(4, forKey: "int")
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(7, forKey: "int")
+        }
+      }
+    }
+    UserDefaults.standard.removeObject(forKey: "int")
+  }
+
+  func testLiveUserDefaultsIntValuesWithValue() async throws {
+    UserDefaults.standard.removeObject(forKey: "int")
+    await withDependencies {
+      $0.userDefaults = .liveValue
+    } operation: {
+      self.userDefaults.set(42, forKey: "int")
+      await withTimeout { group in
+        group.addTask {
+          var expectations: ArraySlice<Int?> = [42, 1, 4, 7][...]
+          for await int in self.userDefaults.integerValues(forKey: "int") {
+            XCTAssertEqual(int, expectations.first)
+            expectations = expectations.dropFirst()
+            if expectations.isEmpty { break }
+          }
+        }
+        group.addTask {
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(1, forKey: "int")
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(4, forKey: "int")
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(7, forKey: "int")
+        }
+      }
+    }
+    UserDefaults.standard.removeObject(forKey: "int")
+  }
+
+  func testLiveUserDefaultsIntValuesWithValueDeduplicated() async throws {
+    UserDefaults.standard.removeObject(forKey: "int")
+    await withDependencies {
+      $0.userDefaults = .liveValue
+    } operation: {
+      self.userDefaults.set(1, forKey: "int")
+      await withTimeout { group in
+        group.addTask {
+          var expectations: ArraySlice<Int?> = [1, 4, 7][...]
+          for await int in self.userDefaults.integerValues(forKey: "int") {
+            XCTAssertEqual(int, expectations.first)
+            expectations = expectations.dropFirst()
+            if expectations.isEmpty { break }
+          }
+        }
+        group.addTask {
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(1, forKey: "int")
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(4, forKey: "int")
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(7, forKey: "int")
+        }
+      }
+    }
+    UserDefaults.standard.removeObject(forKey: "int")
+  }
+
+  func testEphemeralUserDefaultsIntValues() async throws {
+    await withDependencies {
+      $0.userDefaults = .ephemeral()
+    } operation: {
+      await withTimeout { group in
+        group.addTask {
+          var expectations: ArraySlice<Int?> = [nil, 1, 4, 7][...]
+          for await int in self.userDefaults.integerValues(forKey: "int") {
+            XCTAssertEqual(int, expectations.first)
+            expectations = expectations.dropFirst()
+            if expectations.isEmpty { break }
+          }
+        }
+        group.addTask {
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(1, forKey: "int")
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(4, forKey: "int")
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(7, forKey: "int")
+        }
+      }
+    }
+  }
+
+  func testEphemeralUserDefaultsIntValuesWithValue() async throws {
+    await withDependencies {
+      $0.userDefaults = .ephemeral()
+    } operation: {
+      self.userDefaults.set(42, forKey: "int")
+      await withTimeout { group in
+        group.addTask {
+          var expectations: ArraySlice<Int?> = [42, 1, 4, 7][...]
+          for await int in self.userDefaults.integerValues(forKey: "int") {
+            XCTAssertEqual(int, expectations.first)
+            expectations = expectations.dropFirst()
+            if expectations.isEmpty { break }
+          }
+        }
+        group.addTask {
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(1, forKey: "int")
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(4, forKey: "int")
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(7, forKey: "int")
+        }
+      }
+    }
+  }
+
+  func testEphemeralUserDefaultsIntValuesWithValueDeduplicated() async throws {
+    await withDependencies {
+      $0.userDefaults = .ephemeral()
+    } operation: {
+      self.userDefaults.set(1, forKey: "int")
+      await withTimeout { group in
+        group.addTask {
+          var expectations: ArraySlice<Int?> = [1, 4, 7][...]
+          for await int in self.userDefaults.integerValues(forKey: "int") {
+            XCTAssertEqual(int, expectations.first)
+            expectations = expectations.dropFirst()
+            if expectations.isEmpty { break }
+          }
+        }
+        group.addTask {
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(1, forKey: "int")
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(4, forKey: "int")
+          try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
+          self.userDefaults.set(7, forKey: "int")
+        }
+      }
+    }
+  }
 }
