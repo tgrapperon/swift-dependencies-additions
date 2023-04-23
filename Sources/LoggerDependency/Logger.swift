@@ -28,7 +28,7 @@
     /// the `.unimplemented` logger.
     public static var testValue: Logger { Logger() }
     public static var previewValue: Logger { Logger() }
-    
+
     /// A `Logger` that fails when accessed while testing.
     public static var unimplemented: Logger {
       XCTFail(#"Unimplemented: @Dependency(\.logger)"#)
