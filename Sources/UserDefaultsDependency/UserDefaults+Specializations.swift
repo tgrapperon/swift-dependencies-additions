@@ -103,6 +103,7 @@ extension UserDefaults.Dependency {
     public func set(_ value: URL?, forKey key: String) {
       self._set(value, key)
     }
+
   #else
     /// Returns the URL value associated with the specified key.
     /// - Parameter key: A key in the current user defaults store.
@@ -142,7 +143,7 @@ extension UserDefaults.Dependency {
   /// is no value associated to `key`, or if `R` cannot be built from the associated value.
   public func rawRepresentable<R: RawRepresentable>(forKey key: String) -> R?
   where R.RawValue == String {
-    self.string(forKey: key).flatMap(R.init(rawValue:))
+    self.string(forKey: key).flatMap(R.init)
   }
 
   /// Sets the value of the specified default key to the specified RawRepresentable `R` value.
@@ -160,7 +161,7 @@ extension UserDefaults.Dependency {
   /// is no value associated to `key`, or if `R` cannot be built from the associated value.
   public func rawRepresentable<R: RawRepresentable>(forKey key: String) -> R?
   where R.RawValue == Int {
-    self.integer(forKey: key).flatMap(R.init(rawValue:))
+    self.integer(forKey: key).flatMap(R.init)
   }
 
   /// Sets the value of the specified default key to the specified RawRepresentable `R` value.
@@ -170,6 +171,106 @@ extension UserDefaults.Dependency {
   ///   - key: The key with which to associate the value.
   public func set<R: RawRepresentable>(_ value: R?, forKey key: String) where R.RawValue == Int {
     self._set(value?.rawValue, key)
+  }
+}
+
+extension UserDefaults.Dependency {
+  /// An `AsyncStream` of Boolean values for a given `key` as they change. The stream produces `nil`
+  /// if no value exists for the given key.
+  /// - Parameter key: A key in the current user defaults store.
+  /// - Returns: An `AsyncStream` of `Bool?` values, including the initial value.
+  public func boolValues(forKey key: String) -> AsyncStream<Bool?> {
+    self._values(key, Bool.self).map { $0 as! Bool? }.eraseToStream()
+  }
+
+  /// An `AsyncStream` of Data values for a given `key` as they change. The stream produces `nil` if
+  /// no value exists for the given key.
+  /// - Parameter key: A key in the current user defaults store.
+  /// - Returns: An `AsyncStream` of `Data?` values, including the initial value.
+  public func dataValues(forKey key: String) -> AsyncStream<Data?> {
+    self._values(key, Data.self).map { $0 as! Data? }.eraseToStream()
+  }
+
+  /// An `AsyncStream` of Double values for a given `key` as they change. The stream produces `nil`
+  /// if no value exists for the given key.
+  /// - Parameter key: A key in the current user defaults store.
+  /// - Returns: An `AsyncStream` of `Double?` values, including the initial value.
+  public func doubleValues(forKey key: String) -> AsyncStream<Double?> {
+    self._values(key, Double.self).map { $0 as! Double? }.eraseToStream()
+  }
+
+  /// An `AsyncStream` of Integer values for a given `key` as they change. The stream produces `nil`
+  /// if no value exists for the given key.
+  /// - Parameter key: A key in the current user defaults store.
+  /// - Returns: An `AsyncStream` of `Int?` values, including the initial value.
+  public func integerValues(forKey key: String) -> AsyncStream<Int?> {
+    self._values(key, Int.self).map { $0 as! Int? }.eraseToStream()
+  }
+
+  /// An `AsyncStream` of String values for a given `key` as they change. The stream produces `nil`
+  /// if no value exists for the given key.
+  /// - Parameter key: A key in the current user defaults store.
+  /// - Returns: An `AsyncStream` of `String?` values, including the initial value.
+  public func stringValues(forKey key: String) -> AsyncStream<String?> {
+    self._values(key, String.self).map { $0 as! String? }.eraseToStream()
+  }
+
+  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
+    /// An `AsyncStream` of URL values for a given `key` as they change. The stream produces `nil`
+    /// if no value exists for the given key.
+    /// - Parameter key: A key in the current user defaults store.
+    /// - Returns: An `AsyncStream` of `URL?` values, including the initial value.
+    public func urlValues(forKey key: String) -> AsyncStream<URL?> {
+      self._values(key, URL.self).map { $0 as! URL? }.eraseToStream()
+    }
+  #else
+    /// An `AsyncStream` of URL values for a given `key` as they change. The stream produces `nil`
+    /// if no value exists for the given key.
+    /// - Parameter key: A key in the current user defaults store.
+    /// - Returns: An `AsyncStream` of `URL?` values, including the initial value.
+    @available(
+      *, unavailable, message: "Observing URLs from UserDefaults is not supported on this platform."
+    )
+    public func urlValues(forKey key: String) -> AsyncStream<URL?> {
+      self._values(key, URL.self).map { $0 as! URL? }.eraseToStream()
+    }
+  #endif
+
+  /// An `AsyncStream` of `RawRepresentable<String>` values for a given `key` as they change. The
+  /// stream produces `nil` if no value exists for the given key.
+  /// - Parameters:
+  ///   - valueType: The type of `RawRepresentable` values that is produced. You can use this
+  ///   argument if the type system is unable ot infer it from the context.
+  ///   - key: A key in the current user defaults store.
+  /// - Returns: An `AsyncStream` of `RawRepresentable<String>?` values, including the initial
+  /// value.
+  public func rawRepresentableValues<R: RawRepresentable>(
+    _ valueType: R.Type = R.self,
+    forKey key: String
+  )
+    -> AsyncStream<R?> where R.RawValue == String
+  {
+    self._values(key, String.self)
+      .map { ($0 as! String?).flatMap(R.init) }
+      .eraseToStream()
+  }
+
+  /// An `AsyncStream` of `RawRepresentable<Int>` values for a given `key` as they change. The
+  /// stream produces `nil` if no value exists for the given key.
+  /// - Parameters:
+  ///   - valueType: The type of `RawRepresentable` values that is produced. You can use this
+  ///   argument if the type system is unable ot infer it from the context.
+  ///   - key: A key in the current user defaults store.
+  /// - Returns: An `AsyncStream` of `RawRepresentable<Int>?` values, including the initial value.
+  public func rawRepresentableValues<R: RawRepresentable>(
+    _ valueType: R.Type = R.self,
+    forKey key: String
+  )
+    -> AsyncStream<R?> where R.RawValue == Int
+  {
+    self._values(key, Int.self)
+      .map { ($0 as! Int?).flatMap(R.init) }
+      .eraseToStream()
   }
 }
 
@@ -190,5 +291,13 @@ extension UserDefaults.Dependency {
   ///   - key: The key with which to associate the value.
   public func set(_ value: Date?, forKey key: String) {
     self._set(value, key)
+  }
+
+  /// An `AsyncStream` of Date values for a given `key` as they change. The stream produces `nil` if
+  /// if no value exists for the given key.
+  /// - Parameter key: A key in the current user defaults store.
+  /// - Returns: An `AsyncStream` of `Date?` values, including the initial value.
+  public func dateValues(forKey key: String) -> AsyncStream<Date?> {
+    self._values(key, Date.self).map { $0 as! Date? }.eraseToStream()
   }
 }

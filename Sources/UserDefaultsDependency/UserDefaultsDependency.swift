@@ -270,22 +270,44 @@ extension UserDefaults.Dependency: TestDependencyKey {
     return UserDefaults.Dependency { key, _ in
       storage.value[key]
     } set: { value, key in
+      var valueDidChange = false
       storage.withValue {
+        valueDidChange = !_isEqual($0[key], value)
         $0[key] = value
       }
-      for continuation in continuations.value[key]?.values ?? [:].values {
-        continuation.yield(value)
+      if valueDidChange {
+        for continuation in continuations.value[key]?.values ?? [:].values {
+          continuation.yield(value)
+        }
       }
     } values: { key, _ in
       let id = UUID()
-      let stream = AsyncStream((any Sendable)?.self) { streamContinuation in
-        continuations.withValue {
-          $0[key, default: [:]][id] = streamContinuation
-        }
+      let (stream, continuation) = AsyncStream.streamWithContinuation(
+        (any Sendable)?.self,
+        bufferingPolicy: .bufferingNewest(1)
+      )
+      continuations.withValue {
+        $0[key, default: [:]][id] = continuation
       }
-      defer { continuations.value[key]?[id]?.yield(storage.value[key]) }
+      continuation.yield(storage.value[key])
       return stream
     }
+  }
+}
+
+fileprivate func _isEqual(_ lhs: (any Sendable)?, _ rhs: (any Sendable)?) -> Bool {
+  switch (lhs, rhs) {
+  case let (.some(lhs), .some(rhs)):
+    return (lhs as! any Equatable).isEqual(other: rhs)
+  case (.none, .none):
+    return type(of: lhs) == type(of: rhs)
+  case (.some, .none), (.none, .some): return false
+  }
+}
+
+extension Equatable {
+  fileprivate func isEqual(other: Any) -> Bool {
+    self == other as? Self
   }
 }
 
