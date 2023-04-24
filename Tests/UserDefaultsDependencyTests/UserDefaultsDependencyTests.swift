@@ -345,8 +345,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
       await withTimeout { group in
         group.addTask {
           var expectations: ArraySlice<Value?> = [nil, .one, .two, .one][...]
-          for await value in self.userDefaults.rawRepresentableValues(Value.self, forKey: "raw")
-          {
+          for await value in self.userDefaults.rawRepresentableValues(Value.self, forKey: "raw") {
             XCTAssertEqual(value, expectations.first)
             expectations = expectations.dropFirst()
             if expectations.isEmpty { break }
@@ -377,8 +376,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
       await withTimeout { group in
         group.addTask {
           var expectations: ArraySlice<Value?> = [nil, .one, .two, .one][...]
-          for await value in self.userDefaults.rawRepresentableValues(Value.self, forKey: "raw")
-          {
+          for await value in self.userDefaults.rawRepresentableValues(Value.self, forKey: "raw") {
             XCTAssertEqual(value, expectations.first)
             expectations = expectations.dropFirst()
             if expectations.isEmpty { break }
