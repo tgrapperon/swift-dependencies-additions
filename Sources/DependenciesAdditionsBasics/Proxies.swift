@@ -510,7 +510,7 @@ public protocol ProxyBindable {
 ///
 /// You usually obtain this type by drilling into `ProxyBindable` instance writable properties.
 ///
-/// For example, `LockIsolated(["a", "b", "c"]).count` returns an ``AnyProxyBindable<Int>``
+/// For example, `LockIsolated(["a", "b", "c"]).count` returns an ``AnyProxyBindable```<Int>`
 /// that you can bind to a writable dependency.
 public struct AnyProxyBindable<Value: Sendable>: ProxyBindable {
   public var getValue: @Sendable () -> Value

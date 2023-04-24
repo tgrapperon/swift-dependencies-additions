@@ -68,8 +68,8 @@ extension BroadcastableAsyncSequence where Self: Sendable {
     ///
     /// The assign(to:) operator manages the life cycle of the subscription, canceling the
     /// subscription automatically when the Published instance deinitializes. Because of this, the
-    /// ``NotificationStream/assign(to:)-5dfsw`` operator doesn’t return an `AnyCancellable` that
-    /// you’re responsible for like ``NotificationStream/assign(to:on:)-rllq`` does.
+    /// ``BroadcastableAsyncSequence/assign(to:)-nymd`` operator doesn’t return an `AnyCancellable`
+    /// that you’re responsible for like ``BroadcastableAsyncSequence/assign(to:on:)-41l64`` does.
     ///
     /// - Parameter published: A property marked with the @Published attribute, which receives and
     /// republishes all elements received from the upstream publisher.
@@ -98,8 +98,8 @@ extension BroadcastableAsyncSequence where Self: Sendable {
     ///
     /// The assign(to:) operator manages the life cycle of the subscription, canceling the
     /// subscription automatically when the Published instance deinitializes. Because of this, the
-    /// ``NotificationStream/assign(to:)-3sgyd`` operator doesn’t return an `AnyCancellable` that
-    /// you’re responsible for like ``NotificationStream/assign(to:on:)-fj51`` does.
+    /// ``BroadcastableAsyncSequence/assign(to:)-6rn38`` operator doesn’t return an `AnyCancellable`
+    /// that you’re responsible for like ``BroadcastableAsyncSequence/assign(to:on:)-6egqj`` does.
     ///
     /// - Parameter published: A property marked with the @Published attribute, which receives and
     /// republishes all elements received from the upstream publisher.
