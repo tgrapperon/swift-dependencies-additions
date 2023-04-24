@@ -2,13 +2,5 @@ version: 1
 builder:
   configs:
   - documentation_targets: [DependenciesAdditions]
-  - platform: ios
-    scheme: DependenciesAdditions
-  - platform: tvos
-    scheme: DependenciesAdditions
-  - platform: macos
-    scheme: DependenciesAdditions
-  - platform: watchos
-    scheme: DependenciesAdditions
-  - platform: linux
+    # custom_documentation_parameters: [--include-extended-types]  # not working yet
     scheme: DependenciesAdditions
