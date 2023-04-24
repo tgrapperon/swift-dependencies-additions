@@ -196,7 +196,7 @@ extension UserDefaults.Dependency {
   /// - Parameter key: A key in the current user defaults store.
   /// - Returns: An `AsyncStream` of `Double?` values, including the initial value.
   public func doubleValues(forKey key: String) -> AsyncStream<Double?> {
-    return self._values(key, Double.self).map { $0 as! Double? }.eraseToStream()
+    self._values(key, Double.self).map { $0 as! Double? }.eraseToStream()
   }
 
   /// An `AsyncStream` of Integer values for a given `key` as they change. The stream produces `nil`
@@ -236,27 +236,39 @@ extension UserDefaults.Dependency {
     }
   #endif
 
-  /// An `AsyncStream` of RawRepresentable values for a given `key` as they change. The stream
-  /// produces `nil` if no value exists for the given key.
-  /// - Parameter key: A key in the current user defaults store.
+  /// An `AsyncStream` of `RawRepresentable<String>` values for a given `key` as they change. The
+  /// stream produces `nil` if no value exists for the given key.
+  /// - Parameters:
+  ///   - valueType: The type of `RawRepresentable` values that is produced. You can use this
+  ///   argument if the type system is unable ot infer it from the context.
+  ///   - key: A key in the current user defaults store.
   /// - Returns: An `AsyncStream` of `RawRepresentable<String>?` values, including the initial
   /// value.
-  public func rawRepresentableStringValues<R: RawRepresentable>(forKey key: String)
+  public func rawRepresentableValues<R: RawRepresentable>(
+    _ valueType: R.Type = R.self,
+    forKey key: String
+  )
     -> AsyncStream<R?> where R.RawValue == String
   {
-    return self._values(key, String.self)
+    self._values(key, String.self)
       .map { ($0 as! String?).flatMap(R.init) }
       .eraseToStream()
   }
 
-  /// An `AsyncStream` of RawRepresentable values for a given `key` as they change. The stream
-  /// produces `nil` if no value exists for the given key.
-  /// - Parameter key: A key in the current user defaults store.
+  /// An `AsyncStream` of `RawRepresentable<Int>` values for a given `key` as they change. The
+  /// stream produces `nil` if no value exists for the given key.
+  /// - Parameters:
+  ///   - valueType: The type of `RawRepresentable` values that is produced. You can use this
+  ///   argument if the type system is unable ot infer it from the context.
+  ///   - key: A key in the current user defaults store.
   /// - Returns: An `AsyncStream` of `RawRepresentable<Int>?` values, including the initial value.
-  public func rawRepresentableIntValues<R: RawRepresentable>(forKey key: String)
+  public func rawRepresentableValues<R: RawRepresentable>(
+    _ valueType: R.Type = R.self,
+    forKey key: String
+  )
     -> AsyncStream<R?> where R.RawValue == Int
   {
-    return self._values(key, Int.self)
+    self._values(key, Int.self)
       .map { ($0 as! Int?).flatMap(R.init) }
       .eraseToStream()
   }
