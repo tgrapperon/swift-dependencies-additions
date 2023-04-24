@@ -2,6 +2,5 @@ version: 1
 builder:
   configs:
   - documentation_targets: [DependenciesAdditions]
-    custom_documentation_parameters: [--include-extended-types]
+    # custom_documentation_parameters: [--include-extended-types]  # not working yet
     scheme: DependenciesAdditions
-    platform: ios
