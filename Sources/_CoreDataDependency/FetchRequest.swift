@@ -221,6 +221,7 @@
       _ type: ManagedObject.Type,
       predicate: NSPredicate? = nil,
       sortDescriptors: [NSSortDescriptor] = [],
+      fetchLimit: Int? = nil,
       context: Context
     ) -> AsyncThrowingStream<Results<ManagedObject, Context>, Error> {
       let fetchRequest = NSFetchRequest<ManagedObject>(
@@ -232,6 +233,9 @@
           .init(key: "objectID", ascending: true)
         )
       }
+      if let fetchLimit {
+        fetchRequest.fetchLimit = fetchLimit
+      }
       return stream(
         fetchRequest: fetchRequest,
         context: context
@@ -241,12 +245,14 @@
     public func callAsFunction<ManagedObject: NSManagedObject>(
       _ type: ManagedObject.Type,
       predicate: NSPredicate? = nil,
-      sortDescriptors: [NSSortDescriptor] = []
+      sortDescriptors: [NSSortDescriptor] = [],
+      fetchLimit: Int? = nil
     ) -> AsyncThrowingStream<Results<ManagedObject, ViewContext>, Error> {
       return self.callAsFunction(
         type,
         predicate: predicate,
         sortDescriptors: sortDescriptors,
+        fetchLimit: fetchLimit,
         context: self.persistentContainer.isolated.viewContext
       )
     }
@@ -260,6 +266,7 @@
       predicate: NSPredicate? = nil,
       sortDescriptors: [NSSortDescriptor] = [],
       sectionIdentifier: KeyPath<ManagedObject, SectionIdentifier>,
+      fetchLimit: Int? = nil,
       context: Context
     ) -> AsyncThrowingStream<
       SectionedResults<SectionIdentifier, ManagedObject, Context>, Error
@@ -268,13 +275,14 @@
         entityName: String(describing: ManagedObject.self))
       fetchRequest.predicate = predicate
       fetchRequest.sortDescriptors = sortDescriptors
-
       if fetchRequest.sortDescriptors!.first?.keyPath != sectionIdentifier {
         fetchRequest.sortDescriptors?.insert(
           .init(keyPath: sectionIdentifier, ascending: true), at: 0
         )
       }
-
+      if let fetchLimit {
+        fetchRequest.fetchLimit = fetchLimit
+      }
       return stream(
         fetchRequest: fetchRequest,
         sectionIdentifier: sectionIdentifier,
@@ -289,7 +297,8 @@
       _ type: ManagedObject.Type,
       predicate: NSPredicate? = nil,
       sortDescriptors: [NSSortDescriptor] = [],
-      sectionIdentifier: KeyPath<ManagedObject, SectionIdentifier>
+      sectionIdentifier: KeyPath<ManagedObject, SectionIdentifier>,
+      fetchLimit: Int? = nil
     ) -> AsyncThrowingStream<
       SectionedResults<SectionIdentifier, ManagedObject, ViewContext>, Error
     > {
@@ -298,6 +307,7 @@
         predicate: predicate,
         sortDescriptors: sortDescriptors,
         sectionIdentifier: sectionIdentifier,
+        fetchLimit: fetchLimit,
         context: self.persistentContainer.isolated.viewContext
       )
     }
