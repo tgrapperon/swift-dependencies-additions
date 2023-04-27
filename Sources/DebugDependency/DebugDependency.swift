@@ -8,12 +8,26 @@ extension DependencyValues {
 }
 
 extension DebugDependency: DependencyKey {
-  public static var liveValue: DebugDependency { DebugDependency() }
+  public static var liveValue: DebugDependency { DebugDependency(stackDepth: { StackDepth() }) }
   public static var testValue: DebugDependency { .liveValue }
   public static var previewValue: DebugDependency { .liveValue }
+
+  public static var unimplemented: DebugDependency {
+    DebugDependency(
+      stackDepth: XCTestDynamicOverlay.unimplemented(
+        #"@Dependency(\.debug).stackDepth"#,
+        placeholder: StackDepth()
+      )
+    )
+  }
 }
 
-
-public struct DebugDependency {
-  public var stackDepth: StackDepth { .init() }
+public struct DebugDependency: Sendable {
+  
+  var _stackDepth: @Sendable () -> StackDepth
+  public var stackDepth: StackDepth { self._stackDepth() }
+  
+  init(stackDepth: @escaping @Sendable () -> StackDepth) {
+    self._stackDepth = stackDepth
+  }
 }

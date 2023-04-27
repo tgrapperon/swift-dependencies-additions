@@ -30,14 +30,12 @@ public struct StackDepth {
     self.used = used
   }
 
-  @discardableResult
   public func callAsFunction(
     label: String? = nil,
     fileID: StaticString = #fileID,
     line: UInt = #line
-  ) -> Self {
+  ) {
     self.log(label: label, fileID: fileID, line: line)
-    return self
   }
 
   func log(

@@ -3,7 +3,6 @@
 
 import PackageDescription
 
-///
 /// - `DependenciesAdditions`: All non-experimental dependencies;
 /// - `DependenciesAdditionsBasics`: Only utilities and direct extensions to `swift-dependencies`.
 ///
@@ -13,6 +12,7 @@ import PackageDescription
 /// - `CodableDependency`:             `\.encode` and `\.decode`
 /// - `CompressionDependency`:         `\.compress` and `\.decompress`
 /// - `DataDependency`:                `\.dataReader` and `\.dataWriter`
+/// - `DebugDependency`:               `\.debug`
 /// - `DeviceDependency`:              `\.device` and `\.deviceCheckDevice`
 /// - `LoggerDependency`:              `\.logger`
 /// - `NotificationCenterDependency`:  `\.notificationCenter`
@@ -420,6 +420,7 @@ func addIndividualProducts() {
     .library(name: "CodableDependency", targets: ["CodableDependency"]),
     .library(name: "CompressionDependency", targets: ["CompressionDependency"]),
     .library(name: "DataDependency", targets: ["DataDependency"]),
+    .library(name: "DebugDependency", targets: ["DebugDependency"]),
     .library(name: "DeviceDependency", targets: ["DeviceDependency"]),
     .library(name: "LoggerDependency", targets: ["LoggerDependency"]),
     .library(name: "NotificationCenterDependency", targets: ["NotificationCenterDependency"]),
