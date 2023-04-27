@@ -159,6 +159,20 @@ let package = Package(
         "_CoreDataDependency"
       ]
     ),
+    
+    .target(
+      name: "DebugDependency",
+      dependencies: [
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        "LoggerDependency",
+      ]
+    ),
+    .testTarget(
+      name: "DebugDependencyTests",
+      dependencies: [
+        "DebugDependency"
+      ]
+    ),
 
     .target(
       name: "DependenciesAdditions",
@@ -171,6 +185,7 @@ let package = Package(
         "CodableDependency",
         "CompressionDependency",
         "DataDependency",
+        "DebugDependency",
         "DependenciesAdditionsBasics",
         "DeviceDependency",
         "LoggerDependency",

@@ -22,25 +22,20 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+import Foundation
 
 @_transparent
 @usableFromInline
 @inline(__always)
 func runtimeWarn(
   _ message: @autoclosure () -> String,
-  category: String? = "Dependencies",
-  file: StaticString? = nil,
-  line: UInt? = nil
+  category: String? = "Dependencies"
 ) {
   #if DEBUG
     let message = message()
     let category = category ?? "Runtime Warning"
     if _XCTIsTesting {
-      if let file = file, let line = line {
-        XCTFail(message, file: file, line: line)
-      } else {
-        XCTFail(message)
-      }
+      XCTFail(message)
     } else {
       #if canImport(os)
         os_log(
