@@ -9,9 +9,13 @@
   final class LoggerDependencyTests: XCTestCase {
     @Dependency(\.logger) var logger
 
-    func testNotFailingTestLogger() {
-      logger.log("TestValue")
-    }
+    #if (os(iOS) || os(macOS) || os(tvOS) || os(watchOS)) && DEBUG
+      func testFailingTestLogger() {
+        XCTExpectFailure {
+          logger.log("TestValue")
+        }
+      }
+    #endif
 
     func testLoggerCategory() {
       @Dependency(\.logger["Logger.Dependency.Testing"]) var logger
