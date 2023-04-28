@@ -32,9 +32,29 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "AccessibilityDependencyTests"
+               BuildableName = "AccessibilityDependencyTests"
+               BlueprintName = "AccessibilityDependencyTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "ApplicationDependencyTests"
                BuildableName = "ApplicationDependencyTests"
                BlueprintName = "ApplicationDependencyTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "AssertionDependencyTests"
+               BuildableName = "AssertionDependencyTests"
+               BlueprintName = "AssertionDependencyTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>

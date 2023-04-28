@@ -18,6 +18,26 @@ final class ProxiesTests: XCTestCase {
     unimplemented.value = "Hello!"
     XCTAssertEqual("Hello!", unimplemented.value)
   }
+  
+  func testProxyBinding() {
+    struct Foo: ConfigurableProxy {
+      struct Implementation {
+        @ReadWriteProxy var value: String
+      }
+      var _implementation: Implementation
+      var value: String {
+        get { _implementation.value }
+        nonmutating set { _implementation.value = newValue }
+      }
+    }
+    let lockedString = LockIsolated("Hello!")
+    let foo = Foo(_implementation: .init(value: .init(.bind(bindable: lockedString))))
+    
+    XCTAssertEqual("Hello!", foo.value)
+    foo.value = "World!"
+    XCTAssertEqual("World!", foo.value)
+    XCTAssertEqual("World!", lockedString.value)
+  }
 
   func testReadOnlyProxy() {
     struct Foo: ConfigurableProxy {
@@ -37,7 +57,7 @@ final class ProxiesTests: XCTestCase {
   func testFunctionProxy() {
     struct Foo: ConfigurableProxy {
       struct Implementation {
-        @FunctionProxy var value: (Int) -> String
+        @FunctionProxy var value: @Sendable (Int) -> String
       }
       var _implementation: Implementation
       func value(index: Int) -> String {
@@ -45,7 +65,7 @@ final class ProxiesTests: XCTestCase {
       }
     }
     var unimplemented = Foo(_implementation: .init(value: .unimplemented(placeholder: { _ in "" })))
-    unimplemented.$value = { "Hello! \($0)" }
+    unimplemented.$value = { @Sendable in "Hello! \($0)" }
     XCTAssertEqual("Hello! 3", unimplemented.value(index: 3))
   }
 
@@ -124,7 +144,7 @@ final class ProxiesTests: XCTestCase {
     func testUnimplementedFunctionProxy() {
       struct Foo: ConfigurableProxy {
         struct Implementation {
-          @FunctionProxy var value: (Int) -> String
+          @FunctionProxy var value: @Sendable (Int) -> String
         }
         var _implementation: Implementation
         func value(index: Int) -> String {

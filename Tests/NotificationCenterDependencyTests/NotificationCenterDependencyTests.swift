@@ -14,8 +14,8 @@
     // TODO: Strenghten this
     @MainActor
     func testNotificationCenterStream() async throws {
-      @Dependency(\.notificationCenter) var notificationCenter
-      let _ = __dummySeparator__
+      @Dependency(\.notificationCenter) var notificationCenter: NotificationCenter.Dependency
+
       let n1 = self.notificationName1()
       let n2 = self.notificationName2()
       await withDependencies {
@@ -56,8 +56,7 @@
 
     #if DEBUG
       func testNotificationCenterFailure1() {
-        @Dependency(\.notificationCenter) var notificationCenter
-        let _ = __dummySeparator__
+        @Dependency(\.notificationCenter) var notificationCenter: NotificationCenter.Dependency
         XCTExpectFailure {
           notificationCenter.post(name: notificationName1())
         }
@@ -79,24 +78,21 @@
       }
 
       func testNotificationCenterFailure3() {
-        @Dependency(\.notificationCenter) var notificationCenter
-        let _ = __dummySeparator__
+        @Dependency(\.notificationCenter) var notificationCenter: NotificationCenter.Dependency
         XCTExpectFailure {
           notificationCenter.removeObserver(self)
         }
       }
 
       func testNotificationCenterFailure4() {
-        @Dependency(\.notificationCenter) var notificationCenter
-        let _ = __dummySeparator__
+        @Dependency(\.notificationCenter) var notificationCenter: NotificationCenter.Dependency
         XCTExpectFailure {
           _ = notificationCenter.notifications(named: notificationName1())
         }
       }
 
       func testNotificationCenterFailure5() {
-        @Dependency(\.notificationCenter) var notificationCenter
-        let _ = __dummySeparator__
+        @Dependency(\.notificationCenter) var notificationCenter: NotificationCenter.Dependency
         XCTExpectFailure {
           _ = notificationCenter.publisher(for: notificationName1())
         }

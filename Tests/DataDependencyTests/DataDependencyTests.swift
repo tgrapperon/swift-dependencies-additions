@@ -1,13 +1,13 @@
 import DataDependency
 import Dependencies
-@_spi(Internals) import DependenciesAdditionsBasics
+import DependenciesAdditionsBasics
 import XCTest
 
 final class DataDependencyTests: XCTestCase {
 
   func testEphemeralRoundTripping() throws {
-    @Dependency(\.dataProvider) var dataProvider
-    let _ = __dummySeparator__
+    @Dependency(\.dataProvider) var dataProvider: any DataProviderProtocol
+
     try withDependencies {
       $0.dataProvider = .ephemeral()
     } operation: {
