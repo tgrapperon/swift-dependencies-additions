@@ -1,6 +1,6 @@
 import Dependencies
-import Foundation
 import LoggerDependency
+import Foundation
 
 #if canImport(OSLog)
   import OSLog
