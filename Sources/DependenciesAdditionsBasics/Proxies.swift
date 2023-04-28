@@ -494,7 +494,7 @@ public protocol ProxyBindable {
   var getValue: @Sendable () -> Value { get }
   @available(*, deprecated, message: "Implement `setValueFunction()` instead")
   var setValue: @Sendable (Value) -> Void { get }
-  
+
   /// This will be renamed `getValue` in the future when the deprecated `getValue` closure will be
   /// removed.
   func getValueFunction() -> Value
@@ -545,7 +545,7 @@ extension LockIsolated: ProxyBindable {
   @_spi(Internals) public func getValueFunction() -> Value where Value: Sendable {
     self.value
   }
-  
+
   @_spi(Internals) public func setValueFunction(_ value: Value) where Value: Sendable {
     self.withValue {
       $0 = value

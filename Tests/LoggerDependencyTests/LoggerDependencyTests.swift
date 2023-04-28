@@ -1,7 +1,7 @@
 #if canImport(OSLog)
   import BundleDependency
   import Dependencies
-import DependenciesAdditionsBasics
+  import DependenciesAdditionsBasics
   import LoggerDependency
   import XCTest
   import OSLog

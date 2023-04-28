@@ -18,7 +18,7 @@ final class ProxiesTests: XCTestCase {
     unimplemented.value = "Hello!"
     XCTAssertEqual("Hello!", unimplemented.value)
   }
-  
+
   func testProxyBinding() {
     struct Foo: ConfigurableProxy {
       struct Implementation {
@@ -32,7 +32,7 @@ final class ProxiesTests: XCTestCase {
     }
     let lockedString = LockIsolated("Hello!")
     let foo = Foo(_implementation: .init(value: .init(.bind(bindable: lockedString))))
-    
+
     XCTAssertEqual("Hello!", foo.value)
     foo.value = "World!"
     XCTAssertEqual("World!", foo.value)
