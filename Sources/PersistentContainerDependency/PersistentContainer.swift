@@ -38,7 +38,13 @@
   }
 
   extension PersistentContainer {
-    /// Returns a ``PersistentContainer`` value.
+    /// Returns a ``PersistentContainer`` value corresponding to the first managed object model it
+    /// finds in the `.main` bundle.
+    public static func `default`(inMemory: Bool = false) -> PersistentContainer {
+      PersistentContainer(inMemory: inMemory)
+    }
+
+    /// Creates a ``PersistentContainer`` value.
     ///
     /// - Parameters:
     ///   - name: The name of the CoreData model, without extension. If you specify `nil` (the
@@ -48,11 +54,11 @@
     ///   without writing to disk. You typically set this flag to `true` when testing.
     ///
     /// - Returns: A ``PersistentContainer`` value
-    public static func `default`(
+    public init(
       name: String? = nil,
       bundle: Bundle = .main,
       inMemory: Bool = false
-    ) -> PersistentContainer {
+    ) {
       var name = name ?? bundle.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
       let managedObjectModel: NSManagedObjectModel
       if let url = bundle.url(forResource: name, withExtension: "momd"),
@@ -76,7 +82,8 @@
       )
 
       guard !persistentContainer.persistentStoreDescriptions.isEmpty else {
-        return .init(persistentContainer)
+        self = .init(persistentContainer)
+        return
       }
       if inMemory {
         persistentContainer.persistentStoreDescriptions.first!.url = URL(
@@ -87,7 +94,7 @@
           print("Failed to load PesistentStore: \(error)")
         }
       })
-      return .init(persistentContainer)
+      self = .init(persistentContainer)
     }
   }
 
