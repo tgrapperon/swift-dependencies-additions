@@ -180,10 +180,10 @@ public struct ReadWriteBinding<Value>: Sendable {
   where Bindable.Value == Value {
     self.init(
       get: {
-        bindable.get()
+        bindable.getValueFunction()
       },
       set: {
-        bindable.set($0)
+        bindable.setValueFunction($0)
       }
     )
   }
@@ -367,10 +367,10 @@ public struct MainActorReadWriteBinding<Value>: Sendable {
   where Bindable.Value == Value {
     self.init(
       get: {
-        bindable.get()
+        bindable.getValueFunction()
       },
       set: {
-        bindable.set($0)
+        bindable.setValueFunction($0)
       }
     )
   }
@@ -490,28 +490,32 @@ public struct MainActorReadOnlyProxy<Value: Sendable>: Sendable {
 //@dynamicMemberLookup
 public protocol ProxyBindable {
   associatedtype Value
-  @available(*, deprecated, message: "Implement `get()` instead")
+  @available(*, deprecated, message: "Implement `getValueFunction()` instead")
   var getValue: @Sendable () -> Value { get }
-  @available(*, deprecated, message: "Implement `set()` instead")
+  @available(*, deprecated, message: "Implement `setValueFunction()` instead")
   var setValue: @Sendable (Value) -> Void { get }
-
-  func get() -> Value
-  func set(_ value: Value)
+  
+  /// This will be renamed `getValue` in the future when the deprecated `getValue` closure will be
+  /// removed.
+  func getValueFunction() -> Value
+  /// This will be renamed `setValue` in the future when the deprecated `setValue` closure will be
+  /// removed.
+  func setValueFunction(_ value: Value)
 }
 
 extension ProxyBindable where Self: Sendable {
-  public var getValue: @Sendable () -> Value {
-    { self.get() }
+  @_spi(Internals) public var getValue: @Sendable () -> Value {
+    { self.getValueFunction() }
   }
-  public var setValue: @Sendable (Value) -> Void {
-    { self.set($0) }
+  @_spi(Internals) public var setValue: @Sendable (Value) -> Void {
+    { self.setValueFunction($0) }
   }
 }
 
-// Removed for now until a proper way to handle the non-sendable capture is found
+// // Removed for now until a proper way to handle the non-sendable capture is found
 //extension ProxyBindable {
 //  public subscript(dynamicMember keyPath: ReferenceWritableKeyPath<Self, Value>)
-//    -> AnyProxyBindable<Value>
+//  -> AnyProxyBindable<Value> where Value: Sendable
 //  {
 //    return AnyProxyBindable<Value>(
 //      getValue: { self[keyPath: keyPath] },
@@ -529,20 +533,20 @@ extension ProxyBindable where Self: Sendable {
 public struct AnyProxyBindable<Value: Sendable>: ProxyBindable {
   public var getValue: @Sendable () -> Value
   public var setValue: @Sendable (Value) -> Void
-  public func get() -> Value {
+  @_spi(Internals) public func getValueFunction() -> Value {
     self.getValue()
   }
-  public func set(_ value: Value) {
+  @_spi(Internals) public func setValueFunction(_ value: Value) {
     self.setValue(value)
   }
 }
 
 extension LockIsolated: ProxyBindable {
-  public func get() -> Value where Value: Sendable {
+  @_spi(Internals) public func getValueFunction() -> Value where Value: Sendable {
     self.value
   }
   
-  public func set(_ value: Value) where Value: Sendable {
+  @_spi(Internals) public func setValueFunction(_ value: Value) where Value: Sendable {
     self.withValue {
       $0 = value
     }

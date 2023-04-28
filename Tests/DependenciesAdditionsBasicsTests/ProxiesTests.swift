@@ -18,6 +18,26 @@ final class ProxiesTests: XCTestCase {
     unimplemented.value = "Hello!"
     XCTAssertEqual("Hello!", unimplemented.value)
   }
+  
+  func testProxyBinding() {
+    struct Foo: ConfigurableProxy {
+      struct Implementation {
+        @ReadWriteProxy var value: String
+      }
+      var _implementation: Implementation
+      var value: String {
+        get { _implementation.value }
+        nonmutating set { _implementation.value = newValue }
+      }
+    }
+    let lockedString = LockIsolated("Hello!")
+    let foo = Foo(_implementation: .init(value: .init(.bind(bindable: lockedString))))
+    
+    XCTAssertEqual("Hello!", foo.value)
+    foo.value = "World!"
+    XCTAssertEqual("World!", foo.value)
+    XCTAssertEqual("World!", lockedString.value)
+  }
 
   func testReadOnlyProxy() {
     struct Foo: ConfigurableProxy {
