@@ -300,6 +300,9 @@ let package = Package(
       name: "PersistentContainerDependencyTests",
       dependencies: [
         "PersistentContainerDependency"
+      ],
+      resources: [
+        .process("Model.xcdatamodeld")
       ]
     ),
 
