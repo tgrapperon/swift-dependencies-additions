@@ -36,7 +36,6 @@
       .default(inMemory: true)
     }
   }
-
   extension PersistentContainer {
     /// Returns a ``PersistentContainer`` value corresponding to the first managed object model it
     /// finds in the `.main` bundle.
@@ -50,7 +49,7 @@
     ///   - name: The name of the CoreData model, without extension. If you specify `nil` (the
     ///   default), the library will use the first CoreData model it finds in the provided `Bundle`.
     ///   - bundle: The bundle where this model is stored.
-    ///   - inMemory: A boolean flag that makes this ``PersistentContainer`` work in memory only,
+    ///   - inMemory: A boolean flag that makes this ``PersistentContainer`` work in-memory only,
     ///   without writing to disk. You typically set this flag to `true` when testing.
     ///
     /// - Returns: A ``PersistentContainer`` value
@@ -62,11 +61,11 @@
       var name = name ?? bundle.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
       let managedObjectModel: NSManagedObjectModel
       if let url = bundle.url(forResource: name, withExtension: "momd"),
-        let model = NSManagedObjectModel(contentsOf: url)
+        let model = loadManagedObjectModel(url: url)
       {
         managedObjectModel = model
       } else if let url = bundle.url(forResource: nil, withExtension: "momd"),
-        let model = NSManagedObjectModel(contentsOf: url)
+        let model = loadManagedObjectModel(url: url)
       {
         name = url.deletingPathExtension().lastPathComponent
         managedObjectModel = model
@@ -98,6 +97,20 @@
     }
   }
 
+  // Models are cached, and loading the same model twice is ambiguous, so we cache the models to
+  // return them again if possible
+  private let loadedModels = LockIsolated([URL: UncheckedSendable<NSManagedObjectModel?>]())
+  private func loadManagedObjectModel(url: URL) -> NSManagedObjectModel? {
+    if let model = loadedModels.value[url]?.wrappedValue {
+      return model
+    }
+    let model = UncheckedSendable(NSManagedObjectModel(contentsOf: url))
+    loadedModels.withValue {
+      $0[url] = model
+    }
+    return model.wrappedValue
+  }
+
   public struct PersistentContainer: Sendable {
     @_spi(Internals)
     public let _viewContext: @Sendable () -> NSManagedObjectContext
@@ -108,7 +121,7 @@
     ///
     /// - Parameters:
     ///   - persistentContainer: A `NSPersistentContainer` instance
-    ///   - inMemory: A boolean flag that makes this ``PersistentContainer`` work in memory only,
+    ///   - inMemory: A boolean flag that makes this ``PersistentContainer`` work in-memory only,
     ///   without writing to disk. You typically set this flag to `true` when testing.
     public init(
       _ persistentContainer: NSPersistentContainer,
