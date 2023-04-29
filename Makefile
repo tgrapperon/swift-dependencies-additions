@@ -7,7 +7,21 @@ PLATFORM_WATCHOS = watchOS Simulator,id=$(call udid_for,Watch)
 
 CONFIG = debug
 
-default: test
+default: test-all
+
+test-all:
+	CONFIG=debug test-library
+	CONFIG=release test-library
+
+test-library:
+	for platform in "$(PLATFORM_IOS)" "$(PLATFORM_MACOS)" "$(PLATFORM_MAC_CATALYST)" "$(PLATFORM_TVOS)" "$(PLATFORM_WATCHOS)"; do \
+		xcodebuild test \
+			-configuration $(CONFIG) \
+			-workspace DependenciesAdditions.xcworkspace \
+			-scheme DependenciesAdditions \
+			-destination platform="$$platform" || exit 1; \
+	done;
+
 
 build-all-platforms:
 	for platform in \
