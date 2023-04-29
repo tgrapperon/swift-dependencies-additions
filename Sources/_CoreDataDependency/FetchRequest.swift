@@ -40,12 +40,12 @@
     var mainActorContext: NSManagedObjectContext {
       self.context._managedObjectContext.wrappedValue
     }
-    
+
     @MainActor
     var object: ManagedObject {
       self.mainActorContext.object(with: self.id) as! ManagedObject
     }
-    
+
     @MainActor
     public subscript<Value>(dynamicMember keyPath: KeyPath<ManagedObject, Value>) -> Value {
       self.object[keyPath: keyPath]
@@ -292,76 +292,76 @@
     }
   }
 
-extension PersistentContainer.FetchRequest {
-  public func callAsFunction<
-    ManagedObject: NSManagedObject,
-    Context: AnyManagedObjectContext
-  >(
-    fetchRequest: NSFetchRequest<ManagedObject>,
-    context: Context
-  ) -> AsyncThrowingStream<Results<ManagedObject, Context>, Error> {
-    if fetchRequest.sortDescriptors!.isEmpty {
-      fetchRequest.sortDescriptors?.append(
-        .init(key: "objectID", ascending: true)
-      )
-    }
-    return stream(
-      fetchRequest: fetchRequest,
-      context: context
-    )
-  }
-
-  public func callAsFunction<ManagedObject: NSManagedObject>(
-    fetchRequest: NSFetchRequest<ManagedObject>
-  ) -> AsyncThrowingStream<Results<ManagedObject, ViewContext>, Error> {
-    return self.callAsFunction(
-      fetchRequest: fetchRequest,
-      context: self.persistentContainer.isolated.viewContext
-    )
-  }
-
-  public func callAsFunction<
-    SectionIdentifier: Hashable,
-    ManagedObject: NSManagedObject,
-    Context: AnyManagedObjectContext
-  >(
-    fetchRequest: NSFetchRequest<ManagedObject>,
-    sectionIdentifier: KeyPath<ManagedObject, SectionIdentifier>,
-    context: Context
-  ) -> AsyncThrowingStream<
-    SectionedResults<SectionIdentifier, ManagedObject, Context>, Error
-  > {
-    if fetchRequest.sortDescriptors!.first?.keyPath != sectionIdentifier {
-      fetchRequest.sortDescriptors?.insert(
-        .init(keyPath: sectionIdentifier, ascending: true), at: 0
+  extension PersistentContainer.FetchRequest {
+    public func callAsFunction<
+      ManagedObject: NSManagedObject,
+      Context: AnyManagedObjectContext
+    >(
+      fetchRequest: NSFetchRequest<ManagedObject>,
+      context: Context
+    ) -> AsyncThrowingStream<Results<ManagedObject, Context>, Error> {
+      if fetchRequest.sortDescriptors!.isEmpty {
+        fetchRequest.sortDescriptors?.append(
+          .init(key: "objectID", ascending: true)
+        )
+      }
+      return stream(
+        fetchRequest: fetchRequest,
+        context: context
       )
     }
 
-    return stream(
-      fetchRequest: fetchRequest,
-      sectionIdentifier: sectionIdentifier,
-      context: context
-    )
+    public func callAsFunction<ManagedObject: NSManagedObject>(
+      fetchRequest: NSFetchRequest<ManagedObject>
+    ) -> AsyncThrowingStream<Results<ManagedObject, ViewContext>, Error> {
+      return self.callAsFunction(
+        fetchRequest: fetchRequest,
+        context: self.persistentContainer.isolated.viewContext
+      )
+    }
+
+    public func callAsFunction<
+      SectionIdentifier: Hashable,
+      ManagedObject: NSManagedObject,
+      Context: AnyManagedObjectContext
+    >(
+      fetchRequest: NSFetchRequest<ManagedObject>,
+      sectionIdentifier: KeyPath<ManagedObject, SectionIdentifier>,
+      context: Context
+    ) -> AsyncThrowingStream<
+      SectionedResults<SectionIdentifier, ManagedObject, Context>, Error
+    > {
+      if fetchRequest.sortDescriptors!.first?.keyPath != sectionIdentifier {
+        fetchRequest.sortDescriptors?.insert(
+          .init(keyPath: sectionIdentifier, ascending: true), at: 0
+        )
+      }
+
+      return stream(
+        fetchRequest: fetchRequest,
+        sectionIdentifier: sectionIdentifier,
+        context: context
+      )
+    }
+
+    public func callAsFunction<
+      SectionIdentifier: Hashable,
+      ManagedObject: NSManagedObject
+    >(
+      fetchRequest: NSFetchRequest<ManagedObject>,
+      sectionIdentifier: KeyPath<ManagedObject, SectionIdentifier>
+    ) -> AsyncThrowingStream<
+      SectionedResults<SectionIdentifier, ManagedObject, ViewContext>, Error
+    > {
+      return self.callAsFunction(
+        fetchRequest: fetchRequest,
+        sectionIdentifier: sectionIdentifier,
+        context: self.persistentContainer.isolated.viewContext
+      )
+    }
   }
 
-  public func callAsFunction<
-    SectionIdentifier: Hashable,
-    ManagedObject: NSManagedObject
-  >(
-    fetchRequest: NSFetchRequest<ManagedObject>,
-    sectionIdentifier: KeyPath<ManagedObject, SectionIdentifier>
-  ) -> AsyncThrowingStream<
-    SectionedResults<SectionIdentifier, ManagedObject, ViewContext>, Error
-  > {
-    return self.callAsFunction(
-      fetchRequest: fetchRequest,
-      sectionIdentifier: sectionIdentifier,
-      context: self.persistentContainer.isolated.viewContext
-    )
-  }
-}
-
-  extension AsyncThrowingStream {
+  extension AsyncSequence {
     public var first: Element? {
       get async throws {
         var iterator = makeAsyncIterator()
