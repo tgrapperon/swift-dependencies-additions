@@ -97,8 +97,9 @@
     }
   }
 
-  // Models are cached, and loading the same model twice is ambiguous, so we cache the models to
-  // return them again if possible
+  // Managed object models are cached, and loading the same model twice is ambiguous, so we keep a
+  // trace of the models we loaded to return them again if possible. This is especially true when
+  // testing.
   private let loadedModels = LockIsolated([URL: UncheckedSendable<NSManagedObjectModel?>]())
   private func loadManagedObjectModel(url: URL) -> NSManagedObjectModel? {
     if let model = loadedModels.value[url]?.wrappedValue {
