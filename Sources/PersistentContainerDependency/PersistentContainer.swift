@@ -36,21 +36,53 @@
       .default(inMemory: true)
     }
   }
-
   extension PersistentContainer {
+    /// Returns a ``PersistentContainer`` value corresponding to the first managed object model it
+    /// finds in the `.main` bundle.
     public static func `default`(inMemory: Bool = false) -> PersistentContainer {
-      var name = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
-      if Bundle.main.url(forResource: name, withExtension: "momd") == nil {
-        name =
-          Bundle.main.url(forResource: nil, withExtension: "momd")?
-          .deletingPathExtension()
-          .lastPathComponent
-          ?? "Model"
+      PersistentContainer(inMemory: inMemory)
+    }
+
+    /// Creates a ``PersistentContainer`` value.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the CoreData model, without extension. If you specify `nil` (the
+    ///   default), the library will use the first CoreData model it finds in the provided `Bundle`.
+    ///   - bundle: The bundle where this model is stored.
+    ///   - inMemory: A boolean flag that makes this ``PersistentContainer`` work in-memory only,
+    ///   without writing to disk. You typically set this flag to `true` when testing.
+    ///
+    /// - Returns: A ``PersistentContainer`` value
+    public init(
+      name: String? = nil,
+      bundle: Bundle = .main,
+      inMemory: Bool = false
+    ) {
+      var name = name ?? bundle.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
+      let managedObjectModel: NSManagedObjectModel
+      if let url = bundle.url(forResource: name, withExtension: "momd"),
+        let model = loadManagedObjectModel(url: url)
+      {
+        managedObjectModel = model
+      } else if let url = bundle.url(forResource: nil, withExtension: "momd"),
+        let model = loadManagedObjectModel(url: url)
+      {
+        name = url.deletingPathExtension().lastPathComponent
+        managedObjectModel = model
+      } else {
+        fatalError(
+          "Unable to find a suitable CoreData model named \"\(name)\" in the specified Bundle."
+        )
       }
 
-      let persistentContainer = NSPersistentContainer(name: name)
+      let persistentContainer = NSPersistentContainer(
+        name: name,
+        managedObjectModel: managedObjectModel
+      )
+
       guard !persistentContainer.persistentStoreDescriptions.isEmpty else {
-        return .init(persistentContainer)
+        self = .init(persistentContainer)
+        return
       }
       if inMemory {
         persistentContainer.persistentStoreDescriptions.first!.url = URL(
@@ -61,8 +93,23 @@
           print("Failed to load PesistentStore: \(error)")
         }
       })
-      return .init(persistentContainer)
+      self = .init(persistentContainer)
     }
+  }
+
+  // Managed object models are cached, and loading the same model twice is ambiguous, so we keep a
+  // trace of the models we loaded to return them again if possible. This is especially true when
+  // testing.
+  private let loadedModels = LockIsolated([URL: UncheckedSendable<NSManagedObjectModel?>]())
+  private func loadManagedObjectModel(url: URL) -> NSManagedObjectModel? {
+    if let model = loadedModels.value[url]?.wrappedValue {
+      return model
+    }
+    let model = UncheckedSendable(NSManagedObjectModel(contentsOf: url))
+    loadedModels.withValue {
+      $0[url] = model
+    }
+    return model.wrappedValue
   }
 
   public struct PersistentContainer: Sendable {
@@ -71,7 +118,20 @@
     private let _newChildViewContext: @Sendable () -> NSManagedObjectContext
     private let _newBackgroundContext: @Sendable () -> NSManagedObjectContext
 
-    public init(_ persistentContainer: NSPersistentContainer) {
+    /// Creates a ``PersistentContainer`` value from a `NSPersistentContainer` instance
+    ///
+    /// - Parameters:
+    ///   - persistentContainer: A `NSPersistentContainer` instance
+    ///   - inMemory: A boolean flag that makes this ``PersistentContainer`` work in-memory only,
+    ///   without writing to disk. You typically set this flag to `true` when testing.
+    public init(
+      _ persistentContainer: NSPersistentContainer,
+      inMemory: Bool = false
+    ) {
+      if inMemory {
+        persistentContainer.persistentStoreDescriptions.first!.url = URL(
+          fileURLWithPath: "/dev/null")
+      }
       let persistentContainer = UncheckedSendable(persistentContainer)
       let isViewContextConfigured = LockIsolated(false)
 
