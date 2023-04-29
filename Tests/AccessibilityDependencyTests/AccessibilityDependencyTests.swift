@@ -190,12 +190,14 @@
       }
     #endif
 
+    @MainActor
     func testConvertToScreenCoordinatesUsingCGRect() {
       XCTExpectFailure {
         let _ = accessibility.convertToScreenCoordinates(CGRect.zero, in: .init())
       }
     }
 
+    @MainActor
     func testConvertToScreenCoordinatesUsingUIBezierPath() {
       XCTExpectFailure {
         let _ = accessibility.convertToScreenCoordinates(UIBezierPath.init(), in: .init())
@@ -211,7 +213,7 @@
     func testPost() {
       XCTExpectFailure {
         let _ = accessibility.post(
-          notification: UIAccessibility.Notification.announcement,
+          notification: UIAccessibility.Notification(rawValue: 0),
           argument: nil
         )
       }

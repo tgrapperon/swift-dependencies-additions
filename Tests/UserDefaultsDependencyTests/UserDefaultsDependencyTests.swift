@@ -4,153 +4,163 @@ import UserDefaultsDependency
 import XCTest
 
 final class UserDefaultsDependencyTests: XCTestCase {
-  @Dependency(\.userDefaults) var userDefaults
+  
   func testEphemeralDefaultsDate() {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     let ephemeral = UserDefaults.Dependency.ephemeral()
     let date = Date(timeIntervalSince1970: 1000)
     withDependencies {
       $0.userDefaults = ephemeral
     } operation: {
-      self.userDefaults.set(date, forKey: "date")
+      userDefaults.set(date, forKey: "date")
     }
     withDependencies {
       $0.userDefaults = ephemeral
     } operation: {
-      XCTAssertEqual(self.userDefaults.date(forKey: "date"), date)
+      XCTAssertEqual(userDefaults.date(forKey: "date"), date)
     }
   }
 
   func testLiveUserDefaultsBool() {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     let bool = true
     UserDefaults.standard.removeObject(forKey: "bool")
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(bool, forKey: "bool")
+      userDefaults.set(bool, forKey: "bool")
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.bool(forKey: "bool"), bool)
+      XCTAssertEqual(userDefaults.bool(forKey: "bool"), bool)
     }
     UserDefaults.standard.removeObject(forKey: "bool")
   }
 
   func testLiveUserDefaultsData() {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     let data = "123".data(using: .utf8)!
     UserDefaults.standard.removeObject(forKey: "data")
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(data, forKey: "data")
+      userDefaults.set(data, forKey: "data")
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.data(forKey: "data"), data)
+      XCTAssertEqual(userDefaults.data(forKey: "data"), data)
     }
     UserDefaults.standard.removeObject(forKey: "data")
   }
 
   func testLiveUserDefaultsDate() {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     let date = Date(timeIntervalSince1970: 1000)
     UserDefaults.standard.removeObject(forKey: "date")
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(date, forKey: "date")
+      userDefaults.set(date, forKey: "date")
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.date(forKey: "date"), date)
+      XCTAssertEqual(userDefaults.date(forKey: "date"), date)
     }
     UserDefaults.standard.removeObject(forKey: "date")
   }
 
   func testLiveUserDefaultsDouble() {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     let double = 123.4
     UserDefaults.standard.removeObject(forKey: "double")
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(double, forKey: "double")
+      userDefaults.set(double, forKey: "double")
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.double(forKey: "double"), double)
+      XCTAssertEqual(userDefaults.double(forKey: "double"), double)
     }
     UserDefaults.standard.removeObject(forKey: "double")
   }
 
   func testLiveUserDefaultsInt() {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     let int = 123
     UserDefaults.standard.removeObject(forKey: "int")
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(int, forKey: "int")
+      userDefaults.set(int, forKey: "int")
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.integer(forKey: "int"), int)
+      XCTAssertEqual(userDefaults.integer(forKey: "int"), int)
     }
     UserDefaults.standard.removeObject(forKey: "int")
   }
 
   func testLiveUserDefaultsString() {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     let string = "Hello!"
     UserDefaults.standard.removeObject(forKey: "string")
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(string, forKey: "string")
+      userDefaults.set(string, forKey: "string")
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.string(forKey: "string"), string)
+      XCTAssertEqual(userDefaults.string(forKey: "string"), string)
     }
     UserDefaults.standard.removeObject(forKey: "string")
   }
 
   #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
     func testLiveUserDefaultsURL() {
+      @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
       let url = URL(string: "https://github.com/tgrapperon/swift-dependencies-additions")
       UserDefaults.standard.removeObject(forKey: "url")
       withDependencies {
         $0.userDefaults = .standard
       } operation: {
-        self.userDefaults.set(url, forKey: "url")
+        userDefaults.set(url, forKey: "url")
       }
       withDependencies {
         $0.userDefaults = .standard
       } operation: {
-        XCTAssertEqual(self.userDefaults.url(forKey: "url"), url)
+        XCTAssertEqual(userDefaults.url(forKey: "url"), url)
       }
       UserDefaults.standard.removeObject(forKey: "url")
     }
 
     func testLiveUserDefaultsFileURL() {
+      @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
       let url = FileManager.default.temporaryDirectory.appendingPathComponent("Tests")
       UserDefaults.standard.removeObject(forKey: "url")
       withDependencies {
         $0.userDefaults = .standard
       } operation: {
-        self.userDefaults.set(url, forKey: "url")
+        userDefaults.set(url, forKey: "url")
       }
       withDependencies {
         $0.userDefaults = .standard
       } operation: {
-        XCTAssertEqual(self.userDefaults.url(forKey: "url"), url)
+        XCTAssertEqual(userDefaults.url(forKey: "url"), url)
       }
       UserDefaults.standard.removeObject(forKey: "url")
     }
   #endif
 
   func testLiveUserDefaultsStringRawRepresentable() {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     enum Value: String {
       case one
       case two
@@ -160,17 +170,18 @@ final class UserDefaultsDependencyTests: XCTestCase {
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(raw, forKey: "raw")
+      userDefaults.set(raw, forKey: "raw")
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.rawRepresentable(forKey: "raw"), raw)
+      XCTAssertEqual(userDefaults.rawRepresentable(forKey: "raw"), raw)
     }
     UserDefaults.standard.removeObject(forKey: "raw")
   }
 
   func testLiveUserDefaultsIntRawRepresentable() {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     enum Value: Int {
       case one
       case two
@@ -180,17 +191,18 @@ final class UserDefaultsDependencyTests: XCTestCase {
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      self.userDefaults.set(raw, forKey: "raw")
+      userDefaults.set(raw, forKey: "raw")
     }
     withDependencies {
       $0.userDefaults = .standard
     } operation: {
-      XCTAssertEqual(self.userDefaults.rawRepresentable(forKey: "raw"), raw)
+      XCTAssertEqual(userDefaults.rawRepresentable(forKey: "raw"), raw)
     }
     UserDefaults.standard.removeObject(forKey: "raw")
   }
 
   func testLiveUserDefaultsBoolValues() async throws {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     UserDefaults.standard.removeObject(forKey: "bool")
     await withDependencies {
       $0.userDefaults = .liveValue
@@ -198,7 +210,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
       await withTimeout { group in
         group.addTask {
           var expectations: ArraySlice<Bool?> = [nil, true, nil, false][...]
-          for await bool in self.userDefaults.boolValues(forKey: "bool") {
+          for await bool in userDefaults.boolValues(forKey: "bool") {
             XCTAssertEqual(bool, expectations.first)
             expectations = expectations.dropFirst()
             if expectations.isEmpty { break }
@@ -206,11 +218,11 @@ final class UserDefaultsDependencyTests: XCTestCase {
         }
         group.addTask {
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(true, forKey: "bool")
+          userDefaults.set(true, forKey: "bool")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(Bool?.none, forKey: "bool")
+          userDefaults.set(Bool?.none, forKey: "bool")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(false, forKey: "bool")
+          userDefaults.set(false, forKey: "bool")
         }
       }
     }
@@ -218,6 +230,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
   }
 
   func testLiveUserDefaultsDataValues() async throws {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     UserDefaults.standard.removeObject(forKey: "data")
     let d1 = "1".data(using: .utf8)!
     let d2 = "2".data(using: .utf8)!
@@ -228,7 +241,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
       await withTimeout { group in
         group.addTask {
           var expectations: ArraySlice<Data?> = [nil, d1, d2, d3][...]
-          for await data in self.userDefaults.dataValues(forKey: "data") {
+          for await data in userDefaults.dataValues(forKey: "data") {
             XCTAssertEqual(data, expectations.first)
             expectations = expectations.dropFirst()
             if expectations.isEmpty { break }
@@ -236,11 +249,11 @@ final class UserDefaultsDependencyTests: XCTestCase {
         }
         group.addTask {
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(d1, forKey: "data")
+          userDefaults.set(d1, forKey: "data")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(d2, forKey: "data")
+          userDefaults.set(d2, forKey: "data")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(d3, forKey: "data")
+          userDefaults.set(d3, forKey: "data")
         }
       }
     }
@@ -248,6 +261,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
   }
 
   func testLiveUserDefaultsDoubleValues() async throws {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     UserDefaults.standard.removeObject(forKey: "double")
     await withDependencies {
       $0.userDefaults = .liveValue
@@ -255,7 +269,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
       await withTimeout { group in
         group.addTask {
           var expectations: ArraySlice<Double?> = [nil, 1.0, 4.0, 7.0][...]
-          for await double in self.userDefaults.doubleValues(forKey: "double") {
+          for await double in userDefaults.doubleValues(forKey: "double") {
             XCTAssertEqual(double, expectations.first)
             expectations = expectations.dropFirst()
             if expectations.isEmpty { break }
@@ -263,11 +277,11 @@ final class UserDefaultsDependencyTests: XCTestCase {
         }
         group.addTask {
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(1.0, forKey: "double")
+          userDefaults.set(1.0, forKey: "double")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(4.0, forKey: "double")
+          userDefaults.set(4.0, forKey: "double")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(7.0, forKey: "double")
+          userDefaults.set(7.0, forKey: "double")
         }
       }
     }
@@ -275,6 +289,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
   }
 
   func testLiveUserDefaultsStringValues() async throws {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     UserDefaults.standard.removeObject(forKey: "string")
     await withDependencies {
       $0.userDefaults = .liveValue
@@ -282,7 +297,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
       await withTimeout { group in
         group.addTask {
           var expectations: ArraySlice<String?> = [nil, "a", "b", "c"][...]
-          for await string in self.userDefaults.stringValues(forKey: "string") {
+          for await string in userDefaults.stringValues(forKey: "string") {
             XCTAssertEqual(string, expectations.first)
             expectations = expectations.dropFirst()
             if expectations.isEmpty { break }
@@ -290,11 +305,11 @@ final class UserDefaultsDependencyTests: XCTestCase {
         }
         group.addTask {
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set("a", forKey: "string")
+          userDefaults.set("a", forKey: "string")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set("b", forKey: "string")
+          userDefaults.set("b", forKey: "string")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set("c", forKey: "string")
+          userDefaults.set("c", forKey: "string")
         }
       }
     }
@@ -303,6 +318,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
 
   #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
     func testLiveUserDefaultsURLValues() async throws {
+      @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
       UserDefaults.standard.removeObject(forKey: "url")
       let url1 = URL(string: "www.github.com")!
       let url2 = URL(string: "www.apple.com")!
@@ -313,7 +329,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
         await withTimeout { group in
           group.addTask {
             var expectations: ArraySlice<URL?> = [nil, url1, url2, url3][...]
-            for await url in self.userDefaults.urlValues(forKey: "url") {
+            for await url in userDefaults.urlValues(forKey: "url") {
               XCTAssertEqual(url, expectations.first)
               expectations = expectations.dropFirst()
               if expectations.isEmpty { break }
@@ -321,11 +337,11 @@ final class UserDefaultsDependencyTests: XCTestCase {
           }
           group.addTask {
             try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-            self.userDefaults.set(url1, forKey: "url")
+            userDefaults.set(url1, forKey: "url")
             try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-            self.userDefaults.set(url2, forKey: "url")
+            userDefaults.set(url2, forKey: "url")
             try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-            self.userDefaults.set(url3, forKey: "url")
+            userDefaults.set(url3, forKey: "url")
           }
         }
       }
@@ -334,6 +350,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
   #endif
 
   func testLiveUserDefaultsStringRawRepresentableValues() async throws {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     enum Value: String {
       case one
       case two
@@ -345,7 +362,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
       await withTimeout { group in
         group.addTask {
           var expectations: ArraySlice<Value?> = [nil, .one, .two, .one][...]
-          for await value in self.userDefaults.rawRepresentableValues(Value.self, forKey: "raw") {
+          for await value in userDefaults.rawRepresentableValues(Value.self, forKey: "raw") {
             XCTAssertEqual(value, expectations.first)
             expectations = expectations.dropFirst()
             if expectations.isEmpty { break }
@@ -353,11 +370,11 @@ final class UserDefaultsDependencyTests: XCTestCase {
         }
         group.addTask {
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(Value.one, forKey: "raw")
+          userDefaults.set(Value.one, forKey: "raw")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(Value.two, forKey: "raw")
+          userDefaults.set(Value.two, forKey: "raw")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(Value.one, forKey: "raw")
+          userDefaults.set(Value.one, forKey: "raw")
         }
       }
     }
@@ -365,6 +382,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
   }
 
   func testLiveUserDefaultsIntRawRepresentableValues() async throws {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     enum Value: Int {
       case one
       case two
@@ -376,7 +394,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
       await withTimeout { group in
         group.addTask {
           var expectations: ArraySlice<Value?> = [nil, .one, .two, .one][...]
-          for await value in self.userDefaults.rawRepresentableValues(Value.self, forKey: "raw") {
+          for await value in userDefaults.rawRepresentableValues(Value.self, forKey: "raw") {
             XCTAssertEqual(value, expectations.first)
             expectations = expectations.dropFirst()
             if expectations.isEmpty { break }
@@ -384,11 +402,11 @@ final class UserDefaultsDependencyTests: XCTestCase {
         }
         group.addTask {
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(Value.one, forKey: "raw")
+          userDefaults.set(Value.one, forKey: "raw")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(Value.two, forKey: "raw")
+          userDefaults.set(Value.two, forKey: "raw")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(Value.one, forKey: "raw")
+          userDefaults.set(Value.one, forKey: "raw")
         }
       }
     }
@@ -396,6 +414,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
   }
 
   func testLiveUserDefaultsDateValues() async throws {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     UserDefaults.standard.removeObject(forKey: "date")
     let date1 = Date(timeIntervalSince1970: 0)
     let date2 = Date(timeIntervalSince1970: 1)
@@ -406,7 +425,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
       await withTimeout { group in
         group.addTask {
           var expectations: ArraySlice<Date?> = [nil, date1, date2, date3][...]
-          for await url in self.userDefaults.dateValues(forKey: "date") {
+          for await url in userDefaults.dateValues(forKey: "date") {
             XCTAssertEqual(url, expectations.first)
             expectations = expectations.dropFirst()
             if expectations.isEmpty { break }
@@ -414,11 +433,11 @@ final class UserDefaultsDependencyTests: XCTestCase {
         }
         group.addTask {
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(date1, forKey: "date")
+          userDefaults.set(date1, forKey: "date")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(date2, forKey: "date")
+          userDefaults.set(date2, forKey: "date")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(date3, forKey: "date")
+          userDefaults.set(date3, forKey: "date")
         }
       }
     }
@@ -426,6 +445,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
   }
 
   func testLiveUserDefaultsIntValues() async throws {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     UserDefaults.standard.removeObject(forKey: "int")
     await withDependencies {
       $0.userDefaults = .liveValue
@@ -433,7 +453,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
       await withTimeout { group in
         group.addTask {
           var expectations: ArraySlice<Int?> = [nil, 1, 4, 7][...]
-          for await int in self.userDefaults.integerValues(forKey: "int") {
+          for await int in userDefaults.integerValues(forKey: "int") {
             XCTAssertEqual(int, expectations.first)
             expectations = expectations.dropFirst()
             if expectations.isEmpty { break }
@@ -441,11 +461,11 @@ final class UserDefaultsDependencyTests: XCTestCase {
         }
         group.addTask {
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(1, forKey: "int")
+          userDefaults.set(1, forKey: "int")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(4, forKey: "int")
+          userDefaults.set(4, forKey: "int")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(7, forKey: "int")
+          userDefaults.set(7, forKey: "int")
         }
       }
     }
@@ -453,15 +473,16 @@ final class UserDefaultsDependencyTests: XCTestCase {
   }
 
   func testLiveUserDefaultsIntValuesWithValue() async throws {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     UserDefaults.standard.removeObject(forKey: "int")
     await withDependencies {
       $0.userDefaults = .liveValue
     } operation: {
-      self.userDefaults.set(42, forKey: "int")
+      userDefaults.set(42, forKey: "int")
       await withTimeout { group in
         group.addTask {
           var expectations: ArraySlice<Int?> = [42, 1, 4, 7][...]
-          for await int in self.userDefaults.integerValues(forKey: "int") {
+          for await int in userDefaults.integerValues(forKey: "int") {
             XCTAssertEqual(int, expectations.first)
             expectations = expectations.dropFirst()
             if expectations.isEmpty { break }
@@ -469,11 +490,11 @@ final class UserDefaultsDependencyTests: XCTestCase {
         }
         group.addTask {
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(1, forKey: "int")
+          userDefaults.set(1, forKey: "int")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(4, forKey: "int")
+          userDefaults.set(4, forKey: "int")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(7, forKey: "int")
+          userDefaults.set(7, forKey: "int")
         }
       }
     }
@@ -481,15 +502,16 @@ final class UserDefaultsDependencyTests: XCTestCase {
   }
 
   func testLiveUserDefaultsIntValuesWithValueDeduplicated() async throws {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     UserDefaults.standard.removeObject(forKey: "int")
     await withDependencies {
       $0.userDefaults = .liveValue
     } operation: {
-      self.userDefaults.set(1, forKey: "int")
+      userDefaults.set(1, forKey: "int")
       await withTimeout { group in
         group.addTask {
           var expectations: ArraySlice<Int?> = [1, 4, 7][...]
-          for await int in self.userDefaults.integerValues(forKey: "int") {
+          for await int in userDefaults.integerValues(forKey: "int") {
             XCTAssertEqual(int, expectations.first)
             expectations = expectations.dropFirst()
             if expectations.isEmpty { break }
@@ -497,11 +519,11 @@ final class UserDefaultsDependencyTests: XCTestCase {
         }
         group.addTask {
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(1, forKey: "int")
+          userDefaults.set(1, forKey: "int")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(4, forKey: "int")
+          userDefaults.set(4, forKey: "int")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(7, forKey: "int")
+          userDefaults.set(7, forKey: "int")
         }
       }
     }
@@ -509,13 +531,14 @@ final class UserDefaultsDependencyTests: XCTestCase {
   }
 
   func testEphemeralUserDefaultsIntValues() async throws {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     await withDependencies {
       $0.userDefaults = .ephemeral()
     } operation: {
       await withTimeout { group in
         group.addTask {
           var expectations: ArraySlice<Int?> = [nil, 1, 4, 7][...]
-          for await int in self.userDefaults.integerValues(forKey: "int") {
+          for await int in userDefaults.integerValues(forKey: "int") {
             XCTAssertEqual(int, expectations.first)
             expectations = expectations.dropFirst()
             if expectations.isEmpty { break }
@@ -523,25 +546,26 @@ final class UserDefaultsDependencyTests: XCTestCase {
         }
         group.addTask {
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(1, forKey: "int")
+          userDefaults.set(1, forKey: "int")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(4, forKey: "int")
+          userDefaults.set(4, forKey: "int")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(7, forKey: "int")
+          userDefaults.set(7, forKey: "int")
         }
       }
     }
   }
 
   func testEphemeralUserDefaultsIntValuesWithValue() async throws {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     await withDependencies {
       $0.userDefaults = .ephemeral()
     } operation: {
-      self.userDefaults.set(42, forKey: "int")
+      userDefaults.set(42, forKey: "int")
       await withTimeout { group in
         group.addTask {
           var expectations: ArraySlice<Int?> = [42, 1, 4, 7][...]
-          for await int in self.userDefaults.integerValues(forKey: "int") {
+          for await int in userDefaults.integerValues(forKey: "int") {
             XCTAssertEqual(int, expectations.first)
             expectations = expectations.dropFirst()
             if expectations.isEmpty { break }
@@ -549,25 +573,26 @@ final class UserDefaultsDependencyTests: XCTestCase {
         }
         group.addTask {
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(1, forKey: "int")
+          userDefaults.set(1, forKey: "int")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(4, forKey: "int")
+          userDefaults.set(4, forKey: "int")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(7, forKey: "int")
+          userDefaults.set(7, forKey: "int")
         }
       }
     }
   }
 
   func testEphemeralUserDefaultsIntValuesWithValueDeduplicated() async throws {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     await withDependencies {
       $0.userDefaults = .ephemeral()
     } operation: {
-      self.userDefaults.set(1, forKey: "int")
+      userDefaults.set(1, forKey: "int")
       await withTimeout { group in
         group.addTask {
           var expectations: ArraySlice<Int?> = [1, 4, 7][...]
-          for await int in self.userDefaults.integerValues(forKey: "int") {
+          for await int in userDefaults.integerValues(forKey: "int") {
             XCTAssertEqual(int, expectations.first)
             expectations = expectations.dropFirst()
             if expectations.isEmpty { break }
@@ -575,11 +600,11 @@ final class UserDefaultsDependencyTests: XCTestCase {
         }
         group.addTask {
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(1, forKey: "int")
+          userDefaults.set(1, forKey: "int")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(4, forKey: "int")
+          userDefaults.set(4, forKey: "int")
           try await Task.sleep(nanoseconds: NSEC_PER_MSEC * 10)
-          self.userDefaults.set(7, forKey: "int")
+          userDefaults.set(7, forKey: "int")
         }
       }
     }
