@@ -7,8 +7,9 @@ import PackageDescription
 /// - `DependenciesAdditions`: All non-experimental dependencies;
 /// - `DependenciesAdditionsBasics`: Only utilities and direct extensions to `swift-dependencies`.
 ///
-/// - `ApplicationDependency`          `\.application`
-/// - `AssertionDependency`            `\.assert` and `\.assertionFailure`
+/// - `AccessibilityDependency`:       `\.accessibility`
+/// - `ApplicationDependency`:         `\.application`
+/// - `AssertionDependency`:           `\.assert` and `\.assertionFailure`
 /// - `BundleDependency`:              `\.bundleInfo`
 /// - `CodableDependency`:             `\.encode` and `\.decode`
 /// - `CompressionDependency`:         `\.compress` and `\.decompress`
