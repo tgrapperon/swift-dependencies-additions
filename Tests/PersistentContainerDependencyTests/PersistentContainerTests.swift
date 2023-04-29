@@ -10,7 +10,7 @@
     static let model: NSManagedObjectModel? = {
       let url = Bundle.module
         .url(forResource: "Model", withExtension: "momd")
-      return NSManagedObjectModel(contentsOf: url!)!
+      return url.flatMap(NSManagedObjectModel.init(contentsOf:))
     }()
 
     var newPersistentContainer: NSPersistentContainer? {
