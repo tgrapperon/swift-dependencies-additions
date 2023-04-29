@@ -4,7 +4,7 @@ import UserDefaultsDependency
 import XCTest
 
 final class UserDefaultsDependencyTests: XCTestCase {
-  
+
   func testEphemeralDefaultsDate() {
     @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     let ephemeral = UserDefaults.Dependency.ephemeral()
