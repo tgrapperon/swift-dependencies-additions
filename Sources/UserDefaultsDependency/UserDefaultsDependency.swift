@@ -1,6 +1,7 @@
 import Dependencies
-import Foundation
 @_spi(Internals) import DependenciesAdditionsBasics
+import Foundation
+
 extension DependencyValues {
   /// A dependency that exposes an ``UserDefaults.Dependency`` value that you can use to read and
   /// write to `UserDefaults`.
@@ -47,7 +48,8 @@ extension UserDefaults {
     /// - Parameter key: The key that references this user preference.
     /// - Returns: An `AsyncSequence` of `T?` values, including the initial value.
     @_spi(Internals)
-    public func values<T>(forKey key: String) -> AsyncMapSequence<AsyncStream<(any Sendable)?>, T?> {
+    public func values<T>(forKey key: String) -> AsyncMapSequence<AsyncStream<(any Sendable)?>, T?>
+    {
       self._values(key, T.self).map { $0 as? T }
     }
   }
@@ -73,49 +75,49 @@ extension UserDefaults.Dependency: DependencyKey {
       // We use KVO to also get out-of-process changes
       AsyncStream((any Sendable)?.self) { continuation in
         #if canImport(ObjectiveC)
-        final class Observer: NSObject, Sendable {
-          let key: String
-          let type: Any.Type
-          let onChange: @Sendable ((any Sendable)?) -> Void
-          init(
-            key: String,
-            type: Any.Type,
-            onChange: @escaping @Sendable ((any Sendable)?) -> Void
-          ) {
-            self.key = key
-            self.type = type
-            self.onChange = onChange
-            super.init()
+          final class Observer: NSObject, Sendable {
+            let key: String
+            let type: Any.Type
+            let onChange: @Sendable ((any Sendable)?) -> Void
+            init(
+              key: String,
+              type: Any.Type,
+              onChange: @escaping @Sendable ((any Sendable)?) -> Void
+            ) {
+              self.key = key
+              self.type = type
+              self.onChange = onChange
+              super.init()
+            }
+
+            override func observeValue(
+              forKeyPath keyPath: String?,
+              of object: Any?,
+              change: [NSKeyValueChangeKey: Any]?,
+              context: UnsafeMutableRawPointer?
+            ) {
+              self.onChange(
+                (object as! UserDefaults).getSendable(forKey: self.key, as: self.type)
+              )
+            }
           }
 
-          override func observeValue(
-            forKeyPath keyPath: String?,
-            of object: Any?,
-            change: [NSKeyValueChangeKey: Any]?,
-            context: UnsafeMutableRawPointer?
-          ) {
-            self.onChange(
-              (object as! UserDefaults).getSendable(forKey: self.key, as: self.type)
-            )
+          let object = Observer(key: key, type: type) {
+            continuation.yield($0)
           }
-        }
 
-        let object = Observer(key: key, type: type) {
-          continuation.yield($0)
-        }
-
-        userDefaults.value.addObserver(
-          object,
-          forKeyPath: key,
-          options: [.initial, .new],
-          context: nil
-        )
-        continuation.onTermination = { _ in
-          userDefaults.value.removeObserver(object, forKeyPath: key)
-        }
+          userDefaults.value.addObserver(
+            object,
+            forKeyPath: key,
+            options: [.initial, .new],
+            context: nil
+          )
+          continuation.onTermination = { _ in
+            userDefaults.value.removeObserver(object, forKeyPath: key)
+          }
         #else
-        print("AsyncStream of UserDefaults values is currently not supported on Linux")
-        continuation.finish()
+          print("AsyncStream of UserDefaults values is currently not supported on Linux")
+          continuation.finish()
         #endif
       }
     }
@@ -133,12 +135,12 @@ extension UserDefaults.Dependency: DependencyKey {
   // TODO: NSUbiquitousKeyValueStore variant?
 }
 
-private extension UserDefaults {
-  func contains(key: String) -> Bool {
+extension UserDefaults {
+  fileprivate func contains(key: String) -> Bool {
     self.object(forKey: key) != nil
   }
 
-  func getSendable(forKey key: String, as type: Any.Type) -> (any Sendable)? {
+  fileprivate func getSendable(forKey key: String, as type: Any.Type) -> (any Sendable)? {
     switch type {
     case let type where type == Bool.self, let type where type == Bool?.self:
       guard self.contains(key: key) else { return nil }
@@ -162,7 +164,7 @@ private extension UserDefaults {
     }
   }
 
-  func setSendable(_ value: (any Sendable)?, forKey key: String) {
+  fileprivate func setSendable(_ value: (any Sendable)?, forKey key: String) {
     guard let value = value else {
       self.removeObject(forKey: key)
       return
@@ -188,64 +190,64 @@ private extension UserDefaults {
   }
 }
 #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
-@available(iOS 5.0, tvOS 9.0, macOS 10.7, watchOS 9.0, *)
-private extension NSUbiquitousKeyValueStore {
-  func contains(key: String) -> Bool {
-    self.object(forKey: key) != nil
-  }
+  @available(iOS 5.0, tvOS 9.0, macOS 10.7, watchOS 9.0, *)
+  extension NSUbiquitousKeyValueStore {
+    fileprivate func contains(key: String) -> Bool {
+      self.object(forKey: key) != nil
+    }
 
-  func getSendable(forKey key: String, as type: Any.Type) -> (any Sendable)? {
-    switch type {
-    case let type where type == Bool.self, let type where type == Bool?.self:
-      guard self.contains(key: key) else { return nil }
-      return self.bool(forKey: key)
-    case let type where type == Data.self, let type where type == Data?.self:
-      return self.data(forKey: key)
-    case let type where type == Date.self, let type where type == Date?.self:
-      return self.object(forKey: key) as? Date
-    case let type where type == Double.self, let type where type == Double?.self:
-      guard self.contains(key: key) else { return nil }
-      return self.double(forKey: key)
-    case let type where type == Int.self, let type where type == Int?.self:
-      guard self.contains(key: key) else { return nil }
-      return Int(self.longLong(forKey: key))
-    case let type where type == String.self, let type where type == String?.self:
-      return self.string(forKey: key)
-    case let type where type == URL.self, let type where type == URL?.self:
-      // TODO: Improve to handle file urls
-      guard let string = self.string(forKey: key) else { return nil }
-      return URL(string: string)
-    default:
-      return nil
+    fileprivate func getSendable(forKey key: String, as type: Any.Type) -> (any Sendable)? {
+      switch type {
+      case let type where type == Bool.self, let type where type == Bool?.self:
+        guard self.contains(key: key) else { return nil }
+        return self.bool(forKey: key)
+      case let type where type == Data.self, let type where type == Data?.self:
+        return self.data(forKey: key)
+      case let type where type == Date.self, let type where type == Date?.self:
+        return self.object(forKey: key) as? Date
+      case let type where type == Double.self, let type where type == Double?.self:
+        guard self.contains(key: key) else { return nil }
+        return self.double(forKey: key)
+      case let type where type == Int.self, let type where type == Int?.self:
+        guard self.contains(key: key) else { return nil }
+        return Int(self.longLong(forKey: key))
+      case let type where type == String.self, let type where type == String?.self:
+        return self.string(forKey: key)
+      case let type where type == URL.self, let type where type == URL?.self:
+        // TODO: Improve to handle file urls
+        guard let string = self.string(forKey: key) else { return nil }
+        return URL(string: string)
+      default:
+        return nil
+      }
     }
-  }
 
-  func setSendable(_ value: (any Sendable)?, forKey key: String) {
-    guard let value = value else {
-      self.removeObject(forKey: key)
-      return
-    }
-    switch value {
-    case let value as Bool:
-      self.set(value, forKey: key)
-    case let value as Data:
-      self.set(value, forKey: key)
-    case let value as Date:
-      self.set(value, forKey: key)
-    case let value as Double:
-      self.set(value, forKey: key)
-    case let value as Int:
-      self.set(value, forKey: key)
-    case let value as String:
-      self.set(value, forKey: key)
-    case let value as URL:
-      // TODO: Improve to handle file urls
-      self.set(value.absoluteString, forKey: key)
-    default:
-      return
+    fileprivate func setSendable(_ value: (any Sendable)?, forKey key: String) {
+      guard let value = value else {
+        self.removeObject(forKey: key)
+        return
+      }
+      switch value {
+      case let value as Bool:
+        self.set(value, forKey: key)
+      case let value as Data:
+        self.set(value, forKey: key)
+      case let value as Date:
+        self.set(value, forKey: key)
+      case let value as Double:
+        self.set(value, forKey: key)
+      case let value as Int:
+        self.set(value, forKey: key)
+      case let value as String:
+        self.set(value, forKey: key)
+      case let value as URL:
+        // TODO: Improve to handle file urls
+        self.set(value.absoluteString, forKey: key)
+      default:
+        return
+      }
     }
   }
-}
 #endif
 extension UserDefaults.Dependency: TestDependencyKey {
   public static let testValue: Self = {
@@ -295,7 +297,7 @@ extension UserDefaults.Dependency: TestDependencyKey {
   }
 }
 
-fileprivate func _isEqual(_ lhs: (any Sendable)?, _ rhs: (any Sendable)?) -> Bool {
+private func _isEqual(_ lhs: (any Sendable)?, _ rhs: (any Sendable)?) -> Bool {
   switch (lhs, rhs) {
   case let (.some(lhs), .some(rhs)):
     return (lhs as! any Equatable).isEqual(other: rhs)
@@ -312,73 +314,74 @@ extension Equatable {
 }
 
 #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
-extension UserDefaults.Dependency {
-  /// An iCloud-based container of key-value pairs you use to share data among
-  /// instances of your app running on a user's connected devices.
-  @available(iOS 5.0, tvOS 9.0, macOS 10.7, watchOS 9.0, *)
-  public static var ubiquitous: UserDefaults.Dependency {
-    let store = NSUbiquitousKeyValueStore.default
-    let userDefaults = UncheckedSendable(store)
-    let subject = AsyncSharedSubject<(String, any Sendable)>()
+  extension UserDefaults.Dependency {
+    /// An iCloud-based container of key-value pairs you use to share data among
+    /// instances of your app running on a user's connected devices.
+    @available(iOS 5.0, tvOS 9.0, macOS 10.7, watchOS 9.0, *)
+    public static var ubiquitous: UserDefaults.Dependency {
+      let store = NSUbiquitousKeyValueStore.default
+      let userDefaults = UncheckedSendable(store)
+      let subject = AsyncSharedSubject<(String, any Sendable)>()
 
-    return UserDefaults.Dependency { key, type in
-      userDefaults.value.getSendable(forKey: key, as: type)
-    } set: {
-      userDefaults.value.setSendable($0, forKey: $1)
-      // NSUbiquitousKeyValueStore doesn't support KVO, so we call directly
-      // the continuation for local changes.
-      subject.yield(($1, $0))
-      userDefaults.value.synchronize()
-    } values: { key, type in
-      AsyncStream((any Sendable)?.self) { continuation in
-        final class Observer: NSObject, Sendable {
-          let key: String
-          let type: Any.Type
-          let onChange: @Sendable ((any Sendable)?) -> Void
-          init(
-            key: String,
-            type: Any.Type,
-            onChange: @escaping @Sendable ((any Sendable)?) -> Void
-          ) {
-            self.key = key
-            self.type = type
-            self.onChange = onChange
-            super.init()
-            NotificationCenter.default.addObserver(
-              self, selector: #selector(onNotification),
-              name: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
-              object: NSUbiquitousKeyValueStore.default
-            )
-          }
+      return UserDefaults.Dependency { key, type in
+        userDefaults.value.getSendable(forKey: key, as: type)
+      } set: {
+        userDefaults.value.setSendable($0, forKey: $1)
+        // NSUbiquitousKeyValueStore doesn't support KVO, so we call directly
+        // the continuation for local changes.
+        subject.yield(($1, $0))
+        userDefaults.value.synchronize()
+      } values: { key, type in
+        AsyncStream((any Sendable)?.self) { continuation in
+          final class Observer: NSObject, Sendable {
+            let key: String
+            let type: Any.Type
+            let onChange: @Sendable ((any Sendable)?) -> Void
+            init(
+              key: String,
+              type: Any.Type,
+              onChange: @escaping @Sendable ((any Sendable)?) -> Void
+            ) {
+              self.key = key
+              self.type = type
+              self.onChange = onChange
+              super.init()
+              NotificationCenter.default.addObserver(
+                self, selector: #selector(onNotification),
+                name: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
+                object: NSUbiquitousKeyValueStore.default
+              )
+            }
 
-          @objc func onNotification(_ notification: Notification) {
-            guard
-              let store = notification.object as? NSUbiquitousKeyValueStore,
-              let keys = notification.userInfo?[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String],
-              keys.contains(key)
-            else { return }
-            self.onChange(store.getSendable(forKey: self.key, as: self.type))
-          }
-        }
-
-        let object = Observer(key: key, type: type) {
-          subject.yield((key, $0))
-        }
-
-        let task = Task {
-          for await tuple in subject.stream(bufferingPolicy: .bufferingNewest(0)) {
-            if tuple.0 == key {
-              continuation.yield(tuple.1)
+            @objc func onNotification(_ notification: Notification) {
+              guard
+                let store = notification.object as? NSUbiquitousKeyValueStore,
+                let keys = notification.userInfo?[NSUbiquitousKeyValueStoreChangedKeysKey]
+                  as? [String],
+                keys.contains(key)
+              else { return }
+              self.onChange(store.getSendable(forKey: self.key, as: self.type))
             }
           }
-        }
 
-        continuation.onTermination = { [object] _ in
-          task.cancel()
-          let _ = object
+          let object = Observer(key: key, type: type) {
+            subject.yield((key, $0))
+          }
+
+          let task = Task {
+            for await tuple in subject.stream(bufferingPolicy: .bufferingNewest(0)) {
+              if tuple.0 == key {
+                continuation.yield(tuple.1)
+              }
+            }
+          }
+
+          continuation.onTermination = { [object] _ in
+            task.cancel()
+            let _ = object
+          }
         }
       }
     }
   }
-}
 #endif
