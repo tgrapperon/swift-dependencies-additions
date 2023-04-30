@@ -57,7 +57,7 @@ build-for-static-stdlib:
 build-for-library-evolution:
 	swift build \
 		-c release \
-		--target Dependencies \
+		--target DependenciesAdditions \
 		-Xswiftc -emit-module-interface \
 		-Xswiftc -enable-library-evolution
 
