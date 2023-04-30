@@ -44,7 +44,7 @@ let package = Package(
     .library(name: "_SwiftUIDependency", targets: ["_SwiftUIDependency"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "0.1.0"),
+    .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "0.4.0"),
     .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
   ],
   targets: [
