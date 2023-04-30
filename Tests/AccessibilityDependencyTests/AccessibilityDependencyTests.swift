@@ -190,33 +190,35 @@
       }
     #endif
 
-    @MainActor
-    func testConvertToScreenCoordinatesUsingCGRect() {
-      XCTExpectFailure {
-        let _ = accessibility.convertToScreenCoordinates(CGRect.zero, in: .init())
+    #if DEBUG
+      @MainActor
+      func testConvertToScreenCoordinatesUsingCGRect() {
+        XCTExpectFailure {
+          let _ = accessibility.convertToScreenCoordinates(CGRect.zero, in: .init())
+        }
       }
-    }
 
-    @MainActor
-    func testConvertToScreenCoordinatesUsingUIBezierPath() {
-      XCTExpectFailure {
-        let _ = accessibility.convertToScreenCoordinates(UIBezierPath.init(), in: .init())
+      @MainActor
+      func testConvertToScreenCoordinatesUsingUIBezierPath() {
+        XCTExpectFailure {
+          let _ = accessibility.convertToScreenCoordinates(UIBezierPath.init(), in: .init())
+        }
       }
-    }
 
-    func testFocusedElement() {
-      XCTExpectFailure {
-        let _ = accessibility.focusedElement(using: nil)
+      func testFocusedElement() {
+        XCTExpectFailure {
+          let _ = accessibility.focusedElement(using: nil)
+        }
       }
-    }
 
-    func testPost() {
-      XCTExpectFailure {
-        let _ = accessibility.post(
-          notification: UIAccessibility.Notification(rawValue: 0),
-          argument: nil
-        )
+      func testPost() {
+        XCTExpectFailure {
+          let _ = accessibility.post(
+            notification: UIAccessibility.Notification(rawValue: 0),
+            argument: nil
+          )
+        }
       }
-    }
+    #endif
   }
 #endif

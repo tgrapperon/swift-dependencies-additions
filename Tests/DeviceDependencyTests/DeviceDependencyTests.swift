@@ -14,7 +14,7 @@ import XCTest
         XCTAssertEqual(device.batteryLevel, 42)
       }
     }
-
+#if DEBUG
     @MainActor
     func testFailingTestDeviceIOS_name() {
       XCTExpectFailure {
@@ -123,7 +123,7 @@ import XCTest
         let _ = device.playInputClick()
       }
     }
-
+    #endif
   }
 #endif
 
@@ -132,6 +132,7 @@ import XCTest
   final class DeviceDependencyTests: XCTestCase {
     @Dependency(\.device) var device
 
+#if DEBUG
     @MainActor
     func testFailingTestDeviceWatchOS_name() {
       XCTExpectFailure {
@@ -252,6 +253,6 @@ import XCTest
         let _ = device.enableWaterLock()
       }
     }
-
+    #endif
   }
 #endif
