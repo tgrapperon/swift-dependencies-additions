@@ -58,7 +58,6 @@ build-for-library-evolution:
 	swift build \
 		-c release \
 		--target DependenciesAdditions \
-		-Xswiftc -emit-module-interface \
 		-Xswiftc -enable-library-evolution
 
 build-for-static-stdlib-docker:
