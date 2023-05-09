@@ -1,5 +1,6 @@
 import Dependencies
 import Foundation
+import XCTestDynamicOverlay
 
 extension Path: DependencyKey {
   /// An empty ``Path``

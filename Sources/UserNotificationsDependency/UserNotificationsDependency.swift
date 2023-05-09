@@ -2,6 +2,7 @@
   import Dependencies
   @_spi(Internals) import DependenciesAdditionsBasics
   @preconcurrency import UserNotifications
+  import XCTestDynamicOverlay
 
   extension DependencyValues {
     /// An abstraction of `UNUserNotificationCenter`, the central object for managing
