@@ -60,17 +60,16 @@
       public init(
         @_inheritActorContext post: @escaping @Sendable (
           NSNotification.Name, AnyObject?, [AnyHashable: Any]?, StaticString, UInt
-        ) -> Void,
+        ) -> Void = { _, _, _, _, _ in },
         @_inheritActorContext addObserver: @escaping @Sendable (
           AnyObject, Selector, NSNotification.Name?, AnyObject?, StaticString, UInt
-        ) -> Void,
+        ) -> Void = { _, _, _, _, _, _ in },
         @_inheritActorContext removeObserver: @escaping @Sendable (
           AnyObject, NSNotification.Name?, AnyObject?, StaticString, UInt
-        ) -> Void,
+        ) -> Void = { _, _, _, _, _ in },
         @_inheritActorContext publisher: @escaping @Sendable (
           Notification.Name, AnyObject?, StaticString, UInt
-        ) ->
-          AnyPublisher<Notification, Never>
+        ) -> AnyPublisher<Notification, Never> = { _, _, _, _ in Empty().eraseToAnyPublisher() }
       ) {
         self._post = post
         self._addObserver = addObserver
