@@ -57,7 +57,7 @@
           Notification, Never
         >
 
-      init(
+      public init(
         @_inheritActorContext post: @escaping @Sendable (
           NSNotification.Name, AnyObject?, [AnyHashable: Any]?, StaticString, UInt
         ) -> Void,
