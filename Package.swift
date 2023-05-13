@@ -204,7 +204,7 @@ let package = Package(
       name: "DependenciesAdditionsBasicsTests",
       dependencies: [
         .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
-        "DependenciesAdditionsBasics"
+        "DependenciesAdditionsBasics",
       ]
     ),
 
