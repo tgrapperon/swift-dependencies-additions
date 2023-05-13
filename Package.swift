@@ -46,6 +46,7 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "0.4.0"),
     .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
+    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "0.8.0"),
   ],
   targets: [
 
@@ -53,6 +54,7 @@ let package = Package(
       name: "AccessibilityDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
         "DependenciesAdditionsBasics",
       ]
     ),
@@ -66,6 +68,7 @@ let package = Package(
     .target(
       name: "ApplicationDependency",
       dependencies: [
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
         .product(name: "Dependencies", package: "swift-dependencies"),
         "DependenciesAdditionsBasics",
       ]
@@ -81,6 +84,7 @@ let package = Package(
       name: "_AppStorageDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
         "DependenciesAdditionsBasics",
         "UserDefaultsDependency",
       ]
@@ -95,7 +99,8 @@ let package = Package(
     .target(
       name: "AssertionDependency",
       dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies")
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
     .testTarget(
@@ -109,6 +114,7 @@ let package = Package(
       name: "BundleDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
         "DependenciesAdditionsBasics",
       ]
     ),
@@ -122,7 +128,8 @@ let package = Package(
     .target(
       name: "CodableDependency",
       dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies")
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
     .testTarget(
@@ -135,7 +142,8 @@ let package = Package(
     .target(
       name: "CompressionDependency",
       dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies")
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
     .testTarget(
@@ -187,13 +195,15 @@ let package = Package(
     .target(
       name: "DependenciesAdditionsBasics",
       dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies")
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
 
     .testTarget(
       name: "DependenciesAdditionsBasicsTests",
       dependencies: [
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
         "DependenciesAdditionsBasics"
       ]
     ),
@@ -201,7 +211,8 @@ let package = Package(
     .target(
       name: "DataDependency",
       dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies")
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
 
@@ -217,6 +228,7 @@ let package = Package(
       name: "DeviceDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
         "DependenciesAdditionsBasics",
       ]
     ),
@@ -232,6 +244,7 @@ let package = Package(
       name: "LoggerDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
         "BundleDependency",
       ]
     ),
@@ -264,7 +277,8 @@ let package = Package(
     .target(
       name: "NotificationCenterDependency",
       dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies")
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
 
@@ -279,7 +293,8 @@ let package = Package(
     .target(
       name: "PathDependency",
       dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies")
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
       ]
     ),
 
@@ -311,6 +326,7 @@ let package = Package(
       name: "ProcessInfoDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
         "DependenciesAdditionsBasics",
       ]
     ),
@@ -356,6 +372,7 @@ let package = Package(
       name: "UserNotificationsDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
         "DependenciesAdditionsBasics",
       ]
     ),

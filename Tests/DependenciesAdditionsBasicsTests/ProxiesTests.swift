@@ -1,6 +1,7 @@
 import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
 import XCTest
+import XCTestDynamicOverlay
 
 final class ProxiesTests: XCTestCase {
   func testReadWriteProxy() {

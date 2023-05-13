@@ -3,6 +3,7 @@
   @_spi(Internals) import DependenciesAdditionsBasics
   import Foundation
   import UIKit
+  import XCTestDynamicOverlay
 
   extension Accessibility: DependencyKey {
     public static var liveValue: Accessibility { .system }
