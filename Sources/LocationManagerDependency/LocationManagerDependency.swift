@@ -255,7 +255,11 @@
     }
 
     /// The current authorization status for the app.
-    @available(iOS 14, macOS 11, macCatalyst 14, tvOS 14, watchOS 7, *)
+    /// - Remark: In iOS 4.2–14.0, iPadOS 4.2–14.0, macOS 10.7–11.0,
+    ///   Mac Catalyst 13.1–14.0, tvOS 9.0–14.0 and watchOS 2.0–7.0,
+    ///   this property calls the deprecated
+    ///   `class func authorizationStatus() -> CLAuthorizationStatus`.
+    @available(iOS 4.2, macOS 10.7, macCatalyst 13.1, tvOS 9, watchOS 2, *)
     public var authorizationStatus: CLAuthorizationStatus {
       self._implementation.authorizationStatus
     }
