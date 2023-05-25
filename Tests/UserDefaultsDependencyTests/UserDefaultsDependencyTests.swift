@@ -1,6 +1,6 @@
 import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
-import UserDefaultsDependency
+@_spi(Internals) import UserDefaultsDependency
 import XCTest
 
 final class UserDefaultsDependencyTests: XCTestCase {
@@ -607,6 +607,20 @@ final class UserDefaultsDependencyTests: XCTestCase {
           userDefaults.set(7, forKey: "int")
         }
       }
+    }
+  }
+
+  func testUserDefaultsStoringArbitraryPlistRepresentableData() async {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
+
+    withDependencies {
+        $0.userDefaults = .ephemeral()
+    } operation: {
+      let data: [[String: Any]] = [["This": "is", "some": ["data": 123]]]
+      userDefaults.set([], forKey: "arbitraryDataKey")
+      userDefaults.set(data, forKey: "arbitraryDataKey")
+      let result: [[String: Any]]? = userDefaults.object(forKey: "arbitraryDataKey") as [[String: Any]]?
+      XCTAssertEqual(data.description, result?.description)
     }
   }
 }

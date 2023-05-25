@@ -300,16 +300,12 @@ extension UserDefaults.Dependency: TestDependencyKey {
 private func _isEqual(_ lhs: (any Sendable)?, _ rhs: (any Sendable)?) -> Bool {
   switch (lhs, rhs) {
   case let (.some(lhs), .some(rhs)):
-    return (lhs as! any Equatable).isEqual(other: rhs)
+      let lhs = try? PropertyListSerialization.data(fromPropertyList: lhs, format: .xml, options: .zero).base64EncodedString()
+      let rhs = try? PropertyListSerialization.data(fromPropertyList: rhs, format: .xml, options: .zero).base64EncodedString()
+    return lhs == rhs
   case (.none, .none):
     return type(of: lhs) == type(of: rhs)
   case (.some, .none), (.none, .some): return false
-  }
-}
-
-extension Equatable {
-  fileprivate func isEqual(other: Any) -> Bool {
-    self == other as? Self
   }
 }
 
