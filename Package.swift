@@ -15,7 +15,7 @@ import PackageDescription
 /// - `CompressionDependency`:         `\.compress` and `\.decompress`
 /// - `DataDependency`:                `\.dataReader` and `\.dataWriter`
 /// - `DeviceDependency`:              `\.device` and `\.deviceCheckDevice`
-/// - `_LocationDependency`:           `\.location`
+/// - `_LocationDependency`:           `\.locationClient`
 /// - `LocationManagerDependency`:     `\.locationManager`
 /// - `LoggerDependency`:              `\.logger`
 /// - `NotificationCenterDependency`:  `\.notificationCenter`
@@ -468,13 +468,13 @@ func addIndividualProducts() {
 }
 //addIndividualProducts()
 
-for target in package.targets {
-  target.swiftSettings = target.swiftSettings ?? []
-  target.swiftSettings?.append(
-    .unsafeFlags([
-      "-Xfrontend", "-warn-concurrency",
-      "-Xfrontend", "-enable-actor-data-race-checks",
-      //      "-enable-library-evolution",
-    ])
-  )
-}
+//for target in package.targets {
+//  target.swiftSettings = target.swiftSettings ?? []
+//  target.swiftSettings?.append(
+//    .unsafeFlags([
+//      "-Xfrontend", "-warn-concurrency",
+//      "-Xfrontend", "-enable-actor-data-race-checks",
+//      //      "-enable-library-evolution",
+//    ])
+//  )
+//}

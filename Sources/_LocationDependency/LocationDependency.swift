@@ -1,5 +1,5 @@
 #if canImport(CoreLocation)
-  @preconcurrency import CoreLocation
+  import CoreLocation
   import Dependencies
   @_spi(Internals) import DependenciesAdditionsBasics
   import LocationManagerDependency
