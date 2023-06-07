@@ -253,6 +253,13 @@ let package = Package(
       ]
     ),
 
+    .testTarget(
+      name: "_LocationDependencyTests",
+      dependencies: [
+        "_LocationDependency"
+      ]
+    ),
+
     .target(
       name: "LocationManagerDependency",
       dependencies: [
