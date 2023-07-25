@@ -490,16 +490,7 @@ public struct MainActorReadOnlyProxy<Value: Sendable>: Sendable {
 //@dynamicMemberLookup
 public protocol ProxyBindable {
   associatedtype Value
-  @available(*, deprecated, message: "Implement `getValueFunction()` instead")
-  var getValue: @Sendable () -> Value { get }
-  @available(*, deprecated, message: "Implement `setValueFunction()` instead")
-  var setValue: @Sendable (Value) -> Void { get }
-
-  /// This will be renamed `getValue` in the future when the deprecated `getValue` closure will be
-  /// removed.
   func getValueFunction() -> Value
-  /// This will be renamed `setValue` in the future when the deprecated `setValue` closure will be
-  /// removed.
   func setValueFunction(_ value: Value)
 }
 
