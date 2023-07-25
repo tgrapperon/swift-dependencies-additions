@@ -157,15 +157,33 @@ import XCTestDynamicOverlay
           systemName: .init { UIDevice.current.systemName },
           systemVersion: .init { UIDevice.current.systemVersion },
           identifierForVendor: .init { UIDevice.current.identifierForVendor },
-          orientation: .init { UIDevice.current.orientation },
+          orientation: .init {
+            #if swift(>=5.9) && os(xrOS)
+              return UIDeviceOrientation.unknown
+            #else
+              UIDevice.current.orientation
+            #endif
+          },
           isGeneratingDeviceOrientationNotifications: .init {
-            UIDevice.current.isGeneratingDeviceOrientationNotifications
+            #if swift(>=5.9) && os(xrOS)
+              return false
+            #else
+              UIDevice.current.isGeneratingDeviceOrientationNotifications
+            #endif
           },
           beginGeneratingDeviceOrientationNotifications: .init {
-            UIDevice.current.beginGeneratingDeviceOrientationNotifications()
+            #if swift(>=5.9) && os(xrOS)
+              return
+            #else
+              UIDevice.current.beginGeneratingDeviceOrientationNotifications()
+            #endif
           },
           endGeneratingDeviceOrientationNotifications: .init {
-            UIDevice.current.endGeneratingDeviceOrientationNotifications()
+            #if swift(>=5.9) && os(xrOS)
+              return
+            #else
+              UIDevice.current.endGeneratingDeviceOrientationNotifications()
+            #endif
           },
           isBatteryMonitoringEnabled: .init(
             .init {
@@ -185,7 +203,11 @@ import XCTestDynamicOverlay
           isMultitaskingSupported: .init { UIDevice.current.isMultitaskingSupported },
           userInterfaceIdiom: .init { UIDevice.current.userInterfaceIdiom },
           playInputClick: .init {
-            UIDevice.current.playInputClick()
+            #if swift(>=5.9) && os(xrOS)
+              return
+            #else
+              UIDevice.current.playInputClick()
+            #endif
           }
         )
       )
