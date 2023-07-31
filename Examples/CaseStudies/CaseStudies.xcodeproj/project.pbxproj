@@ -7,10 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E95149892968A3C9004E397A /* _AppStorageDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E95149882968A3C9004E397A /* _AppStorageDependency */; };
-		E951498B2968A3C9004E397A /* _CoreDataDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E951498A2968A3C9004E397A /* _CoreDataDependency */; };
-		E951498D2968A3C9004E397A /* _NotificationDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E951498C2968A3C9004E397A /* _NotificationDependency */; };
-		E951498F2968A3C9004E397A /* _SwiftUIDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E951498E2968A3C9004E397A /* _SwiftUIDependency */; };
 		E95149912968A3C9004E397A /* DependenciesAdditions in Frameworks */ = {isa = PBXBuildFile; productRef = E95149902968A3C9004E397A /* DependenciesAdditions */; };
 		E95149932968A3C9004E397A /* SwiftUINavigation in Frameworks */ = {isa = PBXBuildFile; productRef = E95149922968A3C9004E397A /* SwiftUINavigation */; };
 		E9672A7D29620A2E00CFB3F5 /* BatteryStatusStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9672A7C29620A2E00CFB3F5 /* BatteryStatusStudy.swift */; };
@@ -30,6 +26,10 @@
 		E9C3B93F29596715000263AD /* CaseStudiesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B93E29596715000263AD /* CaseStudiesTests.swift */; };
 		E9C3B946295967AE000263AD /* AppStorageStudyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C3B945295967AE000263AD /* AppStorageStudyTests.swift */; };
 		E9EE247D29629AC600D0173E /* BatteryStateStudyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9EE247C29629AC600D0173E /* BatteryStateStudyTests.swift */; };
+		E9F41F142A77F6A000926D97 /* _AppStorageDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E9F41F132A77F6A000926D97 /* _AppStorageDependency */; };
+		E9F41F162A77F6A000926D97 /* _CoreDataDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E9F41F152A77F6A000926D97 /* _CoreDataDependency */; };
+		E9F41F182A77F6A000926D97 /* _NotificationDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E9F41F172A77F6A000926D97 /* _NotificationDependency */; };
+		E9F41F1A2A77F6A000926D97 /* _SwiftUIDependency in Frameworks */ = {isa = PBXBuildFile; productRef = E9F41F192A77F6A000926D97 /* _SwiftUIDependency */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,12 +79,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E951498B2968A3C9004E397A /* _CoreDataDependency in Frameworks */,
+				E9F41F162A77F6A000926D97 /* _CoreDataDependency in Frameworks */,
+				E9F41F142A77F6A000926D97 /* _AppStorageDependency in Frameworks */,
 				E95149912968A3C9004E397A /* DependenciesAdditions in Frameworks */,
+				E9F41F182A77F6A000926D97 /* _NotificationDependency in Frameworks */,
 				E95149932968A3C9004E397A /* SwiftUINavigation in Frameworks */,
-				E95149892968A3C9004E397A /* _AppStorageDependency in Frameworks */,
-				E951498D2968A3C9004E397A /* _NotificationDependency in Frameworks */,
-				E951498F2968A3C9004E397A /* _SwiftUIDependency in Frameworks */,
+				E9F41F1A2A77F6A000926D97 /* _SwiftUIDependency in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,12 +218,12 @@
 			);
 			name = CaseStudies;
 			packageProductDependencies = (
-				E95149882968A3C9004E397A /* _AppStorageDependency */,
-				E951498A2968A3C9004E397A /* _CoreDataDependency */,
-				E951498C2968A3C9004E397A /* _NotificationDependency */,
-				E951498E2968A3C9004E397A /* _SwiftUIDependency */,
 				E95149902968A3C9004E397A /* DependenciesAdditions */,
 				E95149922968A3C9004E397A /* SwiftUINavigation */,
+				E9F41F132A77F6A000926D97 /* _AppStorageDependency */,
+				E9F41F152A77F6A000926D97 /* _CoreDataDependency */,
+				E9F41F172A77F6A000926D97 /* _NotificationDependency */,
+				E9F41F192A77F6A000926D97 /* _SwiftUIDependency */,
 			);
 			productName = "Dependencies Additions Case Studies";
 			productReference = E9DC4C422958F9BB003F0CA8 /* CaseStudies.app */;
@@ -606,28 +606,12 @@
 			repositoryURL = "https://github.com/pointfreeco/swiftui-navigation";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.4.5;
+				minimumVersion = 1.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E95149882968A3C9004E397A /* _AppStorageDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = _AppStorageDependency;
-		};
-		E951498A2968A3C9004E397A /* _CoreDataDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = _CoreDataDependency;
-		};
-		E951498C2968A3C9004E397A /* _NotificationDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = _NotificationDependency;
-		};
-		E951498E2968A3C9004E397A /* _SwiftUIDependency */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = _SwiftUIDependency;
-		};
 		E95149902968A3C9004E397A /* DependenciesAdditions */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DependenciesAdditions;
@@ -636,6 +620,22 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E98E74D4295B5C060024D761 /* XCRemoteSwiftPackageReference "swiftui-navigation" */;
 			productName = SwiftUINavigation;
+		};
+		E9F41F132A77F6A000926D97 /* _AppStorageDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = _AppStorageDependency;
+		};
+		E9F41F152A77F6A000926D97 /* _CoreDataDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = _CoreDataDependency;
+		};
+		E9F41F172A77F6A000926D97 /* _NotificationDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = _NotificationDependency;
+		};
+		E9F41F192A77F6A000926D97 /* _SwiftUIDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = _SwiftUIDependency;
 		};
 /* End XCSwiftPackageProductDependency section */
 
