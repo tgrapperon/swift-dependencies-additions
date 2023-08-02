@@ -149,6 +149,8 @@ extension UserDefaults {
       return self.data(forKey: key)
     case let type where type == Date.self, let type where type == Date?.self:
       return self.object(forKey: key) as? Date
+    case let type where type == Dictionary<String, any Sendable>.self, let type where type == Dictionary<String, any Sendable>?.self:
+      return self.dictionary(forKey: key)
     case let type where type == Double.self, let type where type == Double?.self:
       guard self.contains(key: key) else { return nil }
       return self.double(forKey: key)
@@ -175,6 +177,8 @@ extension UserDefaults {
     case let value as Data:
       self.set(value, forKey: key)
     case let value as Date:
+      self.set(value, forKey: key)
+    case let value as Dictionary<String, any Sendable>:
       self.set(value, forKey: key)
     case let value as Double:
       self.set(value, forKey: key)
