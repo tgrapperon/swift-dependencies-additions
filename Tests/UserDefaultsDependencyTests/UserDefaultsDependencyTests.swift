@@ -122,6 +122,23 @@ final class UserDefaultsDependencyTests: XCTestCase {
     }
     UserDefaults.standard.removeObject(forKey: "string")
   }
+    
+    func testLiveUserDefaultsStringArray() {
+        @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
+        let strings = ["Hello", "World"]
+        UserDefaults.standard.removeObject(forKey: "strings")
+        withDependencies {
+            $0.userDefaults = .standard
+        } operation: {
+            userDefaults.set(strings, forKey: "strings")
+        }
+        withDependencies {
+            $0.userDefaults = .standard
+        } operation: {
+            XCTAssertEqual(userDefaults.stringArray(forKey: "strings"), strings)
+        }
+        UserDefaults.standard.removeObject(forKey: "strings")
+    }
 
   #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
     func testLiveUserDefaultsURL() {
