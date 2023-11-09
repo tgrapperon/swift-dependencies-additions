@@ -85,6 +85,22 @@ extension UserDefaults.Dependency {
   public func set(_ value: String?, forKey key: String) {
     self._set(value, key)
   }
+    /// Returns the [String] value associated with the specified key.
+    /// - Parameter key: A key in the current user defaults store.
+    /// - Returns: The [String] value associated with the specified key, or `nil` if there is no value
+    /// associated to `key`
+    public func stringArray(forKey key: String) -> [String]? {
+        self._get(key, [String].self) as? [String]
+    }
+    
+    /// Sets the value of the specified default key to the specified String value.
+    /// - Parameters:
+    ///   - value: The [String] value to store in the user's defaults store. If the value is `nil`,
+    ///   the associated value will be removed from the store.
+    ///   - key: The key with which to associate the value.
+    public func set(_ value: [String]?, forKey key: String) {
+        self._set(value, key)
+    }
 
   #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
     /// Returns the URL value associated with the specified key.

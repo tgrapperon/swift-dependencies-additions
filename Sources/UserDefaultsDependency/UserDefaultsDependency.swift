@@ -157,6 +157,8 @@ extension UserDefaults {
       return self.integer(forKey: key)
     case let type where type == String.self, let type where type == String?.self:
       return self.string(forKey: key)
+    case let type where type == [String].self, let type where type == [String]?.self:
+        return self.stringArray(forKey: key)
     case let type where type == URL.self, let type where type == URL?.self:
       return self.url(forKey: key)
     default:
@@ -182,6 +184,8 @@ extension UserDefaults {
       self.set(value, forKey: key)
     case let value as String:
       self.set(value, forKey: key)
+    case let value as [String]:
+        self.set(value, forKey: key)
     case let value as URL:
       self.set(value, forKey: key)
     default:
