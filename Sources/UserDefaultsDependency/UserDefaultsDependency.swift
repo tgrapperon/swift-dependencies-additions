@@ -272,12 +272,12 @@ extension UserDefaults.Dependency: TestDependencyKey {
     return UserDefaults.Dependency { key, _ in
       storage.value[key]
     } set: { value, key in
-      var valueDidChange = false
+      let valueDidChange = LockIsolated(false)
       storage.withValue {
-        valueDidChange = !_isEqual($0[key], value)
+        valueDidChange.setValue(!_isEqual($0[key], value))
         $0[key] = value
       }
-      if valueDidChange {
+      if valueDidChange.value {
         for continuation in continuations.value[key]?.values ?? [:].values {
           continuation.yield(value)
         }
