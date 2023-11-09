@@ -1,7 +1,7 @@
 #if canImport(SwiftUI)
   import Combine
   @_exported import Dependencies
-  @_spi(Internals)@_exported import DependenciesAdditionsBasics
+  @_spi(Internals) @_exported import DependenciesAdditionsBasics
   import Foundation
   import SwiftUI
 

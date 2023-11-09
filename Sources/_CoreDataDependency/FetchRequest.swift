@@ -3,7 +3,7 @@
   @_exported import Dependencies
   @_exported import DependenciesAdditionsBasics
   import Foundation
-  @_spi(Internals)@_exported import PersistentContainerDependency
+  @_spi(Internals) @_exported import PersistentContainerDependency
 
   extension NSFetchRequestResult where Self: NSManagedObject {
     public typealias Fetched = _CoreDataDependency.Fetched<Self>
