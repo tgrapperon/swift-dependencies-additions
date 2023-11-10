@@ -72,6 +72,23 @@ final class UserDefaultsDependencyTests: XCTestCase {
     UserDefaults.standard.removeObject(forKey: "date")
   }
 
+  func testLiveUserDefaultsDictionary() {
+    @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
+    let dict: [String: any Sendable] = ["key1": "value1", "key2": "value2"]
+    UserDefaults.standard.removeObject(forKey: "dictionary")
+    withDependencies {
+      $0.userDefaults = .standard
+    } operation: {
+      userDefaults.set(dict, forKey: "dictionary")
+    }
+    withDependencies {
+      $0.userDefaults = .standard
+    } operation: {
+      XCTAssertEqual(userDefaults.dictionary(forKey: "dictionary") as? [String: String], ["key1": "value1", "key2": "value2"])
+    }
+    UserDefaults.standard.removeObject(forKey: "dictionary")
+  }
+
   func testLiveUserDefaultsDouble() {
     @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
     let double = 123.4
