@@ -284,8 +284,8 @@ extension UserDefaults.Dependency: TestDependencyKey {
       }
     } values: { key, _ in
       let id = UUID()
-      let (stream, continuation) = AsyncStream.streamWithContinuation(
-        (any Sendable)?.self,
+      let (stream, continuation) = AsyncStream.makeStream(
+        of: (any Sendable)?.self,
         bufferingPolicy: .bufferingNewest(1)
       )
       continuations.withValue {
