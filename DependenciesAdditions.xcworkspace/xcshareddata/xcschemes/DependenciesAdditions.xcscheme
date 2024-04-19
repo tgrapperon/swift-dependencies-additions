@@ -105,7 +105,7 @@
                BlueprintIdentifier = "DependenciesAdditionsBasicsTests"
                BuildableName = "DependenciesAdditionsBasicsTests"
                BlueprintName = "DependenciesAdditionsBasicsTests"
-               ReferencedContainer = "container:">
+               ReferencedContainer = "container:Basics">
             </BuildableReference>
          </TestableReference>
          <TestableReference
