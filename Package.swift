@@ -419,7 +419,7 @@ func addIndividualProducts() {
     .library(name: "UserNotificationsDependency", targets: ["UserNotificationsDependency"]),
   ])
 }
-//addIndividualProducts()
+addIndividualProducts()
 
 //for target in package.targets {
 //  target.swiftSettings = target.swiftSettings ?? []
