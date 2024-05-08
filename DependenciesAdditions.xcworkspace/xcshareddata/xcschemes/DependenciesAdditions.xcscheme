@@ -52,16 +52,6 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "AssertionDependencyTests"
-               BuildableName = "AssertionDependencyTests"
-               BlueprintName = "AssertionDependencyTests"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "BundleDependencyTests"
                BuildableName = "BundleDependencyTests"
                BlueprintName = "BundleDependencyTests"

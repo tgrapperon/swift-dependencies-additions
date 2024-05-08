@@ -9,7 +9,6 @@ import PackageDescription
 ///
 /// - `AccessibilityDependency`:       `\.accessibility`
 /// - `ApplicationDependency`:         `\.application`
-/// - `AssertionDependency`:           `\.assert` and `\.assertionFailure`
 /// - `BundleDependency`:              `\.bundleInfo`
 /// - `CodableDependency`:             `\.encode` and `\.decode`
 /// - `CompressionDependency`:         `\.compress` and `\.decompress`
@@ -44,7 +43,7 @@ let package = Package(
     .library(name: "_SwiftUIDependency", targets: ["_SwiftUIDependency"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.0.0"),
+    .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.3.0"),
     .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
     .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.0.0"),
   ],
@@ -93,20 +92,6 @@ let package = Package(
       name: "_AppStorageDependencyTests",
       dependencies: [
         "_AppStorageDependency"
-      ]
-    ),
-
-    .target(
-      name: "AssertionDependency",
-      dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
-      ]
-    ),
-    .testTarget(
-      name: "AssertionDependencyTests",
-      dependencies: [
-        "AssertionDependency"
       ]
     ),
 
@@ -175,7 +160,6 @@ let package = Package(
         .product(name: "Dependencies", package: "swift-dependencies"),
         "AccessibilityDependency",
         "ApplicationDependency",
-        "AssertionDependency",
         "BundleDependency",
         "CodableDependency",
         "CompressionDependency",
@@ -420,7 +404,6 @@ func addIndividualProducts() {
   package.products.append(contentsOf: [
     .library(name: "DependenciesAdditionsBasics", targets: ["DependenciesAdditionsBasics"]),
     .library(name: "ApplicationDependency", targets: ["ApplicationDependency"]),
-    .library(name: "AssertionDependency", targets: ["AssertionDependency"]),
     .library(name: "AccessibilityDependency", targets: ["AccessibilityDependency"]),
     .library(name: "BundleDependency", targets: ["BundleDependency"]),
     .library(name: "CodableDependency", targets: ["CodableDependency"]),
