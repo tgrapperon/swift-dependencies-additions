@@ -189,7 +189,7 @@ extension UserDefaults {
     }
   }
 }
-#if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
+#if os(iOS) || os(macOS) || os(tvOS) || os(watchOS) || os(visionOS)
   @available(iOS 5.0, tvOS 9.0, macOS 10.7, watchOS 9.0, *)
   extension NSUbiquitousKeyValueStore {
     fileprivate func contains(key: String) -> Bool {
@@ -313,7 +313,7 @@ extension Equatable {
   }
 }
 
-#if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
+#if os(iOS) || os(macOS) || os(tvOS) || os(watchOS) || os(visionOS)
   extension UserDefaults.Dependency {
     /// An iCloud-based container of key-value pairs you use to share data among
     /// instances of your app running on a user's connected devices.
