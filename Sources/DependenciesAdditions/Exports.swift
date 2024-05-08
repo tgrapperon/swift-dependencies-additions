@@ -1,6 +1,5 @@
 @_exported import AccessibilityDependency
 @_exported import ApplicationDependency
-@_exported import AssertionDependency
 @_exported import BundleDependency
 @_exported import CodableDependency
 @_exported import CompressionDependency

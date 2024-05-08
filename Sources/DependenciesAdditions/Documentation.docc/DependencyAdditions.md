@@ -19,7 +19,6 @@ on Apple's platforms.
 |---------------------------------|--------------------------------------|
 | `AccessibilityDependency`       | `\.accessibility`                    |
 | `ApplicationDependency`         | `\.application`                      |
-| `AssertionDependency`           | `\.assert` and `\.assertionFailure`  |
 | `BundleDependency`              | `\.bundleInfo`                       |
 | `CodableDependency`             | `\.encode` and `\.decode`            |
 | `CompressionDependency`         | `\.compress` and `\.decompress`      |

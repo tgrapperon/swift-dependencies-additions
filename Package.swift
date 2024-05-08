@@ -9,7 +9,6 @@ import PackageDescription
 ///
 /// - `AccessibilityDependency`:       `\.accessibility`
 /// - `ApplicationDependency`:         `\.application`
-/// - `AssertionDependency`:           `\.assert` and `\.assertionFailure`
 /// - `BundleDependency`:              `\.bundleInfo`
 /// - `CodableDependency`:             `\.encode` and `\.decode`
 /// - `CompressionDependency`:         `\.compress` and `\.decompress`
@@ -97,20 +96,6 @@ let package = Package(
     ),
 
     .target(
-      name: "AssertionDependency",
-      dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
-      ]
-    ),
-    .testTarget(
-      name: "AssertionDependencyTests",
-      dependencies: [
-        "AssertionDependency"
-      ]
-    ),
-
-    .target(
       name: "BundleDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
@@ -175,7 +160,6 @@ let package = Package(
         .product(name: "Dependencies", package: "swift-dependencies"),
         "AccessibilityDependency",
         "ApplicationDependency",
-        "AssertionDependency",
         "BundleDependency",
         "CodableDependency",
         "CompressionDependency",
@@ -420,7 +404,6 @@ func addIndividualProducts() {
   package.products.append(contentsOf: [
     .library(name: "DependenciesAdditionsBasics", targets: ["DependenciesAdditionsBasics"]),
     .library(name: "ApplicationDependency", targets: ["ApplicationDependency"]),
-    .library(name: "AssertionDependency", targets: ["AssertionDependency"]),
     .library(name: "AccessibilityDependency", targets: ["AccessibilityDependency"]),
     .library(name: "BundleDependency", targets: ["BundleDependency"]),
     .library(name: "CodableDependency", targets: ["CodableDependency"]),
