@@ -16,6 +16,7 @@ import PackageDescription
 /// - `DeviceDependency`:              `\.device` and `\.deviceCheckDevice`
 /// - `LoggerDependency`:              `\.logger`
 /// - `NotificationCenterDependency`:  `\.notificationCenter`
+/// - `PasteboardDependency`:     `\.pasteboard`
 /// - `PathDependency`:                `\.path`
 /// - `PersistentContainerDependency`: `\.persitentContainer`
 /// - `ProcessInfoDependency`:         `\.processInfo`
@@ -168,6 +169,7 @@ let package = Package(
         "DeviceDependency",
         "LoggerDependency",
         "NotificationCenterDependency",
+        "PasteboardDependency",
         "PathDependency",
         "PersistentContainerDependency",
         "ProcessInfoDependency",
@@ -282,6 +284,21 @@ let package = Package(
       ]
     ),
 
+    .target(
+      name: "PasteboardDependency",
+      dependencies: [
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        "DependenciesAdditionsBasics",
+      ]
+    ),
+    .testTarget(
+      name: "PasteboardDependencyTests",
+      dependencies: [
+        "PasteboardDependency"
+      ]
+    ),
+    
     .testTarget(
       name: "PathDependencyTests",
       dependencies: [
@@ -412,6 +429,7 @@ func addIndividualProducts() {
     .library(name: "DeviceDependency", targets: ["DeviceDependency"]),
     .library(name: "LoggerDependency", targets: ["LoggerDependency"]),
     .library(name: "NotificationCenterDependency", targets: ["NotificationCenterDependency"]),
+    .library(name: "PasteboardDependency", targets: ["PasteboardDependency"]),
     .library(name: "PathDependency", targets: ["PathDependency"]),
     .library(name: "PersistentContainerDependency", targets: ["PersistentContainerDependency"]),
     .library(name: "ProcessInfoDependency", targets: ["ProcessInfoDependency"]),
