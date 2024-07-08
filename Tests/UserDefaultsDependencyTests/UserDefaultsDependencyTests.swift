@@ -123,7 +123,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
     UserDefaults.standard.removeObject(forKey: "string")
   }
 
-  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
+  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS) || os(visionOS)
     func testLiveUserDefaultsURL() {
       @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
       let url = URL(string: "https://github.com/tgrapperon/swift-dependencies-additions")
@@ -316,7 +316,7 @@ final class UserDefaultsDependencyTests: XCTestCase {
     UserDefaults.standard.removeObject(forKey: "string")
   }
 
-  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
+  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS) || os(visionOS)
     func testLiveUserDefaultsURLValues() async throws {
       @Dependency(\.userDefaults) var userDefaults: UserDefaults.Dependency
       UserDefaults.standard.removeObject(forKey: "url")

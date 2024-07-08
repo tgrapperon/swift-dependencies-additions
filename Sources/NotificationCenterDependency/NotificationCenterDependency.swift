@@ -1,4 +1,4 @@
-#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS) || os(visionOS)
   @preconcurrency import Combine
   import Dependencies
   import Foundation

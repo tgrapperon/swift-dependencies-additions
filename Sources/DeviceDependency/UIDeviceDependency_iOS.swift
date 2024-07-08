@@ -3,7 +3,7 @@ import Dependencies
 import Foundation
 import XCTestDynamicOverlay
 
-#if os(iOS)
+#if os(iOS) || os(visionOS)
   import UIKit.UIDevice
 
   extension DependencyValues {
@@ -158,28 +158,28 @@ import XCTestDynamicOverlay
           systemVersion: .init { UIDevice.current.systemVersion },
           identifierForVendor: .init { UIDevice.current.identifierForVendor },
           orientation: .init {
-            #if swift(>=5.9) && os(xrOS)
+            #if swift(>=5.9) && os(visionOS)
               return UIDeviceOrientation.unknown
             #else
               UIDevice.current.orientation
             #endif
           },
           isGeneratingDeviceOrientationNotifications: .init {
-            #if swift(>=5.9) && os(xrOS)
+            #if swift(>=5.9) && os(visionOS)
               return false
             #else
               UIDevice.current.isGeneratingDeviceOrientationNotifications
             #endif
           },
           beginGeneratingDeviceOrientationNotifications: .init {
-            #if swift(>=5.9) && os(xrOS)
+            #if swift(>=5.9) && os(visionOS)
               return
             #else
               UIDevice.current.beginGeneratingDeviceOrientationNotifications()
             #endif
           },
           endGeneratingDeviceOrientationNotifications: .init {
-            #if swift(>=5.9) && os(xrOS)
+            #if swift(>=5.9) && os(visionOS)
               return
             #else
               UIDevice.current.endGeneratingDeviceOrientationNotifications()
@@ -203,7 +203,7 @@ import XCTestDynamicOverlay
           isMultitaskingSupported: .init { UIDevice.current.isMultitaskingSupported },
           userInterfaceIdiom: .init { UIDevice.current.userInterfaceIdiom },
           playInputClick: .init {
-            #if swift(>=5.9) && os(xrOS)
+            #if swift(>=5.9) && os(visionOS)
               return
             #else
               UIDevice.current.playInputClick()

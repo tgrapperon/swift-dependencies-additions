@@ -1,4 +1,4 @@
-#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS) || os(visionOS)
   import Dependencies
   @_spi(Internals) import DependenciesAdditionsBasics
   import NotificationCenterDependency

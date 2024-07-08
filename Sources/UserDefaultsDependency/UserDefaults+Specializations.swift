@@ -86,7 +86,7 @@ extension UserDefaults.Dependency {
     self._set(value, key)
   }
 
-  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
+  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS) || os(visionOS)
     /// Returns the URL value associated with the specified key.
     /// - Parameter key: A key in the current user defaults store.
     /// - Returns: The URL value associated with the specified key, or `nil` if there is no value
@@ -215,7 +215,7 @@ extension UserDefaults.Dependency {
     self._values(key, String.self).map { $0 as! String? }.eraseToStream()
   }
 
-  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
+  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS) || os(visionOS)
     /// An `AsyncStream` of URL values for a given `key` as they change. The stream produces `nil`
     /// if no value exists for the given key.
     /// - Parameter key: A key in the current user defaults store.

@@ -2,7 +2,7 @@ import ApplicationDependency
 import Dependencies
 import XCTest
 
-#if os(iOS) || os(tvOS)
+#if os(iOS) || os(tvOS) || os(visionOS)
   final class ApplicationDependencyTests: XCTestCase {
     @Dependency(\.application) var application
     @MainActor

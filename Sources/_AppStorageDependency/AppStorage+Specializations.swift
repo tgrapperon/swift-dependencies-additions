@@ -61,7 +61,7 @@ extension Dependency.AppStorage {
   where Value == String {
     self.init(wrappedValue: wrappedValue, key: key, store: store)
   }
-  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
+  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS) || os(visionOS)
     /// Creates a property that can read and write to a url user default.
     ///
     /// - Parameters:
@@ -228,7 +228,7 @@ extension Dependency.AppStorage where Value: ExpressibleByNilLiteral {
   where Value == String? {
     self.init(key: key, store: store)
   }
-  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS)
+  #if os(iOS) || os(macOS) || os(tvOS) || os(watchOS) || os(visionOS)
     /// Creates a property that can read and write an Optional URL user
     /// default.
     ///

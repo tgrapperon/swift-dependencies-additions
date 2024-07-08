@@ -1,4 +1,4 @@
-#if os(iOS) || os(watchOS) || os(macOS)
+#if os(iOS) || os(watchOS) || os(macOS) || os(visionOS)
   import Dependencies
   @_spi(Internals) import DependenciesAdditionsBasics
   @preconcurrency import UserNotifications
