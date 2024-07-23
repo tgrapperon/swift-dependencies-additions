@@ -45,7 +45,7 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.3.0"),
     .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
-    .package(url: "https://github.com/pointfreeco/xctest-dynamic-overlay", from: "1.0.0"),
+    .package(url: "https://github.com/pointfreeco/swift-issue-reporting", from: "1.0.0"),
   ],
   targets: [
 
@@ -53,7 +53,7 @@ let package = Package(
       name: "AccessibilityDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        .product(name: "XCTestDynamicOverlay", package: "swift-issue-reporting"),
         "DependenciesAdditionsBasics",
       ]
     ),
@@ -67,7 +67,7 @@ let package = Package(
     .target(
       name: "ApplicationDependency",
       dependencies: [
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        .product(name: "XCTestDynamicOverlay", package: "swift-issue-reporting"),
         .product(name: "Dependencies", package: "swift-dependencies"),
         "DependenciesAdditionsBasics",
       ]
@@ -83,7 +83,7 @@ let package = Package(
       name: "_AppStorageDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        .product(name: "XCTestDynamicOverlay", package: "swift-issue-reporting"),
         "DependenciesAdditionsBasics",
         "UserDefaultsDependency",
       ]
@@ -99,7 +99,7 @@ let package = Package(
       name: "BundleDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        .product(name: "XCTestDynamicOverlay", package: "swift-issue-reporting"),
         "DependenciesAdditionsBasics",
       ]
     ),
@@ -114,7 +114,7 @@ let package = Package(
       name: "CodableDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        .product(name: "XCTestDynamicOverlay", package: "swift-issue-reporting"),
       ]
     ),
     .testTarget(
@@ -128,7 +128,7 @@ let package = Package(
       name: "CompressionDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        .product(name: "XCTestDynamicOverlay", package: "swift-issue-reporting"),
       ]
     ),
     .testTarget(
@@ -180,14 +180,14 @@ let package = Package(
       name: "DependenciesAdditionsBasics",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        .product(name: "XCTestDynamicOverlay", package: "swift-issue-reporting"),
       ]
     ),
 
     .testTarget(
       name: "DependenciesAdditionsBasicsTests",
       dependencies: [
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        .product(name: "XCTestDynamicOverlay", package: "swift-issue-reporting"),
         "DependenciesAdditionsBasics",
       ]
     ),
@@ -196,7 +196,7 @@ let package = Package(
       name: "DataDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        .product(name: "XCTestDynamicOverlay", package: "swift-issue-reporting"),
       ]
     ),
 
@@ -212,7 +212,7 @@ let package = Package(
       name: "DeviceDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        .product(name: "XCTestDynamicOverlay", package: "swift-issue-reporting"),
         "DependenciesAdditionsBasics",
       ]
     ),
@@ -228,7 +228,7 @@ let package = Package(
       name: "LoggerDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        .product(name: "XCTestDynamicOverlay", package: "swift-issue-reporting"),
         "BundleDependency",
       ]
     ),
@@ -262,7 +262,7 @@ let package = Package(
       name: "NotificationCenterDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        .product(name: "XCTestDynamicOverlay", package: "swift-issue-reporting"),
       ]
     ),
 
@@ -278,7 +278,7 @@ let package = Package(
       name: "PathDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        .product(name: "XCTestDynamicOverlay", package: "swift-issue-reporting"),
       ]
     ),
 
@@ -310,7 +310,7 @@ let package = Package(
       name: "ProcessInfoDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        .product(name: "XCTestDynamicOverlay", package: "swift-issue-reporting"),
         "DependenciesAdditionsBasics",
       ]
     ),
@@ -356,7 +356,7 @@ let package = Package(
       name: "UserNotificationsDependency",
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
-        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        .product(name: "XCTestDynamicOverlay", package: "swift-issue-reporting"),
         "DependenciesAdditionsBasics",
       ]
     ),
