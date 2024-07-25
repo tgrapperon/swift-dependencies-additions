@@ -16,7 +16,7 @@ concurrency:
 jobs:
   library-swift-latest:
     name: Library (swift-latest)
-    runs-on: macos-13
+    runs-on: macos-14
     strategy:
       matrix:
         config: ['debug', 'release']
@@ -31,7 +31,7 @@ jobs:
         
   library-evolution:
     name: Library (evolution)
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v3
       - name: Select Xcode 15.4
@@ -41,7 +41,7 @@ jobs:
           
   library-swift-5-9:
     name: Library (swift 5.9)
-    runs-on: macos-12
+    runs-on: macos-14
     strategy:
       matrix:
         config: ['debug', 'release']
