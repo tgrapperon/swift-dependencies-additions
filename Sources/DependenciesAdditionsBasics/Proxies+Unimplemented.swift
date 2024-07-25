@@ -204,13 +204,14 @@ extension MainActorReadOnlyProxy {
     fileID: StaticString = #fileID,
     line: UInt = #line
   ) -> Self {
-    MainActorReadOnlyProxy(value:
-      XCTestDynamicOverlay.unimplemented(
-        description,
-        placeholder: () as! Value,
-        fileID: fileID,
-        line: line
-      )
+    MainActorReadOnlyProxy(
+      value:
+        XCTestDynamicOverlay.unimplemented(
+          description,
+          placeholder: () as! Value,
+          fileID: fileID,
+          line: line
+        )
     )
   }
   public static func unimplemented(

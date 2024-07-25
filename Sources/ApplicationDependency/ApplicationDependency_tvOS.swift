@@ -377,7 +377,7 @@ import XCTestDynamicOverlay
         canOpenURL: .unimplemented(
           #"@Dependency(\.application.canOpenURL)"#, placeholder: { _ in false }),
         open: .unimplemented(
-          #"@Dependency(\.application.open)"#, placeholder: { _, _  in false }),
+          #"@Dependency(\.application.open)"#, placeholder: { _, _ in false }),
         sendEvent: .unimplemented(
           #"@Dependency(\.application.sendEvent)"#, placeholder: { _ in }),
         sendAction: .unimplemented(
@@ -415,11 +415,12 @@ import XCTestDynamicOverlay
           #"@Dependency(\.application.requestSceneSessionActivation)"#,
           placeholder: { _, _, _, _ in }),
         requestSceneSessionDestruction: .unimplemented(
-          #"@Dependency(\.application.requestSceneSessionDestruction)"#, placeholder: { _, _, _ in }),
+          #"@Dependency(\.application.requestSceneSessionDestruction)"#, placeholder: { _, _, _ in }
+        ),
         requestSceneSessionRefresh: .unimplemented(
           #"@Dependency(\.application.requestSceneSessionRefresh)"#, placeholder: { _ in }),
         registerForRemoteNotifications: .unimplemented(
-          #"@Dependency(\.application.registerForRemoteNotifications)"#, placeholder: {  }),
+          #"@Dependency(\.application.registerForRemoteNotifications)"#, placeholder: {}),
         unregisterForRemoteNotifications: .unimplemented(
           #"@Dependency(\.application.unregisterForRemoteNotifications)"#, placeholder: {}),
         isRegisteredForRemoteNotifications: .unimplemented(

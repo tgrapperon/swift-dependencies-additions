@@ -113,7 +113,8 @@ extension BundleInfo {
   static var unimplemented: BundleInfo {
     BundleInfo(
       _implementation: .init(
-        bundleIdentifier: .unimplemented(#"@Dependency(\.bundleInfo.bundleIdentifier)"#, placeholder: ""),
+        bundleIdentifier: .unimplemented(
+          #"@Dependency(\.bundleInfo.bundleIdentifier)"#, placeholder: ""),
         name: .unimplemented(#"@Dependency(\.bundleInfo.name)"#, placeholder: ""),
         displayName: .unimplemented(#"@Dependency(\.bundleInfo.displayName)"#, placeholder: ""),
         spokenName: .unimplemented(#"@Dependency(\.bundleInfo.spokenName)"#, placeholder: ""),

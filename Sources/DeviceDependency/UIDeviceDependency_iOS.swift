@@ -235,13 +235,16 @@ import XCTestDynamicOverlay
           orientation: .unimplemented(
             #"@Dependency(\.device.orientation)"#, placeholder: .unknown),
           isGeneratingDeviceOrientationNotifications: .unimplemented(
-            #"@Dependency(\.device.isGeneratingDeviceOrientationNotifications)"#, placeholder: false),
+            #"@Dependency(\.device.isGeneratingDeviceOrientationNotifications)"#, placeholder: false
+          ),
           beginGeneratingDeviceOrientationNotifications: .unimplemented(
-            #"@Dependency(\.device.beginGeneratingDeviceOrientationNotifications)"#, placeholder: {}),
+            #"@Dependency(\.device.beginGeneratingDeviceOrientationNotifications)"#, placeholder: {}
+          ),
           endGeneratingDeviceOrientationNotifications: .unimplemented(
             #"@Dependency(\.device.endGeneratingDeviceOrientationNotifications)"#, placeholder: {}),
           isBatteryMonitoringEnabled: .init(
-            .unimplemented(#"@Dependency(\.device.isBatteryMonitoringEnabled.get)"#, placeholder: false)),
+            .unimplemented(
+              #"@Dependency(\.device.isBatteryMonitoringEnabled.get)"#, placeholder: false)),
           batteryState: .unimplemented(
             #"@Dependency(\.device.batteryState)"#, placeholder: .unknown),
           batteryLevel: .unimplemented(

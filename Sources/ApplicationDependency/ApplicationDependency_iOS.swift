@@ -472,7 +472,7 @@ import XCTestDynamicOverlay
         requestSceneSessionRefresh: .unimplemented(
           #"@Dependency(\.application.requestSceneSessionRefresh)"#, placeholder: { _ in }),
         registerForRemoteNotifications: .unimplemented(
-          #"@Dependency(\.application.registerForRemoteNotifications)"#, placeholder: { }),
+          #"@Dependency(\.application.registerForRemoteNotifications)"#, placeholder: {}),
         unregisterForRemoteNotifications: .unimplemented(
           #"@Dependency(\.application.unregisterForRemoteNotifications)"#, placeholder: {}),
         isRegisteredForRemoteNotifications: .unimplemented(
