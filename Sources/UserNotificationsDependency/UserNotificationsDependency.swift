@@ -245,25 +245,25 @@
               placeholder: nil
             ),
             supportsContentExtensions: .unimplemented(
-              #"@Dependency(\.userNotificationCenter.supportsContentExtensions)"#),
+              #"@Dependency(\.userNotificationCenter.supportsContentExtensions)"#, placeholder: false),
             add: .unimplemented(
               #"@Dependency(\.userNotificationCenter.add)"#),
             pendingNotificationRequests: .unimplemented(
-              #"@Dependency(\.userNotificationCenter.pendingNotificationRequests)"#),
+              #"@Dependency(\.userNotificationCenter.pendingNotificationRequests)"#, placeholder: { [] }),
             removePendingNotificationRequests: .unimplemented(
               #"@Dependency(\.userNotificationCenter.removePendingNotificationRequests)"#),
             removeAllPendingNotificationRequests: .unimplemented(
-              #"@Dependency(\.userNotificationCenter.removeAllPendingNotificationRequests)"#),
+              #"@Dependency(\.userNotificationCenter.removeAllPendingNotificationRequests)"#, placeholder: {}),
             deliveredNotifications: .unimplemented(
-              #"@Dependency(\,.userNotificationCenter.deliveredNotifications)"#),
+              #"@Dependency(\,.userNotificationCenter.deliveredNotifications)"#, placeholder: { [] }),
             removeDeliveredNotifications: .unimplemented(
-              #"@Dependency(\.userNotificationCenter.removeDeliveredNotifications)"#),
+              #"@Dependency(\.userNotificationCenter.removeDeliveredNotifications)"#, placeholder: { _ in }),
             removeAllDeliveredNotifications: .unimplemented(
-              #"@Dependency(\.userNotificationCenter.removeAllDeliveredNotifications)"#),
+              #"@Dependency(\.userNotificationCenter.removeAllDeliveredNotifications)"#, placeholder: {}),
             setNotificationCategories: .unimplemented(
-              #"@Dependency(\,.userNotificationCenter.setNotificationCategories)"#),
+              #"@Dependency(\,.userNotificationCenter.setNotificationCategories)"#, placeholder: { _ in }),
             notificationCategories: .unimplemented(
-              #"@Dependency(\,.userNotificationCenter.notificationCategories)"#)
+              #"@Dependency(\,.userNotificationCenter.notificationCategories)"#, placeholder: { [] })
           )
         )
       #else
@@ -281,25 +281,31 @@
               placeholder: nil
             ),
             supportsContentExtensions: .unimplemented(
-              #"@Dependency(\.userNotificationCenter.supportsContentExtensions)"#),
+              #"@Dependency(\.userNotificationCenter.supportsContentExtensions)"#,
+              placeholder: false
+            ),
             add: .unimplemented(
               #"@Dependency(\.userNotificationCenter.add)"#),
             pendingNotificationRequests: .unimplemented(
-              #"@Dependency(\.userNotificationCenter.pendingNotificationRequests)"#),
+              #"@Dependency(\.userNotificationCenter.pendingNotificationRequests)"#,
+              placeholder: { [] }),
             removePendingNotificationRequests: .unimplemented(
-              #"@Dependency(\.userNotificationCenter.removePendingNotificationRequests)"#),
+              #"@Dependency(\.userNotificationCenter.removePendingNotificationRequests)"#, placeholder: { _ in }),
             removeAllPendingNotificationRequests: .unimplemented(
-              #"@Dependency(\.userNotificationCenter.removeAllPendingNotificationRequests)"#),
+              #"@Dependency(\.userNotificationCenter.removeAllPendingNotificationRequests)"#,
+              placeholder: { }),
             deliveredNotifications: .unimplemented(
-              #"@Dependency(\,.userNotificationCenter.deliveredNotifications)"#),
+              #"@Dependency(\,.userNotificationCenter.deliveredNotifications)"#, 
+              placeholder: { [] }),
             removeDeliveredNotifications: .unimplemented(
-              #"@Dependency(\.userNotificationCenter.removeDeliveredNotifications)"#),
+              #"@Dependency(\.userNotificationCenter.removeDeliveredNotifications)"#, placeholder: { _ in }),
             removeAllDeliveredNotifications: .unimplemented(
-              #"@Dependency(\.userNotificationCenter.removeAllDeliveredNotifications)"#),
+              #"@Dependency(\.userNotificationCenter.removeAllDeliveredNotifications)"#, placeholder: {}),
             setNotificationCategories: .unimplemented(
-              #"@Dependency(\,.userNotificationCenter.setNotificationCategories)"#),
+              #"@Dependency(\,.userNotificationCenter.setNotificationCategories)"#, placeholder: { _ in }),
             notificationCategories: .unimplemented(
-              #"@Dependency(\,.userNotificationCenter.notificationCategories)"#)
+              #"@Dependency(\,.userNotificationCenter.notificationCategories)"#,
+              placeholder: { [] })
           )
         )
       #endif
