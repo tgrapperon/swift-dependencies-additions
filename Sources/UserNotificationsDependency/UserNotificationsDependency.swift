@@ -251,7 +251,7 @@
             pendingNotificationRequests: .unimplemented(
               #"@Dependency(\.userNotificationCenter.pendingNotificationRequests)"#, placeholder: { [] }),
             removePendingNotificationRequests: .unimplemented(
-              #"@Dependency(\.userNotificationCenter.removePendingNotificationRequests)"#),
+              #"@Dependency(\.userNotificationCenter.removePendingNotificationRequests)"#, placeholder: { _ in }),
             removeAllPendingNotificationRequests: .unimplemented(
               #"@Dependency(\.userNotificationCenter.removeAllPendingNotificationRequests)"#, placeholder: {}),
             deliveredNotifications: .unimplemented(
