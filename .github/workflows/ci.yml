@@ -22,8 +22,8 @@ jobs:
         config: ['debug', 'release']
     steps:
       - uses: actions/checkout@v3
-      - name: Select Xcode 14.3
-        run: sudo xcode-select -s /Applications/Xcode_14.3.app
+      - name: Select Xcode 15.4
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
       - name: Run ${{ matrix.config }} tests
         run: CONFIG=${{ matrix.config }} make test-library
       - name: Build platforms ${{ matrix.config }}
@@ -34,21 +34,21 @@ jobs:
     runs-on: macos-13
     steps:
       - uses: actions/checkout@v3
-      - name: Select Xcode 14.3
-        run: sudo xcode-select -s /Applications/Xcode_14.3.app
+      - name: Select Xcode 15.4
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
       - name: Build for library evolution
         run: make build-for-library-evolution
           
-  library-swift-5-7:
-    name: Library (swift 5.7)
+  library-swift-5-9:
+    name: Library (swift 5.9)
     runs-on: macos-12
     strategy:
       matrix:
         config: ['debug', 'release']
     steps:
       - uses: actions/checkout@v3
-      - name: Select Xcode 14.2
-        run: sudo xcode-select -s /Applications/Xcode_14.2.app
+      - name: Select Xcode 15.4
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
       - name: Run ${{ matrix.config }} tests
         run: CONFIG=${{ matrix.config }} make test-library
       - name: Build platforms ${{ matrix.config }}
