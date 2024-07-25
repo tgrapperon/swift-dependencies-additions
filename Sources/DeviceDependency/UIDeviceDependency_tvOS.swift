@@ -136,28 +136,28 @@ import XCTestDynamicOverlay
       Device(
         _implementation: .init(
           name: .unimplemented(
-            #"@Dependency(\.device.name)"#),
+            #"@Dependency(\.device.name)"#, placeholder: ""),
           model: .unimplemented(
-            #"@Dependency(\.device.model)"#),
+            #"@Dependency(\.device.model)"#, placeholder: ""),
           localizedModel: .unimplemented(
-            #"@Dependency(\.device.localizedModel)"#),
+            #"@Dependency(\.device.localizedModel)"#, placeholder: ""),
           systemName: .unimplemented(
-            #"@Dependency(\.device.systemName)"#),
+            #"@Dependency(\.device.systemName)"#, placeholder: ""),
           systemVersion: .unimplemented(
-            #"@Dependency(\.device.systemVersion)"#),
+            #"@Dependency(\.device.systemVersion)"#, placeholder: ""),
           identifierForVendor: .unimplemented(
             #"@Dependency(\.device.identifierForVendor)"#, placeholder: nil),
           isProximityMonitoringEnabled:
             .unimplemented(
-              #"@Dependency(\.device.isProximityMonitoringEnabled.get)"#),
+              #"@Dependency(\.device.isProximityMonitoringEnabled.get)"#, placeholder: false),
           proximityState: .unimplemented(
-            #"@Dependency(\.device.proximityState)"#),
+            #"@Dependency(\.device.proximityState)"#, placeholder: false),
           isMultitaskingSupported: .unimplemented(
-            #"@Dependency(\.device.isMultitaskingSupported)"#),
+            #"@Dependency(\.device.isMultitaskingSupported)"#, placeholder: false),
           userInterfaceIdiom: .unimplemented(
             #"@Dependency(\.device.userInterfaceIdiom)"#, placeholder: .phone),
           playInputClick: .unimplemented(
-            #"@Dependency(\.device.playInputClick)"#)
+            #"@Dependency(\.device.playInputClick)"#, placeholder: {})
         )
       )
     }

@@ -1,5 +1,5 @@
 CONFIG = debug
-PLATFORM_IOS = iOS Simulator,name=iPhone 11 Pro Max
+PLATFORM_IOS = iOS Simulator,name=iPhone 15 Pro Max
 PLATFORM_MACOS = macOS
 PLATFORM_MAC_CATALYST = macOS,variant=Mac Catalyst
 PLATFORM_TVOS = tvOS Simulator,name=Apple TV
@@ -47,7 +47,7 @@ test-linux:
 		--rm \
 		-v "$(PWD):$(PWD)" \
 		-w "$(PWD)" \
-		swift:5.7-focal \
+		swift:5.9-focal \
 		bash -c 'apt-get update && apt-get -y install make && make test-swift'
 
 build-for-static-stdlib:
@@ -64,12 +64,12 @@ build-for-static-stdlib-docker:
 	@docker run \
 		-v "$(PWD):$(PWD)" \
 		-w "$(PWD)" \
-		swift:5.8-focal \
+		swift:5.9-focal \
 		bash -c "swift build -c debug --static-swift-stdlib"
 	@docker run \
 		-v "$(PWD):$(PWD)" \
 		-w "$(PWD)" \
-		swift:5.8-focal \
+		swift:5.9-focal \
 		bash -c "swift build -c release --static-swift-stdlib"
 
 format:

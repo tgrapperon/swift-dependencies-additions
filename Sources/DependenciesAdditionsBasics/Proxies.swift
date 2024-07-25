@@ -274,6 +274,11 @@ public struct ReadOnlyProxy<Value: Sendable>: Sendable {
     self._value = value
   }
 
+  // Used to workaround .unimplemented limitation with autoclosures
+  init(value: @escaping @Sendable () -> Value) {
+    self._value = value
+  }
+
   @_spi(Internals)
   public var wrappedValue: Value {
     _value()
@@ -312,6 +317,11 @@ public struct FunctionProxy<Value: Sendable>: Sendable {
 
   public init(_ value: Value) {
     self._value = { value }
+  }
+
+  // Used to workaround .unimplemented ambiguous resolution
+  init(value: @escaping @Sendable () -> Value) {
+    self._value = value
   }
 
   @_spi(Internals)
@@ -464,6 +474,10 @@ public struct MainActorReadOnlyProxy<Value: Sendable>: Sendable {
     self._value = value
   }
   public init(_ value: @escaping @MainActor @Sendable () -> Value) {
+    self._value = value
+  }
+  // Used to workaround .unimplemented limitation with autoclosures
+  init(value: @escaping @MainActor @Sendable () -> Value) {
     self._value = value
   }
   @MainActor

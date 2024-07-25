@@ -401,47 +401,47 @@
         .init(
           _implementation: Implementation(
             buttonShapesEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.buttonShapesEnabled)"#),
+              #"@Dependency(\.accessibility.buttonShapesEnabled)"#, placeholder: false),
             hearingDevicePairedEar: .unimplemented(
               #"@Dependency(\.accessibility.hearingDevicePairedEar)"#, placeholder: []),
             isAssistiveTouchRunning: .unimplemented(
-              #"@Dependency(\.accessibility.isAssistiveTouchRunning)"#),
+              #"@Dependency(\.accessibility.isAssistiveTouchRunning)"#, placeholder: false),
             isBoldTextEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isBoldTextEnabled)"#),
+              #"@Dependency(\.accessibility.isBoldTextEnabled)"#, placeholder: false),
             isClosedCaptioningEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isClosedCaptioningEnabled)"#),
+              #"@Dependency(\.accessibility.isClosedCaptioningEnabled)"#, placeholder: false),
             isDarkerSystemColorsEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isDarkerSystemColorsEnabled)"#),
+              #"@Dependency(\.accessibility.isDarkerSystemColorsEnabled)"#, placeholder: false),
             isGrayscaleEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isGrayscaleEnabled)"#),
+              #"@Dependency(\.accessibility.isGrayscaleEnabled)"#, placeholder: false),
             isGuidedAccessEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isGuidedAccessEnabled)"#),
+              #"@Dependency(\.accessibility.isGuidedAccessEnabled)"#, placeholder: false),
             isInvertColorsEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isInvertColorsEnabled)"#),
+              #"@Dependency(\.accessibility.isInvertColorsEnabled)"#, placeholder: false),
             isMonoAudioEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isMonoAudioEnabled)"#),
+              #"@Dependency(\.accessibility.isMonoAudioEnabled)"#, placeholder: false),
             isOnOffSwitchLabelsEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isOnOffSwitchLabelsEnabled)"#),
+              #"@Dependency(\.accessibility.isOnOffSwitchLabelsEnabled)"#, placeholder: false),
             isReduceMotionEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isReduceMotionEnabled)"#),
+              #"@Dependency(\.accessibility.isReduceMotionEnabled)"#, placeholder: false),
             isReduceTransparencyEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isReduceTransparencyEnabled)"#),
+              #"@Dependency(\.accessibility.isReduceTransparencyEnabled)"#, placeholder: false),
             isShakeToUndoEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isShakeToUndoEnabled)"#),
+              #"@Dependency(\.accessibility.isShakeToUndoEnabled)"#, placeholder: false),
             isSpeakScreenEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isSpeakScreenEnabled)"#),
+              #"@Dependency(\.accessibility.isSpeakScreenEnabled)"#, placeholder: false),
             isSpeakSelectionEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isSpeakSelectionEnabled)"#),
+              #"@Dependency(\.accessibility.isSpeakSelectionEnabled)"#, placeholder: false),
             isSwitchControlRunning: .unimplemented(
-              #"@Dependency(\.accessibility.isSwitchControlRunning)"#),
+              #"@Dependency(\.accessibility.isSwitchControlRunning)"#, placeholder: false),
             isVideoAutoplayEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isVideoAutoplayEnabled)"#),
+              #"@Dependency(\.accessibility.isVideoAutoplayEnabled)"#, placeholder: false),
             isVoiceOverRunning: .unimplemented(
-              #"@Dependency(\.accessibility.isVoiceOverRunning)"#),
+              #"@Dependency(\.accessibility.isVoiceOverRunning)"#, placeholder: false),
             prefersCrossFadeTransitions: .unimplemented(
-              #"@Dependency(\.accessibility.prefersCrossFadeTransitions)"#),
+              #"@Dependency(\.accessibility.prefersCrossFadeTransitions)"#, placeholder: false),
             shouldDifferentiateWithoutColor: .unimplemented(
-              #"@Dependency(\.accessibility.shouldDifferentiateWithoutColor)"#),
+              #"@Dependency(\.accessibility.shouldDifferentiateWithoutColor)"#, placeholder: false),
             configureForGuidedAccess: .unimplemented(
               #"@Dependency(\.accessibility.configureForGuidedAccess)"#),
             convertToScreenCoordinatesUsingUIBezierPath: .unimplemented(
@@ -457,58 +457,61 @@
               #"@Dependency(\.accessibility.guidedAccessRestrictionState)"#,
               placeholder: { _ in .deny }),
             post: .unimplemented(
-              #"@Dependency(\.accessibility.post)"#),
+              #"@Dependency(\.accessibility.post)"#, placeholder: { _, _ in () }),
             registerGestureConflictWithZoom: .unimplemented(
               #"@Dependency(\.accessibility.registerGestureConflictWithZoom)"#),
             requestGuidedAccessSession: .unimplemented(
-              #"@Dependency(\.accessibility.requestGuidedAccessSession)"#),
+              #"@Dependency(\.accessibility.requestGuidedAccessSession)"#,
+              placeholder: { _ in false }
+            ),
             zoomFocusChanged: .unimplemented(
-              #"@Dependency(\.accessibility.zoomFocusChanged)"#)
+              #"@Dependency(\.accessibility.zoomFocusChanged)"#
+            )
           )
         )
       #elseif os(tvOS)
         .init(
           _implementation: Implementation(
             buttonShapesEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.buttonShapesEnabled)"#),
+              #"@Dependency(\.accessibility.buttonShapesEnabled)"#, placeholder: false),
             isAssistiveTouchRunning: .unimplemented(
-              #"@Dependency(\.accessibility.isAssistiveTouchRunning)"#),
+              #"@Dependency(\.accessibility.isAssistiveTouchRunning)"#, placeholder: false),
             isBoldTextEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isBoldTextEnabled)"#),
+              #"@Dependency(\.accessibility.isBoldTextEnabled)"#, placeholder: false),
             isClosedCaptioningEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isClosedCaptioningEnabled)"#),
+              #"@Dependency(\.accessibility.isClosedCaptioningEnabled)"#, placeholder: false),
             isDarkerSystemColorsEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isDarkerSystemColorsEnabled)"#),
+              #"@Dependency(\.accessibility.isDarkerSystemColorsEnabled)"#, placeholder: false),
             isGrayscaleEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isGrayscaleEnabled)"#),
+              #"@Dependency(\.accessibility.isGrayscaleEnabled)"#, placeholder: false),
             isGuidedAccessEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isGuidedAccessEnabled)"#),
+              #"@Dependency(\.accessibility.isGuidedAccessEnabled)"#, placeholder: false),
             isInvertColorsEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isInvertColorsEnabled)"#),
+              #"@Dependency(\.accessibility.isInvertColorsEnabled)"#, placeholder: false),
             isMonoAudioEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isMonoAudioEnabled)"#),
+              #"@Dependency(\.accessibility.isMonoAudioEnabled)"#, placeholder: false),
             isOnOffSwitchLabelsEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isOnOffSwitchLabelsEnabled)"#),
+              #"@Dependency(\.accessibility.isOnOffSwitchLabelsEnabled)"#, placeholder: false),
             isReduceMotionEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isReduceMotionEnabled)"#),
+              #"@Dependency(\.accessibility.isReduceMotionEnabled)"#, placeholder: false),
             isReduceTransparencyEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isReduceTransparencyEnabled)"#),
+              #"@Dependency(\.accessibility.isReduceTransparencyEnabled)"#, placeholder: false),
             isShakeToUndoEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isShakeToUndoEnabled)"#),
+              #"@Dependency(\.accessibility.isShakeToUndoEnabled)"#, placeholder: false),
             isSpeakScreenEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isSpeakScreenEnabled)"#),
+              #"@Dependency(\.accessibility.isSpeakScreenEnabled)"#, placeholder: false),
             isSpeakSelectionEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isSpeakSelectionEnabled)"#),
+              #"@Dependency(\.accessibility.isSpeakSelectionEnabled)"#, placeholder: false),
             isSwitchControlRunning: .unimplemented(
-              #"@Dependency(\.accessibility.isSwitchControlRunning)"#),
+              #"@Dependency(\.accessibility.isSwitchControlRunning)"#, placeholder: false),
             isVideoAutoplayEnabled: .unimplemented(
-              #"@Dependency(\.accessibility.isVideoAutoplayEnabled)"#),
+              #"@Dependency(\.accessibility.isVideoAutoplayEnabled)"#, placeholder: false),
             isVoiceOverRunning: .unimplemented(
-              #"@Dependency(\.accessibility.isVoiceOverRunning)"#),
+              #"@Dependency(\.accessibility.isVoiceOverRunning)"#, placeholder: false),
             prefersCrossFadeTransitions: .unimplemented(
-              #"@Dependency(\.accessibility.prefersCrossFadeTransitions)"#),
+              #"@Dependency(\.accessibility.prefersCrossFadeTransitions)"#, placeholder: false),
             shouldDifferentiateWithoutColor: .unimplemented(
-              #"@Dependency(\.accessibility.shouldDifferentiateWithoutColor)"#),
+              #"@Dependency(\.accessibility.shouldDifferentiateWithoutColor)"#, placeholder: false),
             convertToScreenCoordinatesUsingUIBezierPath: .unimplemented(
               #"@Dependency(\.accessibility.convertToScreenCoordinatesUsingUIBezierPath)"#,
               placeholder: { _, _ in UIBezierPath() }),
@@ -522,13 +525,14 @@
               #"@Dependency(\.accessibility.guidedAccessRestrictionState)"#,
               placeholder: { _ in .deny }),
             post: .unimplemented(
-              #"@Dependency(\.accessibility.post)"#),
+              #"@Dependency(\.accessibility.post)"#, placeholder: { _, _ in }),
             registerGestureConflictWithZoom: .unimplemented(
-              #"@Dependency(\.accessibility.registerGestureConflictWithZoom)"#),
+              #"@Dependency(\.accessibility.registerGestureConflictWithZoom)"#, placeholder: {}),
             requestGuidedAccessSession: .unimplemented(
-              #"@Dependency(\.accessibility.requestGuidedAccessSession)"#),
+              #"@Dependency(\.accessibility.requestGuidedAccessSession)"#,
+              placeholder: { _ in false }),
             zoomFocusChanged: .unimplemented(
-              #"@Dependency(\.accessibility.zoomFocusChanged)"#)
+              #"@Dependency(\.accessibility.zoomFocusChanged)"#, placeholder: { _, _, _ in })
           )
         )
       #endif

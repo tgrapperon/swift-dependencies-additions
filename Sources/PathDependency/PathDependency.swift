@@ -27,7 +27,7 @@ extension Path {
 
   /// An `unimplemented` that fails tests.
   public static var unimplemented: Path {
-    .init(XCTestDynamicOverlay.unimplemented(#"@Dependency(\.path)"#))
+    .init(XCTestDynamicOverlay.unimplemented(#"@Dependency(\.path)"#, placeholder: []))
   }
 }
 
@@ -36,7 +36,7 @@ extension Path {
 public struct Path: Hashable, @unchecked Sendable {
   private var _components = [AnyHashable]()
 
-  init(_ components: @autoclosure () -> [AnyHashable] = []) {
+  init(_ components: () -> [AnyHashable] = { [] }) {
     self._components = components()
   }
 

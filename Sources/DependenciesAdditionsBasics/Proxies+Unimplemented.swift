@@ -1,6 +1,7 @@
 import Dependencies
 
 extension ReadWriteBinding {
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented(
     _ description: String,
     file: StaticString = #file,
@@ -10,7 +11,7 @@ extension ReadWriteBinding {
     let value = LockIsolated<@Sendable () -> Value>(
       XCTestDynamicOverlay.unimplemented(
         description,
-        file: file,
+        placeholder: () as! Value,
         fileID: fileID,
         line: line
       )
@@ -48,6 +49,7 @@ extension ReadWriteBinding {
 }
 
 extension ReadWriteProxy {
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented(
     _ description: String = "",
     file: StaticString = #file,
@@ -57,7 +59,7 @@ extension ReadWriteProxy {
     ReadWriteProxy(
       .unimplemented(
         description,
-        file: file,
+        placeholder: () as! Value,
         fileID: fileID,
         line: line
       )
@@ -80,6 +82,7 @@ extension ReadWriteProxy {
 }
 
 extension ReadOnlyProxy {
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented(
     _ description: String = "",
     file: StaticString = #file,
@@ -87,7 +90,13 @@ extension ReadOnlyProxy {
     line: UInt = #line
   ) -> Self {
     ReadOnlyProxy(
-      XCTestDynamicOverlay.unimplemented(description, file: file, fileID: fileID, line: line))
+      XCTestDynamicOverlay.unimplemented(
+        description,
+        placeholder: () as! Value,
+        fileID: fileID,
+        line: line
+      )
+    )
   }
   public static func unimplemented(
     _ description: String = "",
@@ -107,6 +116,7 @@ extension ReadOnlyProxy {
 }
 
 extension MainActorReadWriteBinding {
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented(
     _ description: String,
     file: StaticString = #file,
@@ -116,7 +126,7 @@ extension MainActorReadWriteBinding {
     let value = LockIsolated<@Sendable () -> Value>(
       XCTestDynamicOverlay.unimplemented(
         description,
-        file: file,
+        placeholder: () as! Value,
         fileID: fileID,
         line: line
       )
@@ -154,6 +164,7 @@ extension MainActorReadWriteBinding {
 }
 
 extension MainActorReadWriteProxy {
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented(
     _ description: String = "",
     file: StaticString = #file,
@@ -163,7 +174,7 @@ extension MainActorReadWriteProxy {
     MainActorReadWriteProxy(
       .unimplemented(
         description,
-        file: file,
+        placeholder: () as! Value,
         fileID: fileID,
         line: line
       )
@@ -187,16 +198,16 @@ extension MainActorReadWriteProxy {
 }
 
 extension MainActorReadOnlyProxy {
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented(
     _ description: String = "",
-    file: StaticString = #file,
     fileID: StaticString = #fileID,
     line: UInt = #line
   ) -> Self {
-    MainActorReadOnlyProxy(
+    MainActorReadOnlyProxy(value:
       XCTestDynamicOverlay.unimplemented(
         description,
-        file: file,
+        placeholder: () as! Value,
         fileID: fileID,
         line: line
       )
@@ -225,9 +236,10 @@ extension FunctionProxy {
     fileID: StaticString = #fileID,
     line: UInt = #line
   ) -> Self where Value == @Sendable () -> Result {
-    FunctionProxy({
+    FunctionProxy(value: {
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
@@ -241,6 +253,7 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
@@ -254,6 +267,7 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
@@ -267,6 +281,7 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
@@ -281,6 +296,7 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
@@ -295,6 +311,7 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
@@ -320,6 +337,7 @@ extension FunctionProxy {
 
 // Async
 extension FunctionProxy {
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -328,11 +346,13 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
     })
   }
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<A, Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -341,11 +361,13 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
     })
   }
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<A, B, Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -354,11 +376,13 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
     })
   }
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<A, B, C, Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -367,12 +391,13 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
     })
   }
-
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<A, B, C, D, Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -381,12 +406,13 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
     })
   }
-
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<A, B, C, D, E, Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -395,6 +421,7 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
@@ -571,6 +598,7 @@ extension FunctionProxy {
 }
 
 extension FunctionProxy {
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -579,11 +607,14 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
     })
   }
+
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<A, Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -592,11 +623,14 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
     })
   }
+
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<A, B, Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -605,11 +639,14 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
     })
   }
+
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<A, B, C, Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -618,12 +655,14 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
     })
   }
 
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<A, B, C, D, Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -632,6 +671,7 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
@@ -646,6 +686,7 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
@@ -655,6 +696,7 @@ extension FunctionProxy {
 
 // Async
 extension FunctionProxy {
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -663,11 +705,13 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
     })
   }
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<A, Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -676,11 +720,13 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
     })
   }
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<A, B, Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -689,11 +735,13 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
     })
   }
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<A, B, C, Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -702,12 +750,13 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
     })
   }
-
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<A, B, C, D, Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -716,12 +765,13 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )
     })
   }
-
+  @available(*, unavailable, message: "Use .unimplemented(_:placeholder:)")
   public static func unimplemented<A, B, C, D, E, Result>(
     _ description: String = "",
     fileID: StaticString = #fileID,
@@ -730,6 +780,7 @@ extension FunctionProxy {
     FunctionProxy({
       XCTestDynamicOverlay.unimplemented(
         description,
+        placeholder: fatalError(),
         fileID: fileID,
         line: line
       )

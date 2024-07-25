@@ -338,65 +338,65 @@
       ProcessInfo.Value(
         _implementation: .init(
           environment: .unimplemented(
-            #"@Dependency(\.processInfo.environment)"#),
+            #"@Dependency(\.processInfo.environment)"#, placeholder: [:]),
           arguments: .unimplemented(
-            #"@Dependency(\.processInfo.arguments)"#),
+            #"@Dependency(\.processInfo.arguments)"#, placeholder: []),
           hostName: .unimplemented(
-            #"@Dependency(\.processInfo.hostName)"#),
+            #"@Dependency(\.processInfo.hostName)"#, placeholder: ""),
           processName: .unimplemented(
-            #"@Dependency(\.processInfo.processName)"#),
+            #"@Dependency(\.processInfo.processName)"#, placeholder: ""),
           processIdentifier: .unimplemented(
-            #"@Dependency(\.processInfo.processIdentifier)"#),
+            #"@Dependency(\.processInfo.processIdentifier)"#, placeholder: 0),
           globallyUniqueString: .unimplemented(
-            #"@Dependency(\.processInfo.globallyUniqueString)"#),
+            #"@Dependency(\.processInfo.globallyUniqueString)"#, placeholder: ""),
           operatingSystemVersionString: .unimplemented(
-            #"@Dependency(\.processInfo.operatingSystemVersionString)"#),
+            #"@Dependency(\.processInfo.operatingSystemVersionString)"#, placeholder: ""),
           operatingSystemVersion: .unimplemented(
             #"@Dependency(\.processInfo.operatingSystemVersion)"#,
             placeholder: .init(majorVersion: 0, minorVersion: 0, patchVersion: 1)),
           processorCount: .unimplemented(
-            #"@Dependency(\.processInfo.processorCount)"#),
+            #"@Dependency(\.processInfo.processorCount)"#, placeholder: 0),
           activeProcessorCount: .unimplemented(
-            #"@Dependency(\.processInfo.activeProcessorCount)"#),
+            #"@Dependency(\.processInfo.activeProcessorCount)"#, placeholder: 0),
           physicalMemory: .unimplemented(
-            #"@Dependency(\.processInfo.physicalMemory)"#),
+            #"@Dependency(\.processInfo.physicalMemory)"#, placeholder: 0),
           systemUptime: .unimplemented(
-            #"@Dependency(\.processInfo.systemUptime)"#),
+            #"@Dependency(\.processInfo.systemUptime)"#, placeholder: 0),
           thermalState: .unimplemented(
             #"@Dependency(\.processInfo.thermalState)"#,
             placeholder: .critical),
           isLowPowerModeEnabled: .unimplemented(
-            #"@Dependency(\.processInfo.isLowPowerModeEnabled)"#),
+            #"@Dependency(\.processInfo.isLowPowerModeEnabled)"#, placeholder: false),
           isMacCatalystApp: .unimplemented(
-            #"@Dependency(\.processInfo.isMacCatalystApp)"#),
+            #"@Dependency(\.processInfo.isMacCatalystApp)"#, placeholder: false),
           isiOSAppOnMac: .unimplemented(
-            #"@Dependency(\.processInfo.isiOSAppOnMac)"#),
+            #"@Dependency(\.processInfo.isiOSAppOnMac)"#, placeholder: false),
           userName: .unimplemented(
-            #"@Dependency(\.processInfo.userName)"#),
+            #"@Dependency(\.processInfo.userName)"#, placeholder: ""),
           fullUserName: .unimplemented(
-            #"@Dependency(\.processInfo.fullUserName)"#),
+            #"@Dependency(\.processInfo.fullUserName)"#, placeholder: ""),
           automaticTerminationSupportEnabled: .unimplemented(
-            #"@Dependency(\.processInfo.automaticTerminationSupportEnabled)"#),
+            #"@Dependency(\.processInfo.automaticTerminationSupportEnabled)"#, placeholder: false),
           beginActivity: .unimplemented(
             #"@Dependency(\.processInfo.beginActivity)"#,
             placeholder: { _, _ in NSObject() }),
           endActivity: .unimplemented(
-            #"@Dependency(\.processInfo.endActivity)"#),
+            #"@Dependency(\.processInfo.endActivity)"#, placeholder: { _ in }),
           performActivity:
             .unimplemented(
-              #"@Dependency(\.processInfo.performActivity)"#),
+              #"@Dependency(\.processInfo.performActivity)"#, placeholder: { _, _, _ in }),
           performExpiringActivity: .unimplemented(
-            #"@Dependency(\.processInfo.performExpiringActivity)"#),
+            #"@Dependency(\.processInfo.performExpiringActivity)"#, placeholder: { _, _ in }),
           disableSuddenTermination: .unimplemented(
-            #"@Dependency(\.processInfo.disableSuddenTermination)"#),
+            #"@Dependency(\.processInfo.disableSuddenTermination)"#, placeholder: {}),
           enableSuddenTermination: .unimplemented(
-            #"@Dependency(\.processInfo.enableSuddenTermination)"#),
+            #"@Dependency(\.processInfo.enableSuddenTermination)"#, placeholder: {}),
           disableAutomaticTermination: .unimplemented(
-            #"@Dependency(\.processInfo.disableAutomaticTermination)"#),
+            #"@Dependency(\.processInfo.disableAutomaticTermination)"#, placeholder: { _ in }),
           enableAutomaticTermination: .unimplemented(
-            #"@Dependency(\.processInfo.enableAutomaticTermination)"#),
+            #"@Dependency(\.processInfo.enableAutomaticTermination)"#, placeholder: { _ in }),
           isOperatingSystemAtLeast: .unimplemented(
-            #"@Dependency(\.processInfo.isOperatingSystemAtLeast)"#)
+            #"@Dependency(\.processInfo.isOperatingSystemAtLeast)"#, placeholder: { _ in false })
         )
       )
     }

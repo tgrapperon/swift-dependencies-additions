@@ -199,33 +199,35 @@ import XCTestDynamicOverlay
     public static var unimplemented: Device {
       .init(
         _implementation: .init(
-          name: .unimplemented(#"Dependency(\.device.name)"#),
-          model: .unimplemented(#"Dependency(\.device.model)"#),
-          localizedModel: .unimplemented(#"Dependency(\.device.localizedModel)"#),
-          systemName: .unimplemented(#"Dependency(\.device.systemName)"#),
-          systemVersion: .unimplemented(#"Dependency(\.device.systemVersion)"#),
+          name: .unimplemented(#"Dependency(\.device.name)"#, placeholder: ""),
+          model: .unimplemented(#"Dependency(\.device.model)"#, placeholder: ""),
+          localizedModel: .unimplemented(#"Dependency(\.device.localizedModel)"#, placeholder: ""),
+          systemName: .unimplemented(#"Dependency(\.device.systemName)"#, placeholder: ""),
+          systemVersion: .unimplemented(#"Dependency(\.device.systemVersion)"#, placeholder: ""),
           identifierForVendor: .unimplemented(
             #"Dependency(\.device.identifierForVendor)"#, placeholder: .init()),
           screenBounds: .unimplemented(#"Dependency(\.device.screenBounds)"#, placeholder: .zero),
-          screenScale: .unimplemented(#"Dependency(\.device.screenScale)"#),
+          screenScale: .unimplemented(#"Dependency(\.device.screenScale)"#, placeholder: 0),
           preferredContentSizeCategory: .unimplemented(
-            #"Dependency(\.device.preferredContentSizeCategory)"#),
+            #"Dependency(\.device.preferredContentSizeCategory)"#, placeholder: ""),
           layoutDirection: .unimplemented(
             #"Dependency(\.device.layoutDirection)"#, placeholder: .leftToRight),
           wristLocation: .unimplemented(#"Dependency(\.device.wristLocation)"#, placeholder: .left),
           crownOrientation: .unimplemented(
             #"Dependency(\.device.crownOrientation)"#, placeholder: .right),
           isBatteryMonitoringEnabled: .unimplemented(
-            #"Dependency(\.device.isBatteryMonitoringEnabled.get)"#),
+            #"Dependency(\.device.isBatteryMonitoringEnabled.get)"#, placeholder: false),
           batteryState: .unimplemented(
             #"Dependency(\.device.batteryState)"#, placeholder: .unknown),
-          batteryLevel: .unimplemented(#"Dependency(\.device.batteryLevel)"#),
+          batteryLevel: .unimplemented(#"Dependency(\.device.batteryLevel)"#, placeholder: 0),
           waterResistanceRating: .unimplemented(
             #"Dependency(\.device.waterResistanceRating)"#, placeholder: .ipx7),
-          isWaterLockEnabled: .unimplemented(#"Dependency(\.device.isWaterLockEnabled)"#),
-          supportsAudioStreaming: .unimplemented(#"Dependency(\.device.supportsAudioStreaming)"#),
-          play: .unimplemented(#"Dependency(\.device.play)"#),
-          enableWaterLock: .unimplemented(#"Dependency(\.device.enableWaterLock)"#)
+          isWaterLockEnabled: .unimplemented(
+            #"Dependency(\.device.isWaterLockEnabled)"#, placeholder: false),
+          supportsAudioStreaming: .unimplemented(
+            #"Dependency(\.device.supportsAudioStreaming)"#, placeholder: false),
+          play: .unimplemented(#"Dependency(\.device.play)"#, placeholder: { _ in }),
+          enableWaterLock: .unimplemented(#"Dependency(\.device.enableWaterLock)"#, placeholder: {})
         )
       )
     }
