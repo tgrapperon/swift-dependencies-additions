@@ -226,8 +226,8 @@ import XCTestDynamicOverlay
             #"Dependency(\.device.isWaterLockEnabled)"#, placeholder: false),
           supportsAudioStreaming: .unimplemented(
             #"Dependency(\.device.supportsAudioStreaming)"#, placeholder: false),
-          play: .unimplemented(#"Dependency(\.device.play)"#),
-          enableWaterLock: .unimplemented(#"Dependency(\.device.enableWaterLock)"#)
+          play: .unimplemented(#"Dependency(\.device.play)"#, placeholder: { _ in }),
+          enableWaterLock: .unimplemented(#"Dependency(\.device.enableWaterLock)"#, placeholder: {})
         )
       )
     }
