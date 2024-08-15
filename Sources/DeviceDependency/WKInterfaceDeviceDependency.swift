@@ -1,6 +1,6 @@
 import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
-import XCTestDynamicOverlay
+import IssueReporting
 
 #if os(watchOS)
   import WatchKit.WKInterfaceDevice

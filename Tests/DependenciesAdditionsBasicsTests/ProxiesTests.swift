@@ -1,7 +1,7 @@
 //import Dependencies
 //@_spi(Internals) import DependenciesAdditionsBasics
 //import XCTest
-//import XCTestDynamicOverlay
+//import IssueReporting
 //
 //final class ProxiesTests: XCTestCase {
 //  func testReadWriteProxy() {
@@ -153,7 +153,7 @@
 //        }
 //      }
 //      let unimplemented = Foo(
-//        _implementation: .init(value: .init({ XCTestDynamicOverlay.unimplemented() })))
+//        _implementation: .init(value: .init({ IssueReporting.unimplemented() })))
 //      XCTExpectFailure {
 //        let _ = unimplemented.value(index: 4)
 //      }

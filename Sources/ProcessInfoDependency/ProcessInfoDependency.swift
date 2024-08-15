@@ -2,7 +2,7 @@
   import Dependencies
   @_spi(Internals) import DependenciesAdditionsBasics
   import Foundation
-  import XCTestDynamicOverlay
+  import IssueReporting
 
   extension DependencyValues {
     /// An abstraction of `ProcessInfo`, a collection of information about the current process.

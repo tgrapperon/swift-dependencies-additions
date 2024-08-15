@@ -8,7 +8,7 @@
   // now.
   // https://forums.swift.org/t/argument-must-be-a-static-method-or-property-of-oslogprivacy/38441/2
   @preconcurrency import OSLog
-  import XCTestDynamicOverlay
+  import IssueReporting
 
   @available(macOS 11.0, iOS 14.0, watchOS 7.0, tvOS 14.0, *)
   extension DependencyValues {

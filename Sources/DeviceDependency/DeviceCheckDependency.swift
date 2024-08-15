@@ -2,7 +2,7 @@
   import Dependencies
   @_spi(Internals) import DependenciesAdditionsBasics
   import DeviceCheck
-  import XCTestDynamicOverlay
+  import IssueReporting
 
   extension DependencyValues {
     public var deviceCheckDevice: DeviceCheckDevice {

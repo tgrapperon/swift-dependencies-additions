@@ -59,7 +59,7 @@ func runtimeWarn(
 }
 
 #if DEBUG
-  import XCTestDynamicOverlay
+  import IssueReporting
 
   #if canImport(os)
     import os

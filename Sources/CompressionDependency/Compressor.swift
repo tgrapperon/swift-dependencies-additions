@@ -2,7 +2,7 @@
   import Compression
   import Dependencies
   import Foundation
-  import XCTestDynamicOverlay
+  import IssueReporting
 
   extension DependencyValues {
     /// A ``Compressor`` that can compress a `Data` value that you supply.

@@ -1,6 +1,6 @@
 import Dependencies
 import Foundation
-import XCTestDynamicOverlay
+import IssueReporting
 
 extension Path: DependencyKey {
   /// An empty ``Path``
@@ -27,7 +27,7 @@ extension Path {
 
   /// An `unimplemented` that fails tests.
   public static var unimplemented: Path {
-    .init(XCTestDynamicOverlay.unimplemented(#"@Dependency(\.path)"#, placeholder: []))
+    .init(IssueReporting.unimplemented(#"@Dependency(\.path)"#, placeholder: []))
   }
 }
 

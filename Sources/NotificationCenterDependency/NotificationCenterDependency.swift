@@ -2,7 +2,7 @@
   @preconcurrency import Combine
   import Dependencies
   import Foundation
-  import XCTestDynamicOverlay
+  import IssueReporting
 
   extension DependencyValues {
     /// An abstraction of a `NotificationCenter`.
@@ -28,14 +28,14 @@
     /// reached.
     public static var unimplemented: Self {
       .init(
-        post: XCTestDynamicOverlay.unimplemented(
+        post: IssueReporting.unimplemented(
           #"@Dependency(\.notificationCenter.post)"#),
-        addObserver: XCTestDynamicOverlay.unimplemented(
+        addObserver: IssueReporting.unimplemented(
           #"@Dependency(\.notificationCenter.addObserver)"#,
           placeholder: { @Sendable _, _, _, _, _, _ in () }),
-        removeObserver: XCTestDynamicOverlay.unimplemented(
+        removeObserver: IssueReporting.unimplemented(
           #"@Dependency(\.notificationCenter.removeObserver)"#),
-        publisher: XCTestDynamicOverlay.unimplemented(
+        publisher: IssueReporting.unimplemented(
           #"@Dependency(\.notificationCenter.publisher)"#,
           placeholder: { @Sendable _, _, _, _ in Empty().eraseToAnyPublisher() })
       )

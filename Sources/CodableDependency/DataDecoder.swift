@@ -1,6 +1,6 @@
 import Dependencies
 import Foundation
-import XCTestDynamicOverlay
+import IssueReporting
 
 extension DependencyValues {
   /// A ``DataDecoder`` that can encode a `Codable` value into a `Data` value.

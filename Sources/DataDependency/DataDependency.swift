@@ -1,6 +1,6 @@
 import Dependencies
 import Foundation
-import XCTestDynamicOverlay
+import IssueReporting
 
 /// This dependency is inspired by [David Roman](https://github.com/davdroman)'s PR:
 /// https://github.com/pointfreeco/swift-composable-architecture/pull/1648
@@ -134,7 +134,7 @@ extension DataReader {
   }
   public static var unimplemented: DataReader {
     .init(
-      contentsOfURL: XCTestDynamicOverlay.unimplemented(#"@Dependency(\.dataReader.contentsOfURL)"#)
+      contentsOfURL: IssueReporting.unimplemented(#"@Dependency(\.dataReader.contentsOfURL)"#)
     )
   }
 }
@@ -147,7 +147,7 @@ extension DataWriter {
   }
   public static var unimplemented: DataWriter {
     .init(
-      writeToURL: XCTestDynamicOverlay.unimplemented(#"@Dependency(\.dataWriter.writeToURL)"#)
+      writeToURL: IssueReporting.unimplemented(#"@Dependency(\.dataWriter.writeToURL)"#)
     )
   }
 }
