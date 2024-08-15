@@ -1,8 +1,8 @@
 @_exported import Dependencies
 @_exported import DependenciesAdditionsBasics
 import Foundation
-@_spi(Internals) @_exported import UserDefaultsDependency
 import IssueReporting
+@_spi(Internals) @_exported import UserDefaultsDependency
 
 extension Dependency {
   @propertyWrapper
