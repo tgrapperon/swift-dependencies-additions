@@ -1,7 +1,7 @@
 import Dependencies
 @_spi(Internals) import DependenciesAdditionsBasics
 import Foundation
-import XCTestDynamicOverlay
+import IssueReporting
 
 extension DependencyValues {
   public var bundleInfo: BundleInfo {

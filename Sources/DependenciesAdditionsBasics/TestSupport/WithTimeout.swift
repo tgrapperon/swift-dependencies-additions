@@ -1,5 +1,5 @@
 import Foundation
-import XCTestDynamicOverlay
+import IssueReporting
 
 #if os(Linux)
   public let NSEC_PER_MSEC: UInt64 = 1_000_000

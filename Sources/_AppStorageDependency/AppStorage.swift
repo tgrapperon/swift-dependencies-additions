@@ -2,7 +2,7 @@
 @_exported import DependenciesAdditionsBasics
 import Foundation
 @_spi(Internals) @_exported import UserDefaultsDependency
-import XCTestDynamicOverlay
+import IssueReporting
 
 extension Dependency {
   @propertyWrapper
