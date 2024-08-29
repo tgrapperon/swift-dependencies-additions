@@ -35,6 +35,23 @@ extension UserDefaults.Dependency {
     self._set(value, key)
   }
 
+  /// Returns the Dictionary value associated with the specified key.
+  /// - Parameter key: A key in the current user defaults store.
+  /// - Returns: The Dictionary value associated with the specified key, or `nil` if there is no value
+  /// associated to `key`
+  public func dictionary(forKey key: String) -> [String: any Sendable]? {
+    self._get(key, Dictionary<String, any Sendable>.self) as? [String: any Sendable]
+  }
+
+  /// Sets the value of the specified default key to the specified Dictionary value.
+  /// - Parameters:
+  ///   - value: The Dictionary value to store in the user's defaults store. If the value is `nil`,
+  ///   the associated value will be removed from the store.
+  ///   - key: The key with which to associate the value.
+  public func set(_ value: [String: any Sendable]?, forKey key: String) {
+    self._set(value, key)
+  }
+
   /// Returns the Double value associated with the specified key.
   /// - Parameter key: A key in the current user defaults store.
   /// - Returns: The Double value associated with the specified key, or `nil` if there is no value
