@@ -66,7 +66,7 @@ struct CompressionStudyView: View {
       } header: {
         Text("Text")
       } footer: {
-        Gauge(value: max(1 - model.compressionRatio, 0), in: 0 ... 1) {
+        Gauge(value: max(1 - model.compressionRatio, 0), in: 0...1) {
           Text("Compression Ratio")
         } currentValueLabel: {
           Text(model.compressionRatio.formatted(.percent.precision(.fractionLength(0))))
@@ -103,7 +103,7 @@ struct CompressionStudyView: View {
     #if os(iOS)
       .listStyle(.grouped)
     #endif
-      .navigationTitle("Codable & Compression")
+    .navigationTitle("Codable & Compression")
   }
 }
 
@@ -112,14 +112,14 @@ struct CompressionStudyView_Previews: PreviewProvider {
     NavigationStack {
       CompressionStudyView(
         model:
-        withDependencies {
-          let encoder = JSONEncoder()
-          encoder.outputFormatting.insert(.prettyPrinted)
-          encoder.outputFormatting.insert(.sortedKeys)
-          $0.encode = DataEncoder(encoder)
-        } operation: {
-          .init()
-        }
+          withDependencies {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting.insert(.prettyPrinted)
+            encoder.outputFormatting.insert(.sortedKeys)
+            $0.encode = DataEncoder(encoder)
+          } operation: {
+            .init()
+          }
       )
     }
   }

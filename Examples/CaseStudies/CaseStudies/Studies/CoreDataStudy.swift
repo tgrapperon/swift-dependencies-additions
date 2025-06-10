@@ -1,8 +1,9 @@
-import _CoreDataDependency
-import _SwiftUIDependency
 import Dependencies
 import SwiftUI
 import SwiftUINavigation
+import _CoreDataDependency
+import _SwiftUIDependency
+
 @MainActor
 final class CoreDataStudy: ObservableObject {
   enum Destination {
@@ -159,7 +160,9 @@ struct CoreDataStudyView: View {
             }
           }
         } header: {
-          Text("^[\(songsByYear.count) \("song")](inflect: true) from \(songsByYear.id.formatted(.number.grouping(.never)))")
+          Text(
+            "^[\(songsByYear.count) \("song")](inflect: true) from \(songsByYear.id.formatted(.number.grouping(.never)))"
+          )
         }
       }
     }
@@ -234,7 +237,7 @@ struct AddSongView: View {
   var body: some View {
     Form {
       TextField("Name", text: $model.song.editor.name.emptyIfNil())
-      Stepper(value: $model.song.editor.year, in: 1960 ... 1970) {
+      Stepper(value: $model.song.editor.year, in: 1960...1970) {
         LabeledContent("Year", value: "\(model.song.year)")
       }
     }
@@ -260,38 +263,38 @@ struct CoreDataStudyView_Previews: PreviewProvider {
     NavigationStack {
       CoreDataStudyView(
         model:
-        withDependencies {
-          $0.persistentContainer = .default(inMemory: true).withInitialData()
-        } operation: {
-          CoreDataStudy()
-        }
+          withDependencies {
+            $0.persistentContainer = .default(inMemory: true).withInitialData()
+          } operation: {
+            CoreDataStudy()
+          }
       )
     }
 
     // TODO: Having two previews creates navigation glitches.
-//    NavigationStack {
-//      AddSongView(
-//        model:
-//        withDependencies {
-//          $0.persistentContainer = .canonical(inMemory: true).withInitialData()
-//          $0.uuid = .incrementing
-//        } operation: {
-//          @Dependency(\.persistentContainer) var persistentContainer
-//          @Dependency(\.uuid) var uuid
-//
-//          return AddSongModel(song: try! persistentContainer.insert(Song.self) {
-//            $0.identifier = uuid()
-//            $0.year = 1970
-//            $0.name = "Let it be"
-//          })
-//        }
-//      )
-//    }
+    //    NavigationStack {
+    //      AddSongView(
+    //        model:
+    //        withDependencies {
+    //          $0.persistentContainer = .canonical(inMemory: true).withInitialData()
+    //          $0.uuid = .incrementing
+    //        } operation: {
+    //          @Dependency(\.persistentContainer) var persistentContainer
+    //          @Dependency(\.uuid) var uuid
+    //
+    //          return AddSongModel(song: try! persistentContainer.insert(Song.self) {
+    //            $0.identifier = uuid()
+    //            $0.year = 1970
+    //            $0.name = "Let it be"
+    //          })
+    //        }
+    //      )
+    //    }
   }
 }
 
-public extension Binding {
-  func nilIfEmpty() -> Binding<Value?> where Value: RangeReplaceableCollection {
+extension Binding {
+  public func nilIfEmpty() -> Binding<Value?> where Value: RangeReplaceableCollection {
     Binding<Value?> {
       self.wrappedValue.isEmpty ? nil : self.wrappedValue
     } set: { newValue, _ in
@@ -299,7 +302,7 @@ public extension Binding {
     }
   }
 
-  func emptyIfNil<T>() -> Binding<T> where Value == T?, T: RangeReplaceableCollection {
+  public func emptyIfNil<T>() -> Binding<T> where Value == T?, T: RangeReplaceableCollection {
     Binding<T> {
       self.wrappedValue ?? .init()
     } set: { newValue, _ in

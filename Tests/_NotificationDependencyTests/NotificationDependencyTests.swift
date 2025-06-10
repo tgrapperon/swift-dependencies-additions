@@ -1,5 +1,5 @@
 import Dependencies
- import DependenciesAdditionsBasics
+import DependenciesAdditionsBasics
 import XCTest
 import _NotificationDependency
 

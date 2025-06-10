@@ -1,6 +1,6 @@
 #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
   @_exported import Dependencies
-   @_exported import DependenciesAdditionsBasics
+  @_exported import DependenciesAdditionsBasics
   import Foundation
   import NotificationCenterDependency
 

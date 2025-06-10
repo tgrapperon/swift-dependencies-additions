@@ -1,7 +1,7 @@
 #if canImport(SwiftUI)
   import Combine
   @_exported import Dependencies
-   @_exported import DependenciesAdditionsBasics
+  @_exported import DependenciesAdditionsBasics
   import Foundation
   import SwiftUI
 
@@ -54,7 +54,7 @@
   }
 
   @MainActor
-   public final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
+  public final class SwiftUIEnvironment: Sendable, EnvironmentKey, DependencyKey {
     struct Key: Hashable, @unchecked Sendable {
       let id: AnyHashable?
       let keypath: PartialKeyPath<EnvironmentValues>
@@ -68,13 +68,13 @@
     public nonisolated static var liveValue: SwiftUIEnvironment { .shared }
     public nonisolated static var testValue: SwiftUIEnvironment { .shared }
 
-     public static let shared = SwiftUIEnvironment()
+    public static let shared = SwiftUIEnvironment()
 
     @Published private var dependencies = [Key: Any]()
 
     init() {}
 
-     public func update<ID: Hashable, Value>(
+    public func update<ID: Hashable, Value>(
       _ value: Value?,
       keyPath: KeyPath<EnvironmentValues, Value>,
       id: ID? = String?.none

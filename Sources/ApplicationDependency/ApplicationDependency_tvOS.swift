@@ -1,5 +1,5 @@
 import Dependencies
- import DependenciesAdditionsBasics
+import DependenciesAdditionsBasics
 import Foundation
 import IssueReporting
 
@@ -22,7 +22,7 @@ import IssueReporting
 
   /// The centralized point of control and coordination for apps running in iOS.
   public struct Application: Sendable, ConfigurableProxy {
-     public var _implementation: Implementation
+    public var _implementation: Implementation
 
     /// The delegate of the app object.
     @MainActor

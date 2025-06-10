@@ -1,5 +1,5 @@
 import Dependencies
- import DependenciesAdditionsBasics
+import DependenciesAdditionsBasics
 import UserDefaultsDependency
 import XCTest
 import _AppStorageDependency

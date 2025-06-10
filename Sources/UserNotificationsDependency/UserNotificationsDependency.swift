@@ -44,7 +44,7 @@
         @Sendable () async -> Set<UNNotificationCategory>
     }
 
-     public var _implementation: Implementation
+    public var _implementation: Implementation
 
     /// The notification center’s delegate.
     public var delegate: (UNUserNotificationCenterDelegate & Sendable)? {

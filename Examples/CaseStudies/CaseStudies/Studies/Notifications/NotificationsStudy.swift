@@ -1,7 +1,7 @@
-import _NotificationDependency
 import DependenciesAdditions
 import SwiftUI
 import SwiftUINavigation
+import _NotificationDependency
 
 extension Notification.Name {
   static var timerNotification = Notification.Name("TimerNotification")
@@ -83,7 +83,7 @@ final class CustomNotificationStudy: ObservableObject {
   func sendRandomNotificationButtonTapped() {
     self.withRandomNumberGenerator {
       self.countNotification.post(
-        Int.random(in: 0 ... 1_000, using: &$0)
+        Int.random(in: 0...1_000, using: &$0)
       )
     }
   }

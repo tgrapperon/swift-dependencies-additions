@@ -1,5 +1,5 @@
 import Dependencies
- import DependenciesAdditionsBasics
+import DependenciesAdditionsBasics
 import Foundation
 import IssueReporting
 
@@ -23,7 +23,7 @@ public struct BundleInfo: Sendable, ConfigurableProxy {
     @ReadOnlyProxy public var version: String
   }
 
-   public var _implementation: Implementation
+  public var _implementation: Implementation
 
   /// A unique identifier for a bundle.
   public var bundleIdentifier: String {

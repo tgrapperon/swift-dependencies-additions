@@ -1,6 +1,6 @@
-import _AppStorageDependency
 import Combine
 import SwiftUI
+import _AppStorageDependency
 
 @MainActor
 final class UserDefaultsStudy: ObservableObject {
@@ -26,7 +26,7 @@ final class UserDefaultsStudy: ObservableObject {
     // Automatically save the updated number.
     self.$publishedNumber
       .dropFirst()
-      .removeDuplicates() // We don't want infinite loops
+      .removeDuplicates()  // We don't want infinite loops
       .debounce(for: .milliseconds(250), scheduler: self.mainQueue)
       .compactMap { $0 }
       .sink { [weak self] in
@@ -37,7 +37,7 @@ final class UserDefaultsStudy: ObservableObject {
     // Automatically save the updated string.
     self.$publishedString
       .dropFirst()
-      .removeDuplicates() // We don't want infinite loops
+      .removeDuplicates()  // We don't want infinite loops
       .debounce(for: .milliseconds(250), scheduler: self.mainQueue)
       .sink { [weak self] in
         self?.string = $0
@@ -142,11 +142,14 @@ struct UserDefaultsStudyView: View {
         value: String(describing: stringFromSwiftUI)
       )
 
-      TextField("String", text: Binding {
-        self.model.publishedString ?? ""
-      } set: { newvalue in
-        self.model.publishedString = newvalue.isEmpty ? nil : newvalue
-      })
+      TextField(
+        "String",
+        text: Binding {
+          self.model.publishedString ?? ""
+        } set: { newvalue in
+          self.model.publishedString = newvalue.isEmpty ? nil : newvalue
+        }
+      )
       .textFieldStyle(.roundedBorder)
 
       Button(role: .destructive) {

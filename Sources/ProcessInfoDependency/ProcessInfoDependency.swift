@@ -1,6 +1,6 @@
 #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
   import Dependencies
-   import DependenciesAdditionsBasics
+  import DependenciesAdditionsBasics
   import Foundation
   import IssueReporting
 
@@ -56,7 +56,7 @@
           @Sendable (OperatingSystemVersion) -> Bool
       }
 
-       public var _implementation: Implementation
+      public var _implementation: Implementation
 
     }
   }

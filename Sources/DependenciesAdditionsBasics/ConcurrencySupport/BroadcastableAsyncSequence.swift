@@ -9,7 +9,7 @@ public protocol BroadcastableAsyncSequence: AsyncSequence {}
 
 #if canImport(Combine)
   extension BroadcastableAsyncSequence {
-     public func publisher() -> AnyPublisher<Element, Never>
+    public func publisher() -> AnyPublisher<Element, Never>
     where Self: Sendable, Self.Element: Sendable {
       let subject = CurrentValueSubject<Element?, Never>(.none)
 

@@ -1,5 +1,5 @@
 import Dependencies
- import DependenciesAdditionsBasics
+import DependenciesAdditionsBasics
 import Foundation
 import IssueReporting
 
@@ -42,7 +42,7 @@ import IssueReporting
       @FunctionProxy public var playInputClick: @MainActor @Sendable () -> Void
     }
 
-     public var _implementation: Implementation
+    public var _implementation: Implementation
 
     /// The name of the device.
     @MainActor

@@ -1,6 +1,6 @@
 import Dependencies
 import Foundation
- import UserDefaultsDependency
+import UserDefaultsDependency
 
 // TODO: Update doc that refers to SwiftUI
 

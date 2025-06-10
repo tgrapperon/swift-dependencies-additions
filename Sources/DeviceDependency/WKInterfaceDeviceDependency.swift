@@ -1,5 +1,5 @@
 import Dependencies
- import DependenciesAdditionsBasics
+import DependenciesAdditionsBasics
 import IssueReporting
 
 #if os(watchOS)
@@ -50,7 +50,7 @@ import IssueReporting
       @FunctionProxy public var enableWaterLock: @Sendable () -> Void
     }
 
-     public var _implementation: Implementation
+    public var _implementation: Implementation
 
     /// The name assigned to the underlying device.
     public var name: String {

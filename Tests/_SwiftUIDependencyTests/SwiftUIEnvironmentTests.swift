@@ -1,9 +1,9 @@
 #if canImport(SwiftUI)
   import Dependencies
-   import DependenciesAdditionsBasics
+  import DependenciesAdditionsBasics
   import SwiftUI
   import XCTest
-   import _SwiftUIDependency
+  import _SwiftUIDependency
 
   enum TestEnvironmentKey: EnvironmentKey {
     static var defaultValue: Int { 0 }
