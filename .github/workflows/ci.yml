@@ -22,8 +22,6 @@ jobs:
         config: ['debug', 'release']
     steps:
       - uses: actions/checkout@v3
-      - name: Select Xcode 16.3
-        run: sudo xcode-select -s /Applications/Xcode_16.3.app
       - name: Run ${{ matrix.config }} tests
         run: CONFIG=${{ matrix.config }} make test-library
       - name: Build platforms ${{ matrix.config }}
@@ -34,8 +32,6 @@ jobs:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v3
-      - name: Select Xcode 16.3
-        run: sudo xcode-select -s /Applications/Xcode_16.3.app
       - name: Build for library evolution
         run: make build-for-library-evolution
           
@@ -47,8 +43,6 @@ jobs:
         config: ['debug', 'release']
     steps:
       - uses: actions/checkout@v3
-      - name: Select Xcode 16.3
-        run: sudo xcode-select -s /Applications/Xcode_16.3.app
       - name: Run ${{ matrix.config }} tests
         run: CONFIG=${{ matrix.config }} make test-library
       - name: Build platforms ${{ matrix.config }}
