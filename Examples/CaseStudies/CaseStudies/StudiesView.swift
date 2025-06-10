@@ -10,7 +10,7 @@ class StudiesModel: ObservableObject {
     case coreDataStudy(CoreDataStudy)
     case notificationStudy(CustomNotificationStudy)
     #if os(iOS)
-    case batteryStatusStudy(BatteryStatusStudy)
+      case batteryStatusStudy(BatteryStatusStudy)
     #endif
     case loggerStudy(LoggerStudy)
     case swiftUIEnvironmentStudy(SwiftUIEnvironmentStudy)
@@ -49,11 +49,11 @@ class StudiesModel: ObservableObject {
   }
 
   #if os(iOS)
-  func batteryStatusStudyButtonTapped() {
-    self.destination = withDependencies(from: self) {
-      .batteryStatusStudy(.init())
+    func batteryStatusStudyButtonTapped() {
+      self.destination = withDependencies(from: self) {
+        .batteryStatusStudy(.init())
+      }
     }
-  }
   #endif
 
   func loggerStudyButtonTapped() {
@@ -114,11 +114,11 @@ struct StudiesView: View {
             Label("Notification center", systemImage: "envelope")
           }
           #if os(iOS)
-          Button {
-            self.model.batteryStatusStudyButtonTapped()
-          } label: {
-            Label("Battery Status", systemImage: "battery.75")
-          }
+            Button {
+              self.model.batteryStatusStudyButtonTapped()
+            } label: {
+              Label("Battery Status", systemImage: "battery.75")
+            }
           #endif
           Button {
             self.model.userNotificationStudyButtonTapped()
@@ -160,12 +160,12 @@ struct StudiesView: View {
         CustomNotificationStudyView(model: model)
       }
       #if os(iOS)
-      .navigationDestination(
-        unwrapping: self.$model.destination,
-        case: /StudiesModel.Destination.batteryStatusStudy
-      ) { $model in
-        BatteryStatusStudyView(model: model)
-      }
+        .navigationDestination(
+          unwrapping: self.$model.destination,
+          case: /StudiesModel.Destination.batteryStatusStudy
+        ) { $model in
+          BatteryStatusStudyView(model: model)
+        }
       #endif
       .navigationDestination(
         unwrapping: self.$model.destination,
@@ -193,18 +193,18 @@ struct StudiesView_Previews: PreviewProvider {
   static var previews: some View {
     StudiesView(
       model:
-      withDependencies {
-        $0.userDefaults = .standard
-        $0.persistentContainer = .default(inMemory: true)
-          .withInitialData()
-        #if os(iOS)
-        $0.device.$batteryState = .charging
-        $0.device.$batteryLevel = 0.72
-        $0.device.$isBatteryMonitoringEnabled = .constant(true)
-        #endif
-      } operation: {
-        .init()
-      }
+        withDependencies {
+          $0.userDefaults = .standard
+          $0.persistentContainer = .default(inMemory: true)
+            .withInitialData()
+          #if os(iOS)
+            $0.device.$batteryState = .charging
+            $0.device.$batteryLevel = 0.72
+            $0.device.$isBatteryMonitoringEnabled = .constant(true)
+          #endif
+        } operation: {
+          .init()
+        }
     )
   }
 }

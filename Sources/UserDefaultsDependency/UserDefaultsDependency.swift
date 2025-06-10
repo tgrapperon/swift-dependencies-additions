@@ -1,5 +1,5 @@
 import Dependencies
-@_spi(Internals) import DependenciesAdditionsBasics
+import DependenciesAdditionsBasics
 import Foundation
 
 extension DependencyValues {
@@ -32,13 +32,13 @@ extension UserDefaults {
     }
 
     /// Returns the object associated with the specified key.
-    @_spi(Internals)
+
     public func object<T: Sendable>(forKey key: String) -> T? {
       self._get(key, T.self) as? T
     }
 
     /// Sets the value of the specified default key.
-    @_spi(Internals)
+
     public func set<T: Sendable>(_ value: T?, forKey key: String) {
       self._set(value, key)
     }
@@ -47,7 +47,7 @@ extension UserDefaults {
     /// the value is removed or if no value exists for the given key.
     /// - Parameter key: The key that references this user preference.
     /// - Returns: An `AsyncSequence` of `T?` values, including the initial value.
-    @_spi(Internals)
+
     public func values<T>(forKey key: String) -> AsyncMapSequence<AsyncStream<(any Sendable)?>, T?>
     {
       self._values(key, T.self).map { $0 as? T }
@@ -299,7 +299,7 @@ extension UserDefaults.Dependency: TestDependencyKey {
 
 private func _isEqual(_ lhs: (any Sendable)?, _ rhs: (any Sendable)?) -> Bool {
   switch (lhs, rhs) {
-  case let (.some(lhs), .some(rhs)):
+  case (.some(let lhs), .some(let rhs)):
     return (lhs as! any Equatable).isEqual(other: rhs)
   case (.none, .none):
     return type(of: lhs) == type(of: rhs)

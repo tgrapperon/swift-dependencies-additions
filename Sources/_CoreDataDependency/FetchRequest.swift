@@ -3,7 +3,7 @@
   @_exported import Dependencies
   @_exported import DependenciesAdditionsBasics
   import Foundation
-  @_spi(Internals) @_exported import PersistentContainerDependency
+  @_exported import PersistentContainerDependency
 
   extension NSFetchRequestResult where Self: NSManagedObject {
     public typealias Fetched = _CoreDataDependency.Fetched<Self>
@@ -141,7 +141,7 @@
         result = .success(perform(self.object))
       }
       switch result! {
-      case let .success(value):
+      case .success(let value):
         return value
       }
     }
@@ -209,7 +209,7 @@
         result = .success(perform(self.context))
       }
       switch result! {
-      case let .success(value):
+      case .success(let value):
         return value
       }
     }

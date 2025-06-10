@@ -1,6 +1,6 @@
 #if os(iOS) || os(tvOS)
   import Dependencies
-  @_spi(Internals) import DependenciesAdditionsBasics
+  import DependenciesAdditionsBasics
   import Foundation
   import UIKit
   import IssueReporting
@@ -21,7 +21,7 @@
 
   /// A namespace for accessibility symbols for UIKit apps.
   public struct Accessibility: Sendable, ConfigurableProxy {
-    @_spi(Internals) public var _implementation: Implementation
+    public var _implementation: Implementation
 
     public struct Implementation: Sendable {
       @ReadOnlyProxy public var buttonShapesEnabled: Bool

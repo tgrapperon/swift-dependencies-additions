@@ -1,8 +1,8 @@
 import Dependencies
 import DependenciesAdditionsBasics
 import SwiftUI
-import UserNotificationsDependency
 import UserNotifications
+import UserNotificationsDependency
 
 final class UserNotificationsStudy: NSObject, ObservableObject {
   @Dependency(\.userNotificationCenter) var userNotificationCenter
@@ -37,9 +37,9 @@ final class UserNotificationsStudy: NSObject, ObservableObject {
 
   var canSendNotifications: Bool {
     #if os(macOS)
-    self.status == .authorized
+      self.status == .authorized
     #else
-    self.status == .authorized || self.status == .ephemeral
+      self.status == .authorized || self.status == .ephemeral
     #endif
   }
 
@@ -51,7 +51,7 @@ final class UserNotificationsStudy: NSObject, ObservableObject {
     if self.status == .notDetermined {
       guard
         try await self.userNotificationCenter.requestAuthorization(options: [
-          .alert,
+          .alert
         ])
       else {
         return

@@ -1,6 +1,6 @@
 #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
   import Dependencies
-  @_spi(Internals) import DependenciesAdditionsBasics
+  import DependenciesAdditionsBasics
   import NotificationCenterDependency
   import XCTest
   final class NotificationCenterDependencyTests: XCTestCase {

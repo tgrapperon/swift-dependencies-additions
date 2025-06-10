@@ -170,7 +170,7 @@ public struct ReadWriteBinding<Value>: Sendable {
   }
 
   @available(*, deprecated, message: "Use the two-arguments `get:set:` variant.")
-  @_spi(Internals) public init(_ getSet: (@Sendable () -> Value, @Sendable (Value) -> Void)) {
+  public init(_ getSet: (@Sendable () -> Value, @Sendable (Value) -> Void)) {
     self.get = getSet.0
     self.set = getSet.1
   }
@@ -228,7 +228,6 @@ public struct ReadWriteProxy<Value: Sendable>: Sendable {
     self.binding = binding
   }
 
-  @_spi(Internals)
   public var wrappedValue: Value {
     get {
       self.binding.get()
@@ -279,7 +278,6 @@ public struct ReadOnlyProxy<Value: Sendable>: Sendable {
     self._value = value
   }
 
-  @_spi(Internals)
   public var wrappedValue: Value {
     _value()
   }
@@ -324,7 +322,6 @@ public struct FunctionProxy<Value: Sendable>: Sendable {
     self._value = value
   }
 
-  @_spi(Internals)
   public var wrappedValue: Value {
     _value()
   }
@@ -430,7 +427,7 @@ public struct MainActorReadWriteProxy<Value: Sendable>: Sendable {
   }
 
   @MainActor
-  @_spi(Internals)
+
   public var wrappedValue: Value {
     get {
       self.binding.get()
@@ -481,7 +478,7 @@ public struct MainActorReadOnlyProxy<Value: Sendable>: Sendable {
     self._value = value
   }
   @MainActor
-  @_spi(Internals)
+
   public var wrappedValue: Value {
     _value()
   }
@@ -509,10 +506,10 @@ public protocol ProxyBindable {
 }
 
 extension ProxyBindable where Self: Sendable {
-  @_spi(Internals) public var getValue: @Sendable () -> Value {
+  public var getValue: @Sendable () -> Value {
     { self.getValueFunction() }
   }
-  @_spi(Internals) public var setValue: @Sendable (Value) -> Void {
+  public var setValue: @Sendable (Value) -> Void {
     { self.setValueFunction($0) }
   }
 }
@@ -538,20 +535,20 @@ extension ProxyBindable where Self: Sendable {
 public struct AnyProxyBindable<Value: Sendable>: ProxyBindable {
   public var getValue: @Sendable () -> Value
   public var setValue: @Sendable (Value) -> Void
-  @_spi(Internals) public func getValueFunction() -> Value {
+  public func getValueFunction() -> Value {
     self.getValue()
   }
-  @_spi(Internals) public func setValueFunction(_ value: Value) {
+  public func setValueFunction(_ value: Value) {
     self.setValue(value)
   }
 }
 
 extension LockIsolated: ProxyBindable {
-  @_spi(Internals) public func getValueFunction() -> Value where Value: Sendable {
+  public func getValueFunction() -> Value where Value: Sendable {
     self.value
   }
 
-  @_spi(Internals) public func setValueFunction(_ value: Value) where Value: Sendable {
+  public func setValueFunction(_ value: Value) where Value: Sendable {
     self.withValue {
       $0 = value
     }

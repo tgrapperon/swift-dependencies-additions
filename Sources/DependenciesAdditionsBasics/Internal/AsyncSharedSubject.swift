@@ -3,7 +3,7 @@ import Foundation
 
 // A type that is able to broadcast continuation messages to an arbitrary number of
 // `AsyncStream`s it can generate.
-@_spi(Internals) public final class AsyncSharedSubject<Value>: Sendable {
+public final class AsyncSharedSubject<Value>: Sendable {
   public enum Behavior: Sendable {
     case replayCurrentValue
     case awaitForNewValues

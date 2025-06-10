@@ -1,6 +1,6 @@
 #if canImport(DeviceCheck)
   import Dependencies
-  @_spi(Internals) import DependenciesAdditionsBasics
+  import DependenciesAdditionsBasics
   import DeviceCheck
   import IssueReporting
 
@@ -22,7 +22,7 @@
       @ReadOnlyProxy public var isSupported: Bool
       @FunctionProxy public var generateToken: @Sendable () async throws -> Data
     }
-    @_spi(Internals) public var _implementation: Implementation
+    public var _implementation: Implementation
 
     /// A Boolean value that indicates whether the device supports the DeviceCheck API.
     @available(iOS 11.0, macOS 10.15, tvOS 11.0, watchOS 9.0, *)

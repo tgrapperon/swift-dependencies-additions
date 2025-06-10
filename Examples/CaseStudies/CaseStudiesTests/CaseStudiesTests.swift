@@ -10,5 +10,4 @@ import XCTest
 @MainActor
 final class CaseStudiesTests: XCTestCase {
 
-
 }

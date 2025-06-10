@@ -7,7 +7,7 @@ import XCTest
 @MainActor
 final class BatteryStatusStudyTests: XCTestCase {
   func testBatteryStatusStudy() async throws {
-    @Dependency(\.notificationCenter) var notificationCenter;
+    @Dependency(\.notificationCenter) var notificationCenter
 
     @MainActor
     final class Values {
