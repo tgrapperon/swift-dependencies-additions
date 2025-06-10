@@ -1,9 +1,9 @@
 CONFIG = debug
-PLATFORM_IOS = iOS Simulator,name=iPhone 15 Pro Max
+PLATFORM_IOS = iOS Simulator,name=iPhone 16 Pro Max
 PLATFORM_MACOS = macOS
 PLATFORM_MAC_CATALYST = macOS,variant=Mac Catalyst
 PLATFORM_TVOS = tvOS Simulator,name=Apple TV
-PLATFORM_WATCHOS = watchOS Simulator,name=Apple Watch Series 7 (45mm)
+PLATFORM_WATCHOS = watchOS Simulator,name=Apple Watch Series 8 (45mm)
 
 CONFIG = debug
 
