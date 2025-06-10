@@ -1,6 +1,6 @@
 #if os(iOS) || os(watchOS) || os(macOS)
   import Dependencies
-  @_spi(Internals) import DependenciesAdditionsBasics
+  import DependenciesAdditionsBasics
   @preconcurrency import UserNotifications
   import IssueReporting
 
@@ -44,7 +44,7 @@
         @Sendable () async -> Set<UNNotificationCategory>
     }
 
-    @_spi(Internals) public var _implementation: Implementation
+     public var _implementation: Implementation
 
     /// The notification center’s delegate.
     public var delegate: (UNUserNotificationCenterDelegate & Sendable)? {

@@ -11,7 +11,7 @@ import IssueReporting
 ///   - milliseconds: The timeout after which the test fails, in milliseconds. 1000ms by default.
 ///   - description: The description message to show when the test fails.
 ///   - operation: The operation to perform before the timeout expires.
-@_spi(Internals) public func withTimeout(
+ public func withTimeout(
   _ milliseconds: UInt64 = 1000,
   description: String = "",
   operation: @Sendable @escaping () async throws -> Void,
@@ -37,7 +37,7 @@ import IssueReporting
 ///   - milliseconds: The timeout after which the test fails, in milliseconds. 1000ms by default.
 ///   - description: The description message to show when the test fails.
 ///   - operations: The operations to perform before the timeout expires.
-@_spi(Internals) public func withTimeout(
+ public func withTimeout(
   _ milliseconds: UInt64 = 1000,
   description: String = "",
   group operations: @escaping @Sendable (inout ThrowingTaskGroup<Void, Error>) async throws -> Void,

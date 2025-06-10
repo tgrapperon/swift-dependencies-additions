@@ -1,5 +1,5 @@
 import Dependencies
-@_spi(Internals) import DependenciesAdditionsBasics
+ import DependenciesAdditionsBasics
 import UserDefaultsDependency
 import XCTest
 import _AppStorageDependency

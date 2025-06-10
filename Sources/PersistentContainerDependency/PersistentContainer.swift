@@ -113,7 +113,7 @@
   }
 
   public struct PersistentContainer: Sendable {
-    @_spi(Internals)
+    
     public let _viewContext: @Sendable () -> NSManagedObjectContext
     private let _newChildViewContext: @Sendable () -> NSManagedObjectContext
     private let _newBackgroundContext: @Sendable () -> NSManagedObjectContext
