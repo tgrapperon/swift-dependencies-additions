@@ -14,6 +14,7 @@ import PackageDescription
 /// - `CompressionDependency`:         `\.compress` and `\.decompress`
 /// - `DataDependency`:                `\.dataReader` and `\.dataWriter`
 /// - `DeviceDependency`:              `\.device` and `\.deviceCheckDevice`
+/// - `LocationManagerDependency`:     `\.locationManager`
 /// - `LoggerDependency`:              `\.logger`
 /// - `NotificationCenterDependency`:  `\.notificationCenter`
 /// - `PathDependency`:                `\.path`
@@ -166,6 +167,7 @@ let package = Package(
         "DataDependency",
         "DependenciesAdditionsBasics",
         "DeviceDependency",
+        "LocationManagerDependency",
         "LoggerDependency",
         "NotificationCenterDependency",
         "PathDependency",
@@ -221,6 +223,15 @@ let package = Package(
       name: "DeviceDependencyTests",
       dependencies: [
         "DeviceDependency"
+      ]
+    ),
+
+    .target(
+      name: "LocationManagerDependency",
+      dependencies: [
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "XCTestDynamicOverlay", package: "xctest-dynamic-overlay"),
+        "DependenciesAdditionsBasics",
       ]
     ),
 
@@ -410,6 +421,7 @@ func addIndividualProducts() {
     .library(name: "CompressionDependency", targets: ["CompressionDependency"]),
     .library(name: "DataDependency", targets: ["DataDependency"]),
     .library(name: "DeviceDependency", targets: ["DeviceDependency"]),
+    .library(name: "LocationManagerDependency", targets: ["LocationManagerDependency"]),
     .library(name: "LoggerDependency", targets: ["LoggerDependency"]),
     .library(name: "NotificationCenterDependency", targets: ["NotificationCenterDependency"]),
     .library(name: "PathDependency", targets: ["PathDependency"]),
