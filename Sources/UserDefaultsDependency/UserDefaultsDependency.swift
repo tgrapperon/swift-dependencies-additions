@@ -39,6 +39,7 @@ extension UserDefaults {
 
     /// Sets the value of the specified default key.
 
+    @_disfavoredOverload
     public func set<T: Sendable>(_ value: T?, forKey key: String) {
       self._set(value, key)
     }
